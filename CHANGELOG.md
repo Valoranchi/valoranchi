@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-10-04
+
 ### Added
 
 - Interactive browser dashboard served at `GET /` (`/dashboard.css`, `/dashboard.js`) with responsive dark theme and tabs for Home (player profile, card, rank with RR and rank fit, wallet), Store (daily rotation with countdown reset timer, bundles, night market), Wishlist (with skin autocomplete, local add/remove, and in-store highlights), Matches (last 10 matches with map, agent, score, KDA, result, and RR change), and Friends (online friends and live presence activity).
