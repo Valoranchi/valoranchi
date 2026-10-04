@@ -46,6 +46,33 @@ The standalone binary supports all CLI commands and options:
 
 ---
 
+---
+
+## Desktop Double-Click Mode
+
+You can distribute `riotclient-win-x64.exe` to users who do not use terminal commands:
+
+- **Double-Click Launch**: Double-clicking the `.exe` in Windows Explorer automatically boots the local server (on port 47800, falling back to the next free port if busy) and immediately opens the interactive dashboard in your default browser.
+- **Terminal Launch**: You can also launch the dashboard explicitly from any terminal via `riotclient dashboard` or `.\riotclient-win-x64.exe dashboard`.
+- Keep the console window open while using the dashboard; closing the window stops the server.
+
+---
+
+## Distribution on itch.io
+
+The Windows executable is packaged and published on itch.io:
+
+👉 [https://matias-obezzi.itch.io/valoranchi](https://matias-obezzi.itch.io/valoranchi)
+
+### Windows SmartScreen Note
+
+Because this is a community open-source binary distributed without a commercial Authenticode certificate, Windows SmartScreen may show a warning dialog ("Windows protected your PC") on first launch:
+
+1. Click **More info**.
+2. Click **Run anyway**.
+
+---
+
 ## Windows Binary Signing Caveat
 
 > [!WARNING]
@@ -72,10 +99,10 @@ When `postject` injects the SEA preparation blob into the resource section of `n
    ```
 
 3. **Running Without Signing**:
-   The binary executes normally in developer consoles, automation scripts, and CI runners without re-signing. Windows SmartScreen may present a warning dialog ("Unknown Publisher") on interactive desktop launches until signed.
+   The binary executes normally in developer consoles, automation scripts, and CI runners without re-signing. Windows SmartScreen presents the "More info -> Run anyway" dialog on desktop launches until signed.
 
 ---
 
 ## Automated CI Releases
 
-The `.github/workflows/release.yml` workflow includes an automated `build-exe` job running on `windows-latest`. Whenever a new version is released, the workflow builds `riotclient-win-x64.exe` and attaches it directly to the GitHub Release assets.
+The `.github/workflows/release.yml` workflow includes automated `build-exe` and `publish-itch` jobs running on `windows-latest` and `ubuntu-latest`. Whenever a new version is released, the workflow builds `riotclient-win-x64.exe`, attaches it to the GitHub Release assets, and automatically publishes the build to itch.io with Butler.

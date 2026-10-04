@@ -112,9 +112,10 @@ events.addEventListener("round", (e) => {
 });
 ```
 
-### 4. Documentation & OpenAPI Spec
+### 4. Interactive Dashboard & Documentation
 
-- **`GET /`**: Serves a minimal HTML dashboard listing all active routes, link to the OpenAPI schema, and SSE stream.
+- **`GET /`**: Serves the interactive desktop dashboard in your browser with tabs for Home, Store, Wishlist, Matches, and Friends.
+- **`GET /api`**: Serves an HTML page listing all active routes, link to the OpenAPI schema, and SSE stream.
 - **`GET /openapi.json`**: Generates a valid OpenAPI 3.0 specification covering every method, route parameter, and JSON Schema definitions for domain models.
 
 ---

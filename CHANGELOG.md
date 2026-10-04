@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Interactive browser dashboard served at `GET /` (`/dashboard.css`, `/dashboard.js`) with responsive dark theme and tabs for Home (player profile, card, rank with RR and rank fit, wallet), Store (daily rotation with countdown reset timer, bundles, night market), Wishlist (with skin autocomplete, local add/remove, and in-store highlights), Matches (last 10 matches with map, agent, score, KDA, result, and RR change), and Friends (online friends and live presence activity).
+- Friendly full-width status banner when VALORANT is closed or starting up (`RIOT_CLIENT_NOT_RUNNING` or `RIOT_CLIENT_NOT_READY`) with automatic 10-second background reconnection polling.
+- Bilingual interface in English and Spanish, automatically selected from browser language (`navigator.language`).
+- Catalogue skin autocomplete endpoint `GET /api/store/skins` returning purchasable weapon skins (`{ uuid, name, weapon, icon, tier }`) without requiring an active Riot session.
+- Moved route index directory to `GET /api` with direct links to documentation and the web dashboard.
+- Double-click desktop mode for Node Single Executable Applications (`riotclient-win-x64.exe`): launches the local HTTP server with automatic port fallback (47800-47810), prints a friendly console banner, and automatically opens the user's default browser.
+- CLI command `riotclient dashboard` to launch the local server and open the web dashboard from any environment.
+- Automated itch.io distribution workflow (`.github/workflows/itch.yml`) packaging the Windows executable with desktop instructions and pushing to `matias-obezzi/valoranchi:windows` via Butler.
+
+### Security
+
+- Serve HTTP server hardening against DNS rebinding and cross-site request forgery:
+  - Strict `Host` header validation against loopback addresses (`127.0.0.1:<port>`, `localhost:<port>`, `[::1]:<port>`), returning `403 Forbidden` (`FORBIDDEN_HOST`) on unauthorized hostnames.
+  - Same-origin validation for requests carrying an `Origin` header, blocking foreign cross-origin web callers with `403 Forbidden` (`FORBIDDEN_ORIGIN`).
+  - Strict `Content-Type: application/json` enforcement on all `POST` requests, returning `415 Unsupported Media Type` (`UNSUPPORTED_MEDIA_TYPE`) to mandate CORS preflight requests from browsers.
+  - Zero cross-origin permissive headers: the server never returns `Access-Control-Allow-Origin`, ensuring cross-site preflights fail.
+
 ## [0.5.0] - 2026-10-02
 
 ### Added
