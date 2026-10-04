@@ -11,6 +11,11 @@ import {
   ValidationError,
 } from "../errors.js";
 import type { RiotClient } from "../RiotClient.js";
+import {
+  renderDashboardCss,
+  renderDashboardHtml,
+  renderDashboardJs,
+} from "./dashboard/index.js";
 import { renderIndexHtml } from "./indexHtml.js";
 import { buildOpenApiSpec } from "./openapi.js";
 import { dispatchApiRoute } from "./routes.js";
@@ -102,7 +107,46 @@ export async function createRiotServer(
         query[key] = value;
       }
 
+      const DASHBOARD_CSP =
+        "default-src 'self'; img-src 'self' https://media.valorant-api.com data:; connect-src 'self'";
+
       if (req.method === "GET" && (pathname === "/" || pathname === "/index.html")) {
+        const html = renderDashboardHtml();
+        res.writeHead(200, {
+          "Content-Type": "text/html; charset=utf-8",
+          "Content-Length": Buffer.byteLength(html),
+          "Content-Security-Policy": DASHBOARD_CSP,
+          "X-Content-Type-Options": "nosniff",
+        });
+        res.end(html);
+        return;
+      }
+
+      if (req.method === "GET" && pathname === "/dashboard.css") {
+        const css = renderDashboardCss();
+        res.writeHead(200, {
+          "Content-Type": "text/css; charset=utf-8",
+          "Content-Length": Buffer.byteLength(css),
+          "Content-Security-Policy": DASHBOARD_CSP,
+          "X-Content-Type-Options": "nosniff",
+        });
+        res.end(css);
+        return;
+      }
+
+      if (req.method === "GET" && pathname === "/dashboard.js") {
+        const js = renderDashboardJs();
+        res.writeHead(200, {
+          "Content-Type": "application/javascript; charset=utf-8",
+          "Content-Length": Buffer.byteLength(js),
+          "Content-Security-Policy": DASHBOARD_CSP,
+          "X-Content-Type-Options": "nosniff",
+        });
+        res.end(js);
+        return;
+      }
+
+      if (req.method === "GET" && (pathname === "/api" || pathname === "/api/")) {
         const html = renderIndexHtml();
         res.writeHead(200, {
           "Content-Type": "text/html; charset=utf-8",

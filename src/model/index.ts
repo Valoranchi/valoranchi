@@ -204,6 +204,14 @@ export type StoreItem =
   | { kind: "currency"; uuid: string; name: string; amount: number }
   | { kind: "other"; uuid: string; typeUuid: string; name: null };
 
+export type CatalogSkin = {
+  uuid: string;
+  name: string;
+  weapon: string;
+  icon: Image;
+  tier: Tier | null;
+};
+
 export type DailyOffer = {
   offerId: string;
   item: StoreItem;

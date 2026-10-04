@@ -494,6 +494,14 @@ export const ROUTE_DEFINITIONS: RouteDefinition[] = [
       },
     ],
   },
+  {
+    method: "GET",
+    namespace: "store",
+    action: "skins",
+    path: "/api/store/skins",
+    summary: "Get purchasable weapon skins for autocomplete",
+    responseSchema: "CatalogSkin",
+  },
 
   {
     method: "GET",
@@ -1420,6 +1428,8 @@ export async function dispatchApiRoute(
         return client.store.wishlistAdd(String(body.skin ?? query.skin));
       case "wishlistRemove":
         return client.store.wishlistRemove(String(body.skin ?? query.skin));
+      case "skins":
+        return client.store.skins();
     }
   }
 

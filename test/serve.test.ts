@@ -1,6 +1,12 @@
+import fs from "node:fs";
 import http from "node:http";
+import path from "node:path";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { Catalogue } from "../src/catalogue/Catalogue.js";
+import type { ValorantApiCatalogueData } from "../src/catalogue/types.js";
 import type { MatchesApi } from "../src/client/api.js";
+import type { ClientContext } from "../src/client/ClientContext.js";
+import { StoreService } from "../src/client/StoreService.js";
 import {
   ForbiddenHostError,
   RiotApiError,
@@ -79,6 +85,14 @@ describe("Serve Mode", () => {
   const mockValidateDodge = vi.fn().mockResolvedValue({ method: "POST", path: "/dodge" });
   const mockDodge = vi.fn().mockResolvedValue({ dodged: true, matchId: "m-dodge" });
 
+  const catalogueData = JSON.parse(
+    fs.readFileSync(path.join(import.meta.dirname, "fixtures", "catalogue.json"), "utf-8"),
+  ) as ValorantApiCatalogueData;
+  const fixtureCatalogue = new Catalogue(catalogueData);
+  const fixtureStoreService = new StoreService({
+    catalogue: async () => fixtureCatalogue,
+  } as unknown as ClientContext);
+
   const fakeClient = {
     account: {
       whoami: mockWhoami,
@@ -100,6 +114,7 @@ describe("Serve Mode", () => {
         .fn()
         .mockResolvedValue({ skins: [{ uuid: "s1", name: "Prime Vandal", addedAt: "now" }] }),
       wishlistRemove: vi.fn().mockResolvedValue({ skins: [] }),
+      skins: vi.fn().mockImplementation(() => fixtureStoreService.skins()),
     },
     matches: {
       list: mockListMatches,
@@ -147,13 +162,52 @@ describe("Serve Mode", () => {
     ).rejects.toThrow(ForbiddenHostError);
   });
 
-  it("serves minimal HTML index on GET /", async () => {
+  it("serves dashboard HTML on GET / with CSP header", async () => {
     const res = await requestHttp(`http://127.0.0.1:${testPort}/`);
+    expect(res.status).toBe(200);
+    expect(res.headers["content-type"]).toContain("text/html");
+    expect(res.headers["content-security-policy"]).toContain("default-src 'self'");
+    expect(res.headers["x-content-type-options"]).toBe("nosniff");
+    expect(res.body).toContain("Valoranchi Dashboard");
+  });
+
+  it("serves dashboard assets with correct content types and CSP headers", async () => {
+    const resCss = await requestHttp(`http://127.0.0.1:${testPort}/dashboard.css`);
+    expect(resCss.status).toBe(200);
+    expect(resCss.headers["content-type"]).toBe("text/css; charset=utf-8");
+    expect(resCss.headers["content-security-policy"]).toContain("default-src 'self'");
+    expect(resCss.headers["x-content-type-options"]).toBe("nosniff");
+
+    const resJs = await requestHttp(`http://127.0.0.1:${testPort}/dashboard.js`);
+    expect(resJs.status).toBe(200);
+    expect(resJs.headers["content-type"]).toBe("application/javascript; charset=utf-8");
+    expect(resJs.headers["content-security-policy"]).toContain("default-src 'self'");
+    expect(resJs.headers["x-content-type-options"]).toBe("nosniff");
+  });
+
+  it("serves API route list on GET /api", async () => {
+    const res = await requestHttp(`http://127.0.0.1:${testPort}/api`);
     expect(res.status).toBe(200);
     expect(res.headers["content-type"]).toContain("text/html");
     expect(res.body).toContain("Valoranchi Riot Client API");
     expect(res.body).toContain("/openapi.json");
     expect(res.body).toContain("/events");
+  });
+
+  it("returns only purchasable skins from fixture catalogue on GET /api/store/skins", async () => {
+    const res = await requestHttp(`http://127.0.0.1:${testPort}/api/store/skins`);
+    expect(res.status).toBe(200);
+    const skins = JSON.parse(res.body) as Array<{
+      uuid: string;
+      name: string;
+      weapon: string;
+      icon: string | null;
+      tier: unknown;
+    }>;
+    expect(skins.length).toBeGreaterThan(0);
+    expect(skins.some((s) => s.name === "Prime Vandal")).toBe(true);
+    expect(skins.some((s) => s.name === "Standard Vandal")).toBe(false);
+    expect(skins[0].weapon).toBe("Vandal");
   });
 
   it("serves OpenAPI 3.0 specification on GET /openapi.json", async () => {

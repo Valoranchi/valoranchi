@@ -24,6 +24,7 @@ export function renderIndexHtml(): string {
   <h1>Valoranchi Riot Client API</h1>
   <p>Local HTTP integration server for Riot Client and Valorant.</p>
   <div class="links">
+    <a href="/">Dashboard</a>
     <a href="/openapi.json">OpenAPI Specification (JSON)</a>
     <a href="/events">Server-Sent Events Stream (/events)</a>
     <a href="https://github.com/Valoranchi/valoranchi#readme" target="_blank" rel="noopener">Documentation</a>

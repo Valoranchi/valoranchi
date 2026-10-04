@@ -2,12 +2,14 @@ import { CollectionBuilder } from "../collection/CollectionBuilder.js";
 import { StoreBuilder } from "../collection/StoreBuilder.js";
 import { StoreOffersBuilder } from "../collection/StoreOffersBuilder.js";
 import type {
+  CatalogSkin,
   Offer,
   Order,
   OwnedItems,
   Store,
   StoreHistory,
   StoreSeen,
+  Tier,
   Wallet,
   Wishlist,
   WishlistCheck,
@@ -212,6 +214,35 @@ export class StoreService implements StoreApi {
       checkedAt: new Date().toISOString(),
       hits,
     };
+  }
+
+  async skins(): Promise<CatalogSkin[]> {
+    const catalogue = await this.context.catalogue();
+    const result: CatalogSkin[] = [];
+    for (const weapon of catalogue.weapons) {
+      for (const skin of weapon.skins) {
+        if (!skin.contentTierUuid) {
+          continue;
+        }
+        const tierEntity = catalogue.getTier(skin.contentTierUuid);
+        const tier: Tier | null = tierEntity
+          ? {
+              uuid: tierEntity.uuid.toLowerCase(),
+              name: tierEntity.displayName,
+              rank: tierEntity.rank,
+              icon: tierEntity.displayIcon,
+            }
+          : null;
+        result.push({
+          uuid: skin.uuid.toLowerCase(),
+          name: skin.displayName,
+          weapon: weapon.displayName,
+          icon: skin.displayIcon ?? skin.levels[0]?.displayIcon ?? null,
+          tier,
+        });
+      }
+    }
+    return result;
   }
 
   private async fetchOwnedItems(): Promise<OwnedItems> {

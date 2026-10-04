@@ -1,6 +1,7 @@
 import type {
   AccountXp,
   BlockedPlayer,
+  CatalogSkin,
   ClientInfo,
   CollectionValue,
   Content,
@@ -140,6 +141,7 @@ export interface StoreApi {
   wishlistAdd(skin: string): Promise<Wishlist>;
   wishlistRemove(skin: string): Promise<Wishlist>;
   wishlistCheck(): Promise<WishlistCheck>;
+  skins(): Promise<CatalogSkin[]>;
 }
 
 export interface MatchesApi {
