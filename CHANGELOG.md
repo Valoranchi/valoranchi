@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Both entry points also export a `default` condition, so bundlers that resolve with `require` (webpack for Electron main, for example) find them.
+
 ## [0.6.0] - 2026-10-04
 
 ### Added
