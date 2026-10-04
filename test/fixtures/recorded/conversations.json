@@ -1,0 +1,51 @@
+{
+  "recordedAt": "2026-10-04T05:37:37.039Z",
+  "self": "00000000-0000-4000-8000-000000000001",
+  "raw": [
+    {
+      "cid": "00000000-0000-4000-8000-000000000082@br1.pvp.net",
+      "direct_messages": false,
+      "global_readership": true,
+      "message_history": true,
+      "mid": "1788578655391:3",
+      "muted": false,
+      "mutedRestriction": false,
+      "type": "chat",
+      "uiState": {
+        "changedSinceHidden": false,
+        "hidden": false
+      },
+      "unread_count": 0
+    },
+    {
+      "cid": "00000000-0000-4000-8000-000000000103@na1.pvp.net",
+      "direct_messages": false,
+      "global_readership": true,
+      "message_history": true,
+      "mid": "1789182511107:20",
+      "muted": false,
+      "mutedRestriction": false,
+      "type": "chat",
+      "uiState": {
+        "changedSinceHidden": false,
+        "hidden": false
+      },
+      "unread_count": 0
+    },
+    {
+      "cid": "00000000-0000-4000-8000-000000000003@la1.pvp.net",
+      "direct_messages": false,
+      "global_readership": true,
+      "message_history": true,
+      "mid": "1790391067196:9",
+      "muted": false,
+      "mutedRestriction": false,
+      "type": "chat",
+      "uiState": {
+        "changedSinceHidden": false,
+        "hidden": false
+      },
+      "unread_count": 0
+    }
+  ]
+}

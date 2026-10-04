@@ -1,0 +1,28 @@
+{
+  "recordedAt": "2026-10-04T05:37:37.039Z",
+  "self": "00000000-0000-4000-8000-000000000001",
+  "raw": [
+    {
+      "game_name": "Player119",
+      "game_tag": "TAG",
+      "name": "",
+      "note": "",
+      "pid": "00000000-0000-4000-8000-000000000127@br1.pvp.net",
+      "platform": "",
+      "puuid": "00000000-0000-4000-8000-000000000127",
+      "region": "br1",
+      "subscription": "pending_out"
+    },
+    {
+      "game_name": "Player120",
+      "game_tag": "TAG",
+      "name": "",
+      "note": "",
+      "pid": "00000000-0000-4000-8000-000000000128@br1.pvp.net",
+      "platform": "",
+      "puuid": "00000000-0000-4000-8000-000000000128",
+      "region": "br1",
+      "subscription": "pending_out"
+    }
+  ]
+}

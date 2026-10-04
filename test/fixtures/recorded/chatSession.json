@@ -1,0 +1,16 @@
+{
+  "recordedAt": "2026-10-04T05:37:37.035Z",
+  "self": "00000000-0000-4000-8000-000000000001",
+  "raw": {
+    "federated": true,
+    "game_name": "Player1",
+    "game_tag": "TAG",
+    "loaded": true,
+    "name": "",
+    "pid": "00000000-0000-4000-8000-000000000001@la1.pvp.net",
+    "puuid": "00000000-0000-4000-8000-000000000001",
+    "region": "la1",
+    "resource": "RC-3052200384",
+    "state": "connected"
+  }
+}

@@ -1,0 +1,184 @@
+{
+  "recordedAt": "2026-10-04T05:37:37.012Z",
+  "self": "00000000-0000-4000-8000-000000000001",
+  "raw": {
+    "Subject": "00000000-0000-4000-8000-000000000001",
+    "Version": 4499,
+    "Guns": [
+      {
+        "ID": "ae3de142-4d85-2547-dd26-4e90bed35cf7",
+        "SkinID": "7baa9f5a-4ac3-804a-2e47-4da916de0b79",
+        "SkinLevelID": "fb79c688-4a07-6f3f-7c1a-948b5b399a3f",
+        "ChromaID": "10afa924-483c-3f29-21a3-f78b88e13c60",
+        "Attachments": []
+      },
+      {
+        "ID": "44d4e95c-4157-0037-81b2-17841bf2e8e3",
+        "SkinID": "7b82c605-44bb-aae9-55bf-a4afef323553",
+        "SkinLevelID": "dbf01b61-4639-696a-d17b-0b85c4e3feec",
+        "ChromaID": "afc47102-475d-3a5c-f498-c4b98fb203e1",
+        "Attachments": []
+      },
+      {
+        "ID": "55d8a0f4-4274-ca67-fe2c-06ab45efdf58",
+        "SkinID": "acccab4a-4093-8a4a-f1d3-299071d763d3",
+        "SkinLevelID": "e507b35c-4a86-0663-0259-8da5f286d41c",
+        "ChromaID": "0a59fa66-4f08-e72d-d818-d083b993e8cf",
+        "Attachments": []
+      },
+      {
+        "ID": "2f59173c-4bed-b6c3-2191-dea9b58be9c7",
+        "SkinID": "835a8c05-4e36-1b80-3ad4-c283697ba147",
+        "SkinLevelID": "5ff358ca-4837-6a0e-3016-c5846ca9060d",
+        "ChromaID": "227d5b20-49dd-b80c-3ba0-b7b27f5f2d0e",
+        "Attachments": []
+      },
+      {
+        "ID": "ee8e8d15-496b-07ac-e5f6-8fae5d4c7b1a",
+        "SkinID": "9877d50b-43b1-837a-802a-bf8a3b98e2dd",
+        "SkinLevelID": "a117218e-4f0e-0cca-7758-7ea30b08ac05",
+        "ChromaID": "4a8846e9-4051-2813-db9f-7a8e274542a1",
+        "Attachments": []
+      },
+      {
+        "ID": "5f0aaf7a-4289-3998-d5ff-eb9a5cf7ef5c",
+        "SkinID": "bd9c41dd-42b1-8555-78c1-81a36016bc03",
+        "SkinLevelID": "d45b04d5-44d9-2671-2070-11b8efae759c",
+        "ChromaID": "031401e8-4907-de2c-5097-b88eb90ad540",
+        "Attachments": []
+      },
+      {
+        "ID": "42da8ccc-40d5-affc-beec-15aa47b42eda",
+        "SkinID": "075e4cf0-469b-25dc-8d6f-2995fbb093de",
+        "SkinLevelID": "6afa5e36-4a90-7a2c-30b7-23be5ba2588b",
+        "ChromaID": "38f0b73a-4c02-26ed-dbd0-409a2f8e33ce",
+        "Attachments": []
+      },
+      {
+        "ID": "4ade7faa-4cf1-8376-95ef-39884480959b",
+        "SkinID": "874025d8-4293-a38a-96ac-3d94954fb4b7",
+        "SkinLevelID": "76587a8a-4622-2e70-aafd-ea960b06a98d",
+        "ChromaID": "1738abbc-4dbe-1a42-a15b-eda6249f35be",
+        "Attachments": []
+      },
+      {
+        "ID": "63e6c2b6-4a8e-869c-3d4c-e38355226584",
+        "SkinID": "9c134f41-4c29-1bd8-682e-178e7f349c9b",
+        "SkinLevelID": "a89584fb-451d-fcce-0176-3bbaa6764a2e",
+        "ChromaID": "647f59fb-41ee-ed30-11f1-52b0814af441",
+        "Attachments": []
+      },
+      {
+        "ID": "462080d1-4035-2937-7c09-27aa2a5c27a7",
+        "SkinID": "c79318a6-4ffd-a99f-f452-77947640f688",
+        "SkinLevelID": "3f14aff8-480e-335a-974f-2ba1817de303",
+        "ChromaID": "055e903f-42b7-3d08-dc2f-bc9ed2d9b719",
+        "Attachments": []
+      },
+      {
+        "ID": "910be174-449b-c412-ab22-d0873436b21b",
+        "SkinID": "ed407bc7-4949-3131-b84f-d6be83b63a15",
+        "SkinLevelID": "e5c6d130-4226-cdac-8d03-1b97e907b8f9",
+        "ChromaID": "74d62853-4aa2-8d3b-d7c2-8d8bde69f23c",
+        "Attachments": []
+      },
+      {
+        "ID": "29a0cfab-485b-f5d5-779a-b59f85e204a8",
+        "SkinID": "2136523c-4847-30e8-2e19-b381be7afac4",
+        "SkinLevelID": "870eb8ee-475d-4d3e-ac49-f7bcbdceb716",
+        "ChromaID": "ff89d8db-408f-0ba8-152e-17b42d55f469",
+        "Attachments": []
+      },
+      {
+        "ID": "1baa85b4-4c70-1284-64bb-6481dfc3bb4e",
+        "SkinID": "b4903002-4687-1953-847a-e0b09a2b2726",
+        "SkinLevelID": "7afbe865-4832-941b-049b-1397bd90d4d8",
+        "ChromaID": "e17c8364-4630-505a-a2f8-45add0c2c292",
+        "Attachments": []
+      },
+      {
+        "ID": "c4883e50-4494-202c-3ec3-6b8a9284f00b",
+        "SkinID": "457fe5d2-40c8-4490-6834-53a74e709f4a",
+        "SkinLevelID": "04b64c56-4a51-88d1-419e-9c91fcdff626",
+        "ChromaID": "bd2a03a0-4690-eacc-b68c-9c87e378294d",
+        "Attachments": []
+      },
+      {
+        "ID": "e336c6b8-418d-9340-d77f-7a9e4cfe0702",
+        "SkinID": "84d840c5-4479-4395-d823-e7acbe634c5e",
+        "SkinLevelID": "114a5ce1-43ac-2cd8-3a9a-adbdfa32220e",
+        "ChromaID": "e93656e2-42f9-8eb1-8b74-e5829f3eb08e",
+        "Attachments": []
+      },
+      {
+        "ID": "a03b24d3-4319-996d-0f8c-94bbfba1dfc7",
+        "SkinID": "acdd29aa-44b5-0d78-dc54-8f92ed555559",
+        "SkinLevelID": "d0ef50dc-4a62-1ac1-a276-1f8d1b47a7b0",
+        "ChromaID": "1f0c942c-4be3-d4f3-0183-f7b26ccdcbb8",
+        "Attachments": []
+      },
+      {
+        "ID": "f7e1b454-4ad4-1063-ec0a-159e56b58941",
+        "SkinID": "d25dfdc4-4fce-e121-88ef-66b5dadeee09",
+        "SkinLevelID": "caea8844-4603-951f-c458-25a04a778bf8",
+        "ChromaID": "4bb225a9-4a78-a9d2-8a9f-07a965bc8867",
+        "Attachments": []
+      },
+      {
+        "ID": "9c82e19d-4575-0200-1a81-3eacf00cf872",
+        "SkinID": "d8d5d7a1-4d81-8560-54bc-0692ab40f69b",
+        "SkinLevelID": "85d35e1c-4a21-172b-231f-5cb84550e48b",
+        "ChromaID": "3637a0be-4785-8841-9893-1198325185f2",
+        "Attachments": []
+      },
+      {
+        "ID": "ec845bf4-4f79-ddda-a3da-0db3774b2794",
+        "SkinID": "68f2e92e-4c94-8104-ed99-03925bbc71e8",
+        "SkinLevelID": "69dd1d46-422b-ec24-6dc1-fb848d445ef4",
+        "ChromaID": "f848117b-4cd5-04a1-9f36-648eacebe8ec",
+        "Attachments": []
+      },
+      {
+        "ID": "410b2e0b-4ceb-1321-1727-20858f7f3477",
+        "SkinID": "902a3bcb-4164-3315-fe03-2088fb897ce4",
+        "SkinLevelID": "75947fc9-4fdd-55ea-5a63-1a920336c8e7",
+        "ChromaID": "f8cd2463-4de6-2f96-561b-c0ab717995f9",
+        "Attachments": []
+      },
+      {
+        "ID": "8db0a1bf-4a50-832a-4566-faaaa6d250ca",
+        "SkinID": "61d99a36-4033-0fa9-2c94-71aaf901e120",
+        "SkinLevelID": "45a2214f-4730-8c89-b0a4-a7a2b5125ac8",
+        "ChromaID": "44b01f26-4569-0161-681f-e2a677f317ff",
+        "Attachments": []
+      }
+    ],
+    "ActiveExpressions": [
+      {
+        "TypeID": "03a572de-4234-31ed-d344-ababa488f981",
+        "AssetID": "7f9b236f-40d5-1c22-88a0-d38ffd5c7b8f"
+      },
+      {
+        "TypeID": "03a572de-4234-31ed-d344-ababa488f981",
+        "AssetID": "a99fca6c-4943-5dca-faf0-53990dddbaf6"
+      },
+      {
+        "TypeID": "d5f120f8-ff8c-4aac-92ea-f2b5acbe9475",
+        "AssetID": "dd97bf4a-4eb4-b825-98e3-03b5390a64f3"
+      },
+      {
+        "TypeID": "03a572de-4234-31ed-d344-ababa488f981",
+        "AssetID": "80a11c6a-4d28-bfad-5594-2e9369b7787a"
+      }
+    ],
+    "DynamicOptions": null,
+    "Identity": {
+      "PlayerCardID": "1489e32f-4fca-55ee-c776-dbb7afd8d9a6",
+      "PlayerTitleID": "58e5f5db-4b18-cf8a-afa2-b49574b34456",
+      "AccountLevel": 0,
+      "PreferredLevelBorderID": "af1852a5-4e66-02a6-2ae3-ab8c885efb80",
+      "HideAccountLevel": true
+    },
+    "Incognito": true
+  }
+}

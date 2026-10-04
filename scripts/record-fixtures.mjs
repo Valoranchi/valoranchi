@@ -13,7 +13,7 @@ const outDir = path.join(
 const UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
 const NAME_KEYS = new Set(["gameName", "GameName", "game_name", "name"]);
 const TAG_KEYS = new Set(["tagLine", "TagLine", "game_tag"]);
-const TEXT_KEYS = new Set(["body", "note"]);
+const TEXT_KEYS = new Set(["body", "note", "msg", "summary"]);
 
 class Anonymizer {
   ids = new Map();
@@ -44,7 +44,10 @@ class Anonymizer {
     if (Array.isArray(value)) return value.map((item) => this.walk(item));
     if (value && typeof value === "object") {
       return Object.fromEntries(
-        Object.entries(value).map(([k, v]) => [this.text(k), this.walk(v, k)]),
+        Object.entries(value).map(([k, v]) => [
+          this.text(k),
+          k === "private" && value.product !== "valorant" ? "" : this.walk(v, k),
+        ]),
       );
     }
     if (typeof value !== "string") return value;
