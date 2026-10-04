@@ -58,11 +58,9 @@ You can distribute `riotclient-win-x64.exe` to users who do not use terminal com
 
 ---
 
-## Distribution on itch.io
+## Download
 
-The Windows executable is packaged and published on itch.io:
-
-👉 [https://matias-obezzi.itch.io/valoranchi](https://matias-obezzi.itch.io/valoranchi)
+Every GitHub release carries `riotclient-win-x64.exe` among its assets: [github.com/Valoranchi/valoranchi/releases](https://github.com/Valoranchi/valoranchi/releases).
 
 ### Windows SmartScreen Note
 
@@ -105,4 +103,4 @@ When `postject` injects the SEA preparation blob into the resource section of `n
 
 ## Automated CI Releases
 
-The `.github/workflows/release.yml` workflow includes automated `build-exe` and `publish-itch` jobs running on `windows-latest` and `ubuntu-latest`. Whenever a new version is released, the workflow builds `riotclient-win-x64.exe`, attaches it to the GitHub Release assets, and automatically publishes the build to itch.io with Butler.
+The `.github/workflows/release.yml` workflow includes a `build-exe` job running on `windows-latest`. Whenever a new version is released, it builds `riotclient-win-x64.exe` and attaches it to the GitHub Release assets.

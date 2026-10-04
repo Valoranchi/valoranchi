@@ -11,11 +11,7 @@ import {
   ValidationError,
 } from "../errors.js";
 import type { RiotClient } from "../RiotClient.js";
-import {
-  renderDashboardCss,
-  renderDashboardHtml,
-  renderDashboardJs,
-} from "./dashboard/index.js";
+import { renderDashboardCss, renderDashboardHtml, renderDashboardJs } from "./dashboard/index.js";
 import { renderIndexHtml } from "./indexHtml.js";
 import { buildOpenApiSpec } from "./openapi.js";
 import { dispatchApiRoute } from "./routes.js";
@@ -32,6 +28,16 @@ export function isLoopback(host: string): boolean {
   }
   return false;
 }
+
+const DASHBOARD_CSP =
+  "default-src 'self'; img-src 'self' https://media.valorant-api.com data:; connect-src 'self'";
+
+const DASHBOARD_ASSETS: Record<string, { type: string; render: () => string }> = {
+  "/": { type: "text/html; charset=utf-8", render: renderDashboardHtml },
+  "/index.html": { type: "text/html; charset=utf-8", render: renderDashboardHtml },
+  "/dashboard.css": { type: "text/css; charset=utf-8", render: renderDashboardCss },
+  "/dashboard.js": { type: "application/javascript; charset=utf-8", render: renderDashboardJs },
+};
 
 export function httpStatusForError(error: unknown): number {
   if (error instanceof RiotClientNotRunningError || error instanceof RiotClientNotReadyError) {
@@ -107,42 +113,16 @@ export async function createRiotServer(
         query[key] = value;
       }
 
-      const DASHBOARD_CSP =
-        "default-src 'self'; img-src 'self' https://media.valorant-api.com data:; connect-src 'self'";
-
-      if (req.method === "GET" && (pathname === "/" || pathname === "/index.html")) {
-        const html = renderDashboardHtml();
+      const asset = req.method === "GET" ? DASHBOARD_ASSETS[pathname] : undefined;
+      if (asset) {
+        const body = asset.render();
         res.writeHead(200, {
-          "Content-Type": "text/html; charset=utf-8",
-          "Content-Length": Buffer.byteLength(html),
+          "Content-Type": asset.type,
+          "Content-Length": Buffer.byteLength(body),
           "Content-Security-Policy": DASHBOARD_CSP,
           "X-Content-Type-Options": "nosniff",
         });
-        res.end(html);
-        return;
-      }
-
-      if (req.method === "GET" && pathname === "/dashboard.css") {
-        const css = renderDashboardCss();
-        res.writeHead(200, {
-          "Content-Type": "text/css; charset=utf-8",
-          "Content-Length": Buffer.byteLength(css),
-          "Content-Security-Policy": DASHBOARD_CSP,
-          "X-Content-Type-Options": "nosniff",
-        });
-        res.end(css);
-        return;
-      }
-
-      if (req.method === "GET" && pathname === "/dashboard.js") {
-        const js = renderDashboardJs();
-        res.writeHead(200, {
-          "Content-Type": "application/javascript; charset=utf-8",
-          "Content-Length": Buffer.byteLength(js),
-          "Content-Security-Policy": DASHBOARD_CSP,
-          "X-Content-Type-Options": "nosniff",
-        });
-        res.end(js);
+        res.end(body);
         return;
       }
 

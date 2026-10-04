@@ -13,10 +13,7 @@ export function isSea(): boolean {
   }
 }
 
-export function shouldLaunchDashboard(options: {
-  argsLength: number;
-  isSea: boolean;
-}): boolean {
+export function shouldLaunchDashboard(options: { argsLength: number; isSea: boolean }): boolean {
   return options.argsLength === 0 && options.isSea;
 }
 

@@ -105,19 +105,19 @@ Hits are deduplicated by rotation window (`<skinUuid>:<where>:<endsAt>`), ensuri
 
 ### Options
 
-| Option | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `intervalMinutes` | `number` | `60` | Polling interval in minutes between rotation checks (minimum 1 minute). |
-| `webhook` | `string` | `undefined` | Optional webhook URL (`https:` only) to post hit notifications to. |
-| `discord` | `boolean` | auto | Format notification for Discord webhooks (defaults to `true` if webhook URL contains `discord.com` or `discordapp.com`). |
+| Option            | Type      | Default     | Description                                                                                                              |
+| :---------------- | :-------- | :---------- | :----------------------------------------------------------------------------------------------------------------------- |
+| `intervalMinutes` | `number`  | `60`        | Polling interval in minutes between rotation checks (minimum 1 minute).                                                  |
+| `webhook`         | `string`  | `undefined` | Optional webhook URL (`https:` only) to post hit notifications to.                                                       |
+| `discord`         | `boolean` | auto        | Format notification for Discord webhooks (defaults to `true` if webhook URL contains `discord.com` or `discordapp.com`). |
 
 ### Events Emitted
 
-| Event   | Type / Payload   | Description                                                                                                   |
-| :------ | :--------------- | :------------------------------------------------------------------------------------------------------------ |
-| `hit`   | `WishlistHit`    | Emitted whenever a wishlisted skin appears in daily rotation, night market, or featured bundle.               |
-| `check` | `WishlistCheck`  | Emitted on each storefront check, providing current shop offers and any matching hits.                       |
-| `error` | `Error`          | Emitted if an unhandled error occurs during store inspection or webhook notification dispatch.                |
+| Event   | Type / Payload  | Description                                                                                     |
+| :------ | :-------------- | :---------------------------------------------------------------------------------------------- |
+| `hit`   | `WishlistHit`   | Emitted whenever a wishlisted skin appears in daily rotation, night market, or featured bundle. |
+| `check` | `WishlistCheck` | Emitted on each storefront check, providing current shop offers and any matching hits.          |
+| `error` | `Error`         | Emitted if an unhandled error occurs during store inspection or webhook notification dispatch.  |
 
 ### Usage with Event Listener
 

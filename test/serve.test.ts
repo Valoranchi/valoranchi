@@ -432,4 +432,3 @@ describe("Serve Mode", () => {
     expect(JSON.parse(res.body).gameName).toBe("Tester");
   });
 });
-

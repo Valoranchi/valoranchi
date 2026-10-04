@@ -199,13 +199,13 @@ export class AccountService implements AccountApi {
     if (!change) return false;
     return Boolean(
       change.guns?.length ||
-        change.sprays?.length ||
-        change.flex !== undefined ||
-        change.card ||
-        change.title ||
-        change.levelBorder ||
-        change.incognito !== undefined ||
-        change.hideAccountLevel !== undefined,
+      change.sprays?.length ||
+      change.flex !== undefined ||
+      change.card ||
+      change.title ||
+      change.levelBorder ||
+      change.incognito !== undefined ||
+      change.hideAccountLevel !== undefined,
     );
   }
 

@@ -1696,4 +1696,3 @@ describe("CLI write commands and dry-run", () => {
     });
   });
 });
-

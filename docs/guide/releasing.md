@@ -21,21 +21,6 @@ If a release publish fails after a version is tagged or committed (for instance,
 - The workflow detects that the version specified in `package.json` has not yet been published to the npm registry and publishes it directly without generating a redundant version bump.
 - Alternatively, check the **Publish the version already in package.json** option in the workflow dispatch dialog to force this behavior.
 
-## Publishing to itch.io
-
-The Windows executable is distributed on itch.io at [matias-obezzi/valoranchi](https://matias-obezzi.itch.io/valoranchi).
-
-The `release.yml` workflow automatically publishes new releases to itch.io via Butler after building and attaching `riotclient-win-x64.exe` to the GitHub release.
-
-### Manual Republishing by Hand
-
-If you need to republish an existing tag to itch.io manually:
-
-1. Navigate to the **Actions** tab in GitHub and select the **Publish to itch.io** workflow.
-2. Click **Run workflow**.
-3. Enter the Git tag name to publish (e.g. `v0.5.0`).
-4. Butler will download `riotclient-win-x64.exe` from the specified GitHub Release, package it with the desktop `README.txt`, and push to `matias-obezzi/valoranchi:windows` with the version number.
-
 ## Token Scope Requirements
 
 The workflow verifies npm permissions before starting the build. It expects a granular npm access token configured with **Read and write** permissions across all packages under the `@valoranchi` organization scope. An HTTP 404 during the publish step indicates that the token cannot access the `@valoranchi` scope or the organization is not accessible.

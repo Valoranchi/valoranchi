@@ -16,7 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Moved route index directory to `GET /api` with direct links to documentation and the web dashboard.
 - Double-click desktop mode for Node Single Executable Applications (`riotclient-win-x64.exe`): launches the local HTTP server with automatic port fallback (47800-47810), prints a friendly console banner, and automatically opens the user's default browser.
 - CLI command `riotclient dashboard` to launch the local server and open the web dashboard from any environment.
-- Automated itch.io distribution workflow (`.github/workflows/itch.yml`) packaging the Windows executable with desktop instructions and pushing to `matias-obezzi/valoranchi:windows` via Butler.
 
 ### Security
 

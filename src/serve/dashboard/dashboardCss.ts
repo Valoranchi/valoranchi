@@ -623,5 +623,11 @@ body {
     gap: 0.5rem;
   }
 }
+.tag { color: var(--text-muted); }
+.bundle-desc { color: var(--text-secondary); font-size: 0.85rem; }
+.price-strike { text-decoration: line-through; color: var(--text-muted); margin-right: 0.5rem; }
+.hit-badge-inline { position: static; }
+.muted-small { font-size: 0.8rem; color: var(--text-muted); }
+.muted-tiny { font-size: 0.75rem; color: var(--text-muted); }
 `;
 }

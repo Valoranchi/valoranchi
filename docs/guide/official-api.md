@@ -19,6 +19,7 @@ Development API keys expire automatically every 24 hours. Production and persona
 ## Key Security
 
 Official API keys are sensitive secrets:
+
 - The API key stays server-side and is never exposed in client bundles or public repositories.
 - `HttpGateway` enforces that `X-Riot-Token` is strictly sent to official Riot hosts (`*.riotgames.com`) and never forwarded to third-party endpoints or asset hosts like `valorant-api.com`.
 - API keys are never included in log outputs or formatted error messages.
@@ -28,6 +29,7 @@ Official API keys are sensitive secrets:
 Riot's official developer API enforces sliding-window rate limits (defaulting to 20 requests per second and 100 requests per 2 minutes for development keys).
 
 The library includes an integrated sliding-window `RateLimiter`:
+
 - Concurrent requests are automatically serialized across sliding windows to prevent exceeding rate quotas.
 - When encountering HTTP 429 (Rate Limited), the client respects the `Retry-After` header (up to 10 seconds) and automatically retries once.
 - Transient 5xx server errors trigger an automatic retry after a 500 ms backoff.
@@ -161,4 +163,3 @@ If the API key is missing, the CLI exits with code `7` and outputs a JSON error:
   }
 }
 ```
-

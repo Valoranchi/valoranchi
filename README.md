@@ -7,7 +7,7 @@ A TypeScript library and command-line tool for reading the local signed-in Riot 
 
 Documentation: [https://valoranchi.github.io/valoranchi/](https://valoranchi.github.io/valoranchi/)
 Usage by language: [https://valoranchi.github.io/valoranchi/languages/](https://valoranchi.github.io/valoranchi/languages/)
-Windows Executable & Desktop Dashboard: [https://matias-obezzi.itch.io/valoranchi](https://matias-obezzi.itch.io/valoranchi)
+Windows executable with a desktop dashboard: [GitHub releases](https://github.com/Valoranchi/valoranchi/releases)
 
 ## Installation
 

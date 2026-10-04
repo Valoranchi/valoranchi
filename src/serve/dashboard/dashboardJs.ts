@@ -84,6 +84,10 @@ export function renderDashboardJs(): string {
   const isSpanish = Boolean(navigator.language && navigator.language.toLowerCase().startsWith("es"));
   const currentLang = isSpanish ? "es" : "en";
 
+  function esc(value) {
+    return String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  }
+
   function t(key, params) {
     let str = DICT[currentLang][key] || DICT.en[key] || key;
     if (params) {
@@ -223,7 +227,7 @@ export function renderDashboardJs(): string {
       const cardArt = loadout?.card?.large || loadout?.card?.wide || loadout?.card?.small || "";
       const rank = mmr?.current;
       const rankName = rank?.name || t("unranked");
-      const rankIcon = rank?.icon ? '<img src="' + rank.icon + '" class="rank-icon" alt="' + rankName + '">' : "";
+      const rankIcon = rank?.icon ? '<img src="' + esc(rank.icon) + '" class="rank-icon" alt="' + esc(rankName) + '">' : "";
       const rr = rank?.rating !== null && rank?.rating !== undefined ? rank.rating : 0;
       const fit = mmr?.fit;
       const fitText = fit?.verdict ? (t("fit") + ": " + fit.verdict + (fit.expected?.name ? " (" + fit.expected.name + ")" : "")) : "";
@@ -236,10 +240,10 @@ export function renderDashboardJs(): string {
         '<div class="home-grid">',
         '  <div class="home-card profile-card">',
         '    <div class="profile-header">',
-        cardArt ? '      <img src="' + cardArt + '" class="profile-card-art" alt="Card">' : '',
+        cardArt ? '      <img src="' + esc(cardArt) + '" class="profile-card-art" alt="Card">' : '',
         '      <div class="profile-info">',
-        '        <h2>' + player.gameName + '<span style="color:var(--text-muted)">#' + player.tagLine + '</span></h2>',
-        '        <span class="level-badge">' + t("level") + ' ' + player.accountLevel + '</span>',
+        '        <h2>' + esc(player.gameName) + '<span class="tag">#' + esc(player.tagLine) + '</span></h2>',
+        '        <span class="level-badge">' + t("level") + ' ' + esc(player.accountLevel) + '</span>',
         '      </div>',
         '    </div>',
         '  </div>',
@@ -248,25 +252,25 @@ export function renderDashboardJs(): string {
         '    <div class="rank-display">',
         rankIcon,
         '      <div class="rank-details">',
-        '        <h3>' + rankName + '</h3>',
-        '        <div class="rr-text">' + rr + ' ' + t("rr") + '</div>',
-        fitText ? '        <span class="fit-badge">' + fitText + '</span>' : '',
+        '        <h3>' + esc(rankName) + '</h3>',
+        '        <div class="rr-text">' + esc(rr) + ' ' + t("rr") + '</div>',
+        fitText ? '        <span class="fit-badge">' + esc(fitText) + '</span>' : '',
         '      </div>',
         '    </div>',
         '  </div>',
         '  <div class="home-card wallet-card">',
         '    <div class="section-title">' + t("wallet") + '</div>',
         '    <div class="wallet-chips">',
-        '      <div class="wallet-chip vp"><span class="wallet-val">' + vp.toLocaleString() + '</span><span class="wallet-label">' + t("vp") + '</span></div>',
-        '      <div class="wallet-chip rad"><span class="wallet-val">' + rad.toLocaleString() + '</span><span class="wallet-label">' + t("rad") + '</span></div>',
-        '      <div class="wallet-chip kc"><span class="wallet-val">' + kc.toLocaleString() + '</span><span class="wallet-label">' + t("kc") + '</span></div>',
+        '      <div class="wallet-chip vp"><span class="wallet-val">' + esc(vp.toLocaleString()) + '</span><span class="wallet-label">' + t("vp") + '</span></div>',
+        '      <div class="wallet-chip rad"><span class="wallet-val">' + esc(rad.toLocaleString()) + '</span><span class="wallet-label">' + t("rad") + '</span></div>',
+        '      <div class="wallet-chip kc"><span class="wallet-val">' + esc(kc.toLocaleString()) + '</span><span class="wallet-label">' + t("kc") + '</span></div>',
         '    </div>',
         '  </div>',
         '</div>',
       ].join("\\n");
     } catch (err) {
       if (!isRiotOffline) {
-        container.innerHTML = '<div class="inline-error">' + t("errorLoading", { section: t("home") }) + ': ' + err.message + '</div>';
+        container.innerHTML = '<div class="inline-error">' + t("errorLoading", { section: t("home") }) + ': ' + esc(err.message) + '</div>';
       }
     }
   }
@@ -287,19 +291,19 @@ export function renderDashboardJs(): string {
 
       if (daily) {
         const remaining = formatTimeRemaining(daily.endsAt);
-        html += '<div class="section-title"><span>' + t("dailyOffers") + '</span><span class="countdown-timer" id="store-daily-timer">' + t("resetsIn") + ' ' + remaining + '</span></div>';
+        html += '<div class="section-title"><span>' + t("dailyOffers") + '</span><span class="countdown-timer" id="store-daily-timer">' + t("resetsIn") + ' ' + esc(remaining) + '</span></div>';
         html += '<div class="store-grid">';
         for (const offer of offers) {
           const item = offer.item;
-          const icon = item.icon ? '<img src="' + item.icon + '" class="skin-img" alt="' + item.name + '">' : '';
-          const tierIcon = item.tier?.icon ? '<img src="' + item.tier.icon + '" class="skin-tier-icon" alt="' + (item.tier.name || '') + '">' : '';
+          const icon = item.icon ? '<img src="' + esc(item.icon) + '" class="skin-img" alt="' + esc(item.name) + '">' : '';
+          const tierIcon = item.tier?.icon ? '<img src="' + esc(item.tier.icon) + '" class="skin-tier-icon" alt="' + esc(item.tier.name) + '">' : '';
           html += [
             '<div class="skin-card">',
             '  <div class="skin-img-wrap">' + icon + '</div>',
-            '  <div class="skin-title">' + item.name + '</div>',
+            '  <div class="skin-title">' + esc(item.name) + '</div>',
             '  <div class="skin-weapon">' + (item.weapon || '') + '</div>',
             '  <div class="skin-meta">',
-            '    <span class="skin-price">' + offer.cost.amount.toLocaleString() + ' VP</span>',
+            '    <span class="skin-price">' + esc(offer.cost.amount.toLocaleString()) + ' VP</span>',
             tierIcon,
             '  </div>',
             '</div>',
@@ -319,14 +323,14 @@ export function renderDashboardJs(): string {
         html += '<div class="section-title">' + t("featuredBundles") + '</div>';
         for (const b of bundles) {
           const img = b.promoImage || b.icon;
-          const banner = img ? '<img src="' + img + '" class="bundle-banner" alt="' + b.name + '">' : '';
+          const banner = img ? '<img src="' + esc(img) + '" class="bundle-banner" alt="' + esc(b.name) + '">' : '';
           const price = b.totalDiscounted || b.totalBase || 0;
           html += [
             '<div class="bundle-card">',
             banner,
             '  <div class="bundle-info">',
-            '    <div><h3>' + b.name + '</h3>' + (b.description ? '<p style="color:var(--text-secondary);font-size:0.85rem">' + b.description + '</p>' : '') + '</div>',
-            '    <div class="skin-price">' + price.toLocaleString() + ' VP</div>',
+            '    <div><h3>' + esc(b.name) + '</h3>' + (b.description && b.description !== b.name ? '<p class="bundle-desc">' + esc(b.description) + '</p>' : '') + '</div>',
+            '    <div class="skin-price">' + esc(price.toLocaleString()) + ' VP</div>',
             '  </div>',
             '</div>',
           ].join("");
@@ -338,15 +342,15 @@ export function renderDashboardJs(): string {
         html += '<div class="store-grid">';
         for (const nm of nightMarket) {
           const item = nm.item;
-          const icon = item.icon ? '<img src="' + item.icon + '" class="skin-img" alt="' + item.name + '">' : '';
+          const icon = item.icon ? '<img src="' + esc(item.icon) + '" class="skin-img" alt="' + esc(item.name) + '">' : '';
           html += [
             '<div class="skin-card">',
             '  <div class="skin-img-wrap">' + icon + '</div>',
-            '  <div class="skin-title">' + item.name + '</div>',
+            '  <div class="skin-title">' + esc(item.name) + '</div>',
             '  <div class="skin-weapon">' + (item.weapon || '') + '</div>',
             '  <div class="skin-meta">',
-            '    <div><span style="text-decoration:line-through;color:var(--text-muted);margin-right:0.5rem">' + nm.cost.amount + '</span><span class="skin-price">' + nm.discountedCost.amount.toLocaleString() + ' VP</span></div>',
-            '    <span class="hit-badge" style="position:static">-' + nm.discountPercent + '%</span>',
+            '    <div><span class="price-strike">' + esc(nm.cost.amount) + '</span><span class="skin-price">' + esc(nm.discountedCost.amount.toLocaleString()) + ' VP</span></div>',
+            '    <span class="hit-badge hit-badge-inline">-' + esc(nm.discountPercent) + '%</span>',
             '  </div>',
             '</div>',
           ].join("");
@@ -357,7 +361,7 @@ export function renderDashboardJs(): string {
       container.innerHTML = html;
     } catch (err) {
       if (!isRiotOffline) {
-        container.innerHTML = '<div class="inline-error">' + t("errorLoading", { section: t("store") }) + ': ' + err.message + '</div>';
+        container.innerHTML = '<div class="inline-error">' + t("errorLoading", { section: t("store") }) + ': ' + esc(err.message) + '</div>';
       }
     }
   }
@@ -384,19 +388,19 @@ export function renderDashboardJs(): string {
         const isHit = hitUuids.has((s.uuid || "").toLowerCase());
         const hitBadge = isHit ? '<span class="hit-badge">' + t("inStoreToday") + '</span>' : '';
         const catSkin = cachedSkins.find((cs) => cs.uuid.toLowerCase() === (s.uuid || "").toLowerCase());
-        const icon = catSkin?.icon ? '<img src="' + catSkin.icon + '" class="skin-img" alt="' + s.name + '">' : '';
+        const icon = catSkin?.icon ? '<img src="' + esc(catSkin.icon) + '" class="skin-img" alt="' + esc(s.name) + '">' : '';
         const weapon = catSkin?.weapon || "";
-        const tierIcon = catSkin?.tier?.icon ? '<img src="' + catSkin.tier.icon + '" class="skin-tier-icon" alt="">' : '';
+        const tierIcon = catSkin?.tier?.icon ? '<img src="' + esc(catSkin.tier.icon) + '" class="skin-tier-icon" alt="">' : '';
 
         html += [
           '<div class="skin-card' + (isHit ? ' in-store' : '') + '">',
           hitBadge,
           '  <div class="skin-img-wrap">' + icon + '</div>',
-          '  <div class="skin-title">' + s.name + '</div>',
-          '  <div class="skin-weapon">' + weapon + '</div>',
+          '  <div class="skin-title">' + esc(s.name) + '</div>',
+          '  <div class="skin-weapon">' + esc(weapon) + '</div>',
           '  <div class="skin-meta">',
           tierIcon,
-          '    <button class="btn-remove" data-remove-skin="' + s.uuid + '">' + t("remove") + '</button>',
+          '    <button class="btn-remove" data-remove-skin="' + esc(s.uuid) + '">' + t("remove") + '</button>',
           '  </div>',
           '</div>',
         ].join("");
@@ -419,7 +423,7 @@ export function renderDashboardJs(): string {
       });
     } catch (err) {
       if (!isRiotOffline) {
-        container.innerHTML = '<div class="inline-error">' + t("errorLoading", { section: t("wishlist") }) + ': ' + err.message + '</div>';
+        container.innerHTML = '<div class="inline-error">' + t("errorLoading", { section: t("wishlist") }) + ': ' + esc(err.message) + '</div>';
       }
     }
   }
@@ -465,7 +469,7 @@ export function renderDashboardJs(): string {
           const me = match.players?.find((p) => p.puuid === myPuuid) || match.players?.[0];
           if (me) {
             agentName = me.agent?.name || "";
-            agentIcon = me.agent?.icon ? '<img src="' + me.agent.icon + '" class="agent-icon" alt="' + agentName + '">' : '';
+            agentIcon = me.agent?.icon ? '<img src="' + esc(me.agent.icon) + '" class="agent-icon" alt="' + esc(agentName) + '">' : '';
             if (me.stats) {
               kdaText = me.stats.kills + ' / ' + me.stats.deaths + ' / ' + me.stats.assists;
             }
@@ -496,11 +500,11 @@ export function renderDashboardJs(): string {
         const mapName = summary.map?.name || "Valorant";
 
         html += [
-          '<div class="match-item ' + resultClass + '">',
-          '  <div><span class="match-badge ' + resultClass + '">' + resultText + '</span></div>',
-          '  <div class="match-agent">' + agentIcon + '<div><strong>' + agentName + '</strong><div style="font-size:0.8rem;color:var(--text-muted)">' + mapName + '</div></div></div>',
-          '  <div class="match-score">' + scoreText + '</div>',
-          '  <div class="match-kda"><div style="font-size:0.75rem;color:var(--text-muted)">' + t("kda") + '</div>' + kdaText + '</div>',
+          '<div class="match-item ' + esc(resultClass) + '">',
+          '  <div><span class="match-badge ' + esc(resultClass) + '">' + esc(resultText) + '</span></div>',
+          '  <div class="match-agent">' + agentIcon + '<div><strong>' + esc(agentName) + '</strong><div class="muted-small">' + esc(mapName) + '</div></div></div>',
+          '  <div class="match-score">' + esc(scoreText) + '</div>',
+          '  <div class="match-kda"><div class="muted-tiny">' + t("kda") + '</div>' + esc(kdaText) + '</div>',
           '  <div>' + rrHtml + '</div>',
           '</div>',
         ].join("");
@@ -510,7 +514,7 @@ export function renderDashboardJs(): string {
       container.innerHTML = html;
     } catch (err) {
       if (!isRiotOffline) {
-        container.innerHTML = '<div class="inline-error">' + t("errorLoading", { section: t("matches") }) + ': ' + err.message + '</div>';
+        container.innerHTML = '<div class="inline-error">' + t("errorLoading", { section: t("matches") }) + ': ' + esc(err.message) + '</div>';
       }
     }
   }
@@ -532,7 +536,7 @@ export function renderDashboardJs(): string {
         return;
       }
 
-      let html = '<div class="section-title">' + t("onlineFriends") + ' (' + onlineFriends.length + ')</div>';
+      let html = '<div class="section-title">' + t("onlineFriends") + ' (' + esc(onlineFriends.length) + ')</div>';
       html += '<div class="friends-list">';
       for (const f of onlineFriends) {
         const presence = f.presence || {};
@@ -545,7 +549,7 @@ export function renderDashboardJs(): string {
         if (state === "ingame") {
           const map = presence.map?.name || "";
           const score = presence.score ? ' (' + presence.score.ally + '-' + presence.score.enemy + ')' : '';
-          activity = "In Match" + (map ? ' - ' + map : '') + score;
+          activity = "In Match" + (map ? ' · ' + map : '') + score;
         } else if (state === "menus") {
           activity = "In Menus";
         } else if (state === "pregame") {
@@ -554,10 +558,10 @@ export function renderDashboardJs(): string {
 
         html += [
           '<div class="friend-card">',
-          '  <span class="presence-dot ' + stateClass + '"></span>',
+          '  <span class="presence-dot ' + esc(stateClass) + '"></span>',
           '  <div class="friend-info">',
-          '    <span class="friend-name">' + f.gameName + '<span style="color:var(--text-muted)">#' + f.tagLine + '</span></span>',
-          '    <span class="friend-activity">' + activity + '</span>',
+          '    <span class="friend-name">' + esc(f.gameName) + '<span class="tag">#' + esc(f.tagLine) + '</span></span>',
+          '    <span class="friend-activity">' + esc(activity) + '</span>',
           '  </div>',
           '</div>',
         ].join("");
@@ -567,7 +571,7 @@ export function renderDashboardJs(): string {
       container.innerHTML = html;
     } catch (err) {
       if (!isRiotOffline) {
-        container.innerHTML = '<div class="inline-error">' + t("errorLoading", { section: t("friends") }) + ': ' + err.message + '</div>';
+        container.innerHTML = '<div class="inline-error">' + t("errorLoading", { section: t("friends") }) + ': ' + esc(err.message) + '</div>';
       }
     }
   }
@@ -596,7 +600,7 @@ export function renderDashboardJs(): string {
         const datalist = document.getElementById("skins-datalist");
         if (datalist) {
           datalist.innerHTML = skins
-            .map((s) => '<option value="' + s.name + '">' + s.weapon + ' - ' + s.name + '</option>')
+            .map((s) => '<option value="' + esc(s.name) + '">' + esc(s.weapon) + ' · ' + esc(s.name) + '</option>')
             .join("");
         }
       }

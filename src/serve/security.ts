@@ -1,9 +1,5 @@
 import type { IncomingMessage } from "node:http";
-import {
-  ForbiddenHostError,
-  ForbiddenOriginError,
-  UnsupportedMediaTypeError,
-} from "../errors.js";
+import { ForbiddenHostError, ForbiddenOriginError, UnsupportedMediaTypeError } from "../errors.js";
 
 function getHeaderValue(value: string | string[] | undefined): string | undefined {
   if (Array.isArray(value)) {
@@ -24,11 +20,7 @@ export function isAllowedHost(
     return false;
   }
   const normalized = hostHeader.toLowerCase();
-  const allowed = new Set([
-    `127.0.0.1:${port}`,
-    `localhost:${port}`,
-    `[::1]:${port}`,
-  ]);
+  const allowed = new Set([`127.0.0.1:${port}`, `localhost:${port}`, `[::1]:${port}`]);
   if (port === 80) {
     allowed.add("127.0.0.1");
     allowed.add("localhost");
@@ -54,7 +46,10 @@ export function isAllowedJsonContentType(contentType: string | undefined): boole
   if (!contentType) {
     return false;
   }
-  const parts = contentType.toLowerCase().split(";").map((p) => p.trim());
+  const parts = contentType
+    .toLowerCase()
+    .split(";")
+    .map((p) => p.trim());
   if (parts[0] !== "application/json") {
     return false;
   }
@@ -84,7 +79,10 @@ export function validateRequestSecurity(
     throw new ForbiddenOriginError(originHeader);
   }
 
-  if (req.method === "POST" && !isAllowedJsonContentType(getHeaderValue(req.headers["content-type"]))) {
+  if (
+    req.method === "POST" &&
+    !isAllowedJsonContentType(getHeaderValue(req.headers["content-type"]))
+  ) {
     throw new UnsupportedMediaTypeError(getHeaderValue(req.headers["content-type"]));
   }
 }

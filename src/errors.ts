@@ -34,7 +34,10 @@ export class ForbiddenHostError extends RiotClientError {
 
 export class ForbiddenOriginError extends RiotClientError {
   constructor(origin?: string) {
-    super(origin ? `Origin '${origin}' is not allowed` : "Origin is not allowed", "FORBIDDEN_ORIGIN");
+    super(
+      origin ? `Origin '${origin}' is not allowed` : "Origin is not allowed",
+      "FORBIDDEN_ORIGIN",
+    );
   }
 }
 
