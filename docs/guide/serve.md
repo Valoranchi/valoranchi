@@ -119,16 +119,18 @@ events.addEventListener("round", (e) => {
 
 ---
 
-## Security & Loopback Binding
+## Security
 
 > [!IMPORTANT]
 > The Riot Client local API exposes your authenticated session and game entitlements.
 
-By default, serve mode strictly binds to the loopback interface (`127.0.0.1` or `localhost`).
+The serve HTTP server implements multiple layers of defense to protect your local session from cross-site requests and DNS rebinding attacks:
 
-If you attempt to bind to a non-loopback host (e.g. `0.0.0.0` or a local LAN address) without passing `--allow-remote` (or `allowRemote: true`), the server will immediately refuse to start and throw `ForbiddenHostError`.
-
-Only enable `--allow-remote` on trusted private networks or behind an authenticated reverse proxy.
+1. **Loopback Binding**: By default, serve mode strictly binds to loopback (`127.0.0.1` or `localhost`). Attempting to bind non-loopback hosts without `--allow-remote` (or `allowRemote: true`) immediately throws `ForbiddenHostError`.
+2. **Host Header Validation**: All incoming requests must specify a `Host` header matching `127.0.0.1:<port>`, `localhost:<port>`, or `[::1]:<port>` (unless `allowRemote` is enabled). Any unexpected host returns `403 Forbidden` (`FORBIDDEN_HOST`), preventing DNS rebinding.
+3. **Origin Checking**: If an `Origin` header is present (such as in browser-initiated requests), it must strictly match `http://<host>`. Cross-origin browser requests return `403 Forbidden` (`FORBIDDEN_ORIGIN`). Non-browser clients (such as curl and scripts without an `Origin` header) remain allowed.
+4. **Content-Type Enforcement on POST**: All POST requests must provide `Content-Type: application/json` (optional charset permitted). Non-JSON POST requests return `415 Unsupported Media Type` (`UNSUPPORTED_MEDIA_TYPE`). This forces browsers to send a CORS preflight for cross-site calls.
+5. **No CORS Allow Headers**: The server never returns `Access-Control-Allow-Origin` or related headers, ensuring cross-site browser preflights fail.
 
 ---
 
@@ -136,10 +138,12 @@ Only enable `--allow-remote` on trusted private networks or behind an authentica
 
 Serve mode maps client errors directly to standard HTTP statuses:
 
-| Status Code               | Condition                                  | Example                                                               |
-| :------------------------ | :----------------------------------------- | :-------------------------------------------------------------------- |
-| `200 OK`                  | Successful execution                       | Payload returned as JSON                                              |
-| `400 Bad Request`         | Validation failure or missing confirmation | `{ "error": { "code": "VALIDATION", "reason": "confirm-required" } }` |
-| `502 Bad Gateway`         | Riot remote API error                      | Upstream Riot endpoint returned 4xx or 5xx                            |
-| `503 Service Unavailable` | Riot Client is closed or starting up       | `RIOT_CLIENT_NOT_RUNNING` or `RIOT_CLIENT_NOT_READY`                  |
-| `500 Internal Error`      | Unexpected server exception                | Internal unhandled error                                              |
+| Status Code                    | Condition                                  | Example                                                               |
+| :----------------------------- | :----------------------------------------- | :-------------------------------------------------------------------- |
+| `200 OK`                       | Successful execution                       | Payload returned as JSON                                              |
+| `400 Bad Request`              | Validation failure or missing confirmation | `{ "error": { "code": "VALIDATION", "reason": "confirm-required" } }` |
+| `403 Forbidden`                | Invalid Host header or foreign Origin      | `{ "error": { "code": "FORBIDDEN_HOST" } }`                           |
+| `415 Unsupported Media Type`   | Non-JSON Content-Type on POST              | `{ "error": { "code": "UNSUPPORTED_MEDIA_TYPE" } }`                   |
+| `502 Bad Gateway`              | Riot remote API error                      | Upstream Riot endpoint returned 4xx or 5xx                            |
+| `503 Service Unavailable`      | Riot Client is closed or starting up       | `RIOT_CLIENT_NOT_RUNNING` or `RIOT_CLIENT_NOT_READY`                  |
+| `500 Internal Error`           | Unexpected server exception                | Internal unhandled error                                              |

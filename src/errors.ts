@@ -27,8 +27,23 @@ export class RegionUnknownError extends RiotClientError {
 }
 
 export class ForbiddenHostError extends RiotClientError {
-  constructor(host: string) {
-    super(`Host '${host}' is not allowed to receive Riot credentials`, "FORBIDDEN_HOST");
+  constructor(host: string, message?: string) {
+    super(message ?? `Host '${host}' is not allowed to receive Riot credentials`, "FORBIDDEN_HOST");
+  }
+}
+
+export class ForbiddenOriginError extends RiotClientError {
+  constructor(origin?: string) {
+    super(origin ? `Origin '${origin}' is not allowed` : "Origin is not allowed", "FORBIDDEN_ORIGIN");
+  }
+}
+
+export class UnsupportedMediaTypeError extends RiotClientError {
+  constructor(contentType?: string) {
+    super(
+      `Unsupported media type: ${contentType ?? "none"}. Expected application/json`,
+      "UNSUPPORTED_MEDIA_TYPE",
+    );
   }
 }
 

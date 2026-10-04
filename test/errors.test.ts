@@ -1,12 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
   ForbiddenHostError,
+  ForbiddenOriginError,
   OfficialApiKeyMissingError,
   RegionUnknownError,
   RiotApiError,
   RiotClientError,
   RiotClientNotReadyError,
   RiotClientNotRunningError,
+  UnsupportedMediaTypeError,
   ValidationError,
 } from "../src/errors.js";
 
@@ -50,6 +52,16 @@ describe("errors", () => {
     expect(forbidden.code).toBe("FORBIDDEN_HOST");
     expect(forbidden.message).toContain("evil.com");
     expect(forbidden instanceof RiotClientError).toBe(true);
+
+    const forbiddenOrigin = new ForbiddenOriginError("https://evil.example");
+    expect(forbiddenOrigin.code).toBe("FORBIDDEN_ORIGIN");
+    expect(forbiddenOrigin.message).toContain("evil.example");
+    expect(forbiddenOrigin instanceof RiotClientError).toBe(true);
+
+    const unsupportedMedia = new UnsupportedMediaTypeError("text/plain");
+    expect(unsupportedMedia.code).toBe("UNSUPPORTED_MEDIA_TYPE");
+    expect(unsupportedMedia.message).toContain("text/plain");
+    expect(unsupportedMedia instanceof RiotClientError).toBe(true);
   });
 
   it("sanitizes url in RiotApiError by stripping query strings and captures retryAfterSeconds", () => {

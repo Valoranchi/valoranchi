@@ -3,15 +3,18 @@ import { URL } from "node:url";
 import { formatError } from "../formatError.js";
 import {
   ForbiddenHostError,
+  ForbiddenOriginError,
   RiotApiError,
   RiotClientNotReadyError,
   RiotClientNotRunningError,
+  UnsupportedMediaTypeError,
   ValidationError,
 } from "../errors.js";
 import type { RiotClient } from "../RiotClient.js";
 import { renderIndexHtml } from "./indexHtml.js";
 import { buildOpenApiSpec } from "./openapi.js";
 import { dispatchApiRoute } from "./routes.js";
+import { validateRequestSecurity } from "./security.js";
 import { handleSse } from "./sse.js";
 import type { ServeOptions, ServerInstance } from "./types.js";
 
@@ -31,6 +34,12 @@ export function httpStatusForError(error: unknown): number {
   }
   if (error instanceof ValidationError) {
     return 400;
+  }
+  if (error instanceof ForbiddenHostError || error instanceof ForbiddenOriginError) {
+    return 403;
+  }
+  if (error instanceof UnsupportedMediaTypeError) {
+    return 415;
   }
   if (error instanceof RiotApiError) {
     return 502;
@@ -75,6 +84,7 @@ export async function createRiotServer(
   const port = options.port ?? 47800;
   const host = options.host ?? "127.0.0.1";
   const allowRemote = Boolean(options.allowRemote);
+  let activePort = port;
 
   if (!allowRemote && !isLoopback(host)) {
     throw new ForbiddenHostError(
@@ -84,6 +94,7 @@ export async function createRiotServer(
 
   const server = http.createServer(async (req: IncomingMessage, res: ServerResponse) => {
     try {
+      validateRequestSecurity(req, activePort, allowRemote);
       const parsedUrl = new URL(req.url ?? "/", `http://${req.headers.host ?? "127.0.0.1"}`);
       const pathname = parsedUrl.pathname;
       const query: Record<string, string> = {};
@@ -157,10 +168,15 @@ export async function createRiotServer(
     });
   });
 
-  const url = `http://${host}:${port}`;
+  const address = server.address();
+  if (address && typeof address === "object") {
+    activePort = address.port;
+  }
+
+  const url = `http://${host}:${activePort}`;
   return {
     server,
-    port,
+    port: activePort,
     host,
     url,
     close: async () => {

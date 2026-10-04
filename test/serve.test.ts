@@ -319,4 +319,63 @@ describe("Serve Mode", () => {
     const result = await ssePromise;
     expect(result).toContain("event: connected");
   });
+
+  it("rejects POST with foreign Origin with 403 without calling client method", async () => {
+    mockEquip.mockClear();
+    mockValidateEquip.mockClear();
+    const res = await requestHttp(`http://127.0.0.1:${testPort}/api/account/equip`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Origin: "https://evil.example",
+      },
+      body: JSON.stringify({ card: "card-123" }),
+    });
+    expect(res.status).toBe(403);
+    const parsed = JSON.parse(res.body);
+    expect(parsed.error.code).toBe("FORBIDDEN_ORIGIN");
+    expect(mockValidateEquip).not.toHaveBeenCalled();
+    expect(mockEquip).not.toHaveBeenCalled();
+  });
+
+  it("rejects POST with text/plain with 415", async () => {
+    const res = await requestHttp(`http://127.0.0.1:${testPort}/api/account/equip`, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ card: "card-123" }),
+    });
+    expect(res.status).toBe(415);
+    const parsed = JSON.parse(res.body);
+    expect(parsed.error.code).toBe("UNSUPPORTED_MEDIA_TYPE");
+  });
+
+  it("rejects request with wrong Host with 403", async () => {
+    const res = await requestHttp(`http://127.0.0.1:${testPort}/api/account/whoami`, {
+      headers: { Host: "evil.example:48912" },
+    });
+    expect(res.status).toBe(403);
+    const parsed = JSON.parse(res.body);
+    expect(parsed.error.code).toBe("FORBIDDEN_HOST");
+  });
+
+  it("allows same-origin POST", async () => {
+    mockValidateEquip.mockClear();
+    const res = await requestHttp(`http://127.0.0.1:${testPort}/api/account/equip`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Origin: `http://127.0.0.1:${testPort}`,
+      },
+      body: JSON.stringify({ card: "card-123" }),
+    });
+    expect(res.status).toBe(200);
+    expect(mockValidateEquip).toHaveBeenCalled();
+  });
+
+  it("allows no-Origin GET", async () => {
+    const res = await requestHttp(`http://127.0.0.1:${testPort}/api/account/whoami`);
+    expect(res.status).toBe(200);
+    expect(JSON.parse(res.body).gameName).toBe("Tester");
+  });
 });
+

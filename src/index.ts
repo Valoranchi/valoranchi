@@ -75,12 +75,14 @@ export {
 
 export {
   ForbiddenHostError,
+  ForbiddenOriginError,
   OfficialApiKeyMissingError,
   RegionUnknownError,
   RiotApiError,
   RiotClientError,
   RiotClientNotReadyError,
   RiotClientNotRunningError,
+  UnsupportedMediaTypeError,
   ValidationError,
 } from "./errors.js";
 
