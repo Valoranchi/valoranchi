@@ -5,6 +5,23 @@ import { PACKAGE_VERSION } from "./version.js";
 import { formatError } from "./formatError.js";
 import { McpServer } from "./mcp/index.js";
 import { RiotClient, type LoadoutChange, type LoadoutGunChange } from "./RiotClient.js";
+import {
+  isSea,
+  openBrowser,
+  printDashboardBanner,
+  runDashboard,
+  shouldLaunchDashboard,
+  startDashboardServer,
+} from "./dashboardLauncher.js";
+
+export {
+  isSea,
+  openBrowser,
+  printDashboardBanner,
+  runDashboard,
+  shouldLaunchDashboard,
+  startDashboardServer,
+};
 
 export const USAGE = `Usage: riotclient <command> [options]
 
@@ -122,6 +139,7 @@ Events:
   watch-friends    Stream friend activity and presence events until interrupted
 
 Server:
+  dashboard        Start local server and open interactive web dashboard
   serve            Start local HTTP server with SSE events and OpenAPI docs [--port 47800] [--host 127.0.0.1] [--allow-remote]
   mcp              Start Model Context Protocol (MCP) server over stdio for AI assistants
 
@@ -1311,6 +1329,17 @@ async function executeCommand(
 }
 
 export async function runCli(args: string[]): Promise<number> {
+  if (shouldLaunchDashboard({ argsLength: args.length, isSea: isSea() })) {
+    const client = new RiotClient();
+    try {
+      return await runDashboard(client);
+    } catch (error) {
+      const formatted = formatError(error);
+      process.stderr.write(`${JSON.stringify(formatted)}\n`);
+      return exitCodeForError(error);
+    }
+  }
+
   const parsed = parseArgs({
     args,
     options: {
@@ -1420,6 +1449,10 @@ export async function runCli(args: string[]): Promise<number> {
 
     if (command === "watch-friends") {
       return await runWatchFriends(client);
+    }
+
+    if (command === "dashboard") {
+      return await runDashboard(client);
     }
 
     if (command === "serve") {

@@ -11,12 +11,15 @@ import { SessionManager } from "../src/client/SessionManager.js";
 import { Catalogue } from "../src/catalogue/Catalogue.js";
 import { ValorantApi } from "../src/catalogue/ValorantApi.js";
 import { HttpGateway } from "../src/riot/HttpGateway.js";
+import http from "node:http";
 import {
   exitCodeForError,
   formatError,
   formatWatchLine,
   runCli,
   runWatchStore,
+  shouldLaunchDashboard,
+  startDashboardServer,
   USAGE,
 } from "../src/cli.js";
 
@@ -1647,4 +1650,50 @@ describe("CLI write commands and dry-run", () => {
       }
     });
   });
+
+  describe("double-click mode and dashboard launcher", () => {
+    it("documents dashboard command in USAGE", () => {
+      expect(USAGE).toContain("dashboard");
+    });
+
+    it("makes double-click decision correctly", () => {
+      expect(shouldLaunchDashboard({ argsLength: 0, isSea: true })).toBe(true);
+      expect(shouldLaunchDashboard({ argsLength: 0, isSea: false })).toBe(false);
+      expect(shouldLaunchDashboard({ argsLength: 1, isSea: true })).toBe(false);
+      expect(shouldLaunchDashboard({ argsLength: 2, isSea: false })).toBe(false);
+    });
+
+    it("falls back to the next free port when startPort is busy", async () => {
+      const busyPort = 48820;
+      const blocker = http.createServer();
+      await new Promise<void>((resolve) => blocker.listen(busyPort, "127.0.0.1", () => resolve()));
+
+      try {
+        const mockClient = {
+          serve: vi.fn().mockImplementation(async (opts: { port: number }) => {
+            if (opts.port === busyPort) {
+              const err = new Error("address already in use") as Error & { code?: string };
+              err.code = "EADDRINUSE";
+              throw err;
+            }
+            return {
+              port: opts.port,
+              host: "127.0.0.1",
+              url: `http://127.0.0.1:${opts.port}`,
+              server: blocker,
+              close: vi.fn(),
+            };
+          }),
+        } as unknown as RiotClient;
+
+        const instance = await startDashboardServer(mockClient, busyPort, 5);
+        expect(instance.port).toBe(busyPort + 1);
+        expect(instance.url).toBe(`http://127.0.0.1:${busyPort + 1}`);
+        expect(mockClient.serve).toHaveBeenCalledTimes(2);
+      } finally {
+        await new Promise<void>((resolve) => blocker.close(() => resolve()));
+      }
+    });
+  });
 });
+
