@@ -20,6 +20,13 @@ export {
   type DiscordRecapPayload,
   type MatchRecapOptions,
 } from "./MatchRecap.js";
+export {
+  Instalock,
+  type InstalockEventMap,
+  type InstalockHandle,
+  type InstalockItem,
+  type InstalockOptions,
+} from "./Instalock.js";
 export { AsyncQueue } from "./AsyncQueue.js";
 export type {
   FriendsWatchEventMap,

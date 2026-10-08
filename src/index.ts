@@ -28,6 +28,7 @@ export {
   buildMatchRecap,
   buildMatchRecapDiscord,
   formatPresenceActivity,
+  Instalock,
   type DiscordEmbed,
   type DiscordEmbedField,
   type DiscordRecapPayload,
@@ -42,6 +43,10 @@ export {
   type FriendsWatchItem,
   type StoreWatchEventMap,
   type StoreWatchItem,
+  type InstalockEventMap,
+  type InstalockHandle,
+  type InstalockItem,
+  type InstalockOptions,
 } from "./watch/index.js";
 export {
   createRiotServer,
@@ -150,6 +155,8 @@ export type {
   StoreHistoryDay,
   StoreSeen,
   MatchSyncResult,
+  Session,
+  SessionMatchAcs,
   Store,
   StoreItem,
   Tier,
@@ -163,6 +170,7 @@ export type {
 export { ratingTrend } from "./analysis/ratingTrend.js";
 export { performanceSummary } from "./analysis/performanceSummary.js";
 export { playerAssessment } from "./analysis/playerAssessment.js";
+export { sessionSummary, type SessionSummaryOptions } from "./analysis/session.js";
 export { diffLoadout, exportLoadout } from "./analysis/loadoutDiff.js";
 export { collectionValue } from "./analysis/collectionValue.js";
 export {

@@ -41,6 +41,7 @@ import type {
   QueueConfig,
   RankChange,
   RatingTrend,
+  Session,
   Store,
   StoreHistory,
   StoreSeen,
@@ -48,6 +49,7 @@ import type {
   Wishlist,
   WishlistCheck,
 } from "../model/index.js";
+import type { InstalockHandle, InstalockOptions } from "../watch/index.js";
 import type { OfficialPlatformData } from "../official/types.js";
 import type { RiotLoadoutResponse } from "../riot/types.js";
 import type { LoadoutChange } from "./LoadoutValidator.js";
@@ -187,6 +189,8 @@ export interface MatchesApi {
     onProgress?: (done: number, total: number) => void;
   }): Promise<PerformanceSummary>;
   assess(puuid?: string): Promise<PlayerAssessment>;
+  session(options?: { since?: string }): Promise<Session>;
+  instalock(options: InstalockOptions): InstalockHandle;
 }
 
 export interface PartyApi {

@@ -904,3 +904,28 @@ export type WishlistCheck = {
   checkedAt: string;
   hits: WishlistHit[];
 };
+
+export type SessionMatchAcs = {
+  id: string;
+  matchId: string;
+  acs: number;
+  map: string | null;
+  agent: string | null;
+};
+
+export type Session = {
+  since: string;
+  matches: number;
+  wins: number;
+  losses: number;
+  draws: number;
+  rrNet: number;
+  rrPerGame: number;
+  streak: RatingStreak;
+  rankStart: Rank | null;
+  rankNow: Rank | null;
+  bestMatch: SessionMatchAcs | null;
+  worstMatch: SessionMatchAcs | null;
+  tilt: boolean;
+};
+

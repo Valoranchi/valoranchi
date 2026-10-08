@@ -15,13 +15,22 @@ import type {
   PerformanceSummary,
   PlayerAssessment,
   MatchSyncResult,
+  Session,
 } from "../model/index.js";
 import { ratingTrend } from "../analysis/ratingTrend.js";
 import { performanceSummary } from "../analysis/performanceSummary.js";
 import { playerAssessment } from "../analysis/playerAssessment.js";
+import { sessionSummary } from "../analysis/session.js";
 import { loadKnownMatches, saveKnownMatches, syncMatches } from "../analysis/matchSync.js";
 import { defaultResponseCacheDir } from "../riot/ResponseCache.js";
 import type { RiotMatchHistoryItem } from "../riot/types.js";
+import { EventsService } from "./EventsService.js";
+import { MatchWatcher } from "../watch/MatchWatcher.js";
+import {
+  Instalock,
+  type InstalockHandle,
+  type InstalockOptions,
+} from "../watch/Instalock.js";
 import type { MatchesApi } from "./api.js";
 import type { ClientContext } from "./ClientContext.js";
 import { LiveMatchService } from "./LiveMatchService.js";
@@ -415,4 +424,43 @@ export class MatchService implements MatchesApi {
       updates: rawUpdates.Matches ?? [],
     });
   }
+
+  async session(options?: { since?: string }): Promise<Session> {
+    const session = await this.context.sessions.session();
+    const puuid = session.puuid;
+    const api = this.context.api(session);
+    const catalogue = await this.context.catalogue();
+
+    const [historyPage, rawUpdates] = await Promise.all([
+      api.matchHistory(0, 20, undefined, puuid),
+      api.competitiveUpdates(0, 20, "competitive", puuid).catch(() => ({ Matches: [] })),
+    ]);
+
+    const items = historyPage.History ?? [];
+    const matchIds = items.map((h) => h.MatchID);
+    const matches: Match[] = [];
+
+    for (let i = 0; i < matchIds.length; i++) {
+      if (i > 0) {
+        await new Promise((resolve) => setTimeout(resolve, 200));
+      }
+      try {
+        const details = await api.matchDetails(matchIds[i]!);
+        matches.push(new MatchBuilder(details, catalogue, puuid).build());
+      } catch {}
+    }
+
+    return sessionSummary(rawUpdates.Matches ?? [], matches, new Date(), {
+      since: options?.since,
+      puuid,
+      catalogue,
+    });
+  }
+
+  instalock(options: InstalockOptions): InstalockHandle {
+    const events = new EventsService(this.context).events();
+    const watcher = new MatchWatcher(events, this, { pollIntervalMs: 1000 });
+    return new Instalock(watcher, this, options, true);
+  }
 }
+
