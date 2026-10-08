@@ -12,6 +12,14 @@ export {
 export { MatchWatcher, type MatchWatcherOptions } from "./MatchWatcher.js";
 export { StoreWatcher, type StoreWatcherOptions } from "./StoreWatcher.js";
 export { WebhookNotifier } from "./WebhookNotifier.js";
+export {
+  buildMatchRecap,
+  buildMatchRecapDiscord,
+  type DiscordEmbed,
+  type DiscordEmbedField,
+  type DiscordRecapPayload,
+  type MatchRecapOptions,
+} from "./MatchRecap.js";
 export { AsyncQueue } from "./AsyncQueue.js";
 export type {
   FriendsWatchEventMap,

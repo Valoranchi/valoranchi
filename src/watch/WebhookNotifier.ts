@@ -19,12 +19,31 @@ export class WebhookNotifier {
     this.url = parsed;
   }
 
-  async notify(hit: WishlistHit): Promise<void> {
-    const isDiscord =
+  get isDiscord(): boolean {
+    return (
       (this.url.hostname === "discord.com" || this.url.hostname === "discordapp.com") &&
-      this.url.pathname.startsWith("/api/webhooks/");
+      this.url.pathname.startsWith("/api/webhooks/")
+    );
+  }
 
-    const payload = isDiscord ? this.buildDiscordPayload(hit) : JSON.stringify(hit);
+  async notify<T = unknown>(
+    item: T,
+    discordBuilder?: (item: T) => unknown,
+  ): Promise<void> {
+    let payload: string;
+
+    if (this.isDiscord) {
+      if (discordBuilder) {
+        const built = discordBuilder(item);
+        payload = typeof built === "string" ? built : JSON.stringify(built);
+      } else if (this.isWishlistHit(item)) {
+        payload = this.buildDiscordPayload(item);
+      } else {
+        payload = JSON.stringify(item);
+      }
+    } else {
+      payload = JSON.stringify(item);
+    }
 
     const response = await fetch(this.url.toString(), {
       method: "POST",
@@ -36,6 +55,16 @@ export class WebhookNotifier {
     if (!response.ok) {
       throw new Error(`Webhook notification failed with status ${response.status}`);
     }
+  }
+
+  private isWishlistHit(item: unknown): item is WishlistHit {
+    return Boolean(
+      item &&
+        typeof item === "object" &&
+        "where" in item &&
+        "skin" in item &&
+        "price" in item,
+    );
   }
 
   private buildDiscordPayload(hit: WishlistHit): string {

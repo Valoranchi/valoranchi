@@ -1,19 +1,25 @@
 import type { MatchesApi } from "../client/api.js";
 import type { RiotEvents } from "../events/RiotEvents.js";
 import { TypedEmitter } from "../events/TypedEmitter.js";
+import type { Match } from "../model/index.js";
 import { AsyncQueue } from "./AsyncQueue.js";
+import { buildMatchRecapDiscord } from "./MatchRecap.js";
 import type { MatchWatchEventMap, MatchWatchItem } from "./types.js";
+import { WebhookNotifier } from "./WebhookNotifier.js";
 
 export interface MatchWatcherOptions {
   pollIntervalMs?: number;
   retryIntervalMs?: number;
   retryMaxMs?: number;
+  webhook?: string;
 }
 
 export class MatchWatcher extends TypedEmitter<MatchWatchEventMap> {
   private readonly pollIntervalMs: number;
   private readonly retryIntervalMs: number;
   private readonly retryMaxMs: number;
+  private readonly notifier?: WebhookNotifier;
+  private selfPuuid: string | null = null;
 
   private phase: "idle" | "pregame" | "ingame" = "idle";
   private currentMatchId: string | null = null;
@@ -37,6 +43,9 @@ export class MatchWatcher extends TypedEmitter<MatchWatchEventMap> {
     this.pollIntervalMs = options.pollIntervalMs ?? 5000;
     this.retryIntervalMs = options.retryIntervalMs ?? 5000;
     this.retryMaxMs = options.retryMaxMs ?? 120000;
+    if (options.webhook) {
+      this.notifier = new WebhookNotifier(options.webhook);
+    }
   }
 
   start(): this {
@@ -182,6 +191,7 @@ export class MatchWatcher extends TypedEmitter<MatchWatchEventMap> {
       const live = await this.matches.live();
       if (!this.running || this.phase !== "pregame") return;
       if (live.phase === "pregame") {
+        if (live.self?.puuid) this.selfPuuid = live.self.puuid;
         this.currentMatchId = live.matchId;
         if (!this.hasEmittedPregame) {
           this.hasEmittedPregame = true;
@@ -207,6 +217,7 @@ export class MatchWatcher extends TypedEmitter<MatchWatchEventMap> {
       const live = await this.matches.live({ loadouts: true });
       if (!this.running || this.phase !== "ingame") return;
       if (live.phase === "ingame") {
+        if (live.self?.puuid) this.selfPuuid = live.self.puuid;
         this.currentMatchId = live.matchId;
         if (!this.hasEmittedStarted) {
           this.hasEmittedStarted = true;
@@ -243,6 +254,7 @@ export class MatchWatcher extends TypedEmitter<MatchWatchEventMap> {
       if (!this.running) return;
 
       if (live.phase === "pregame") {
+        if (live.self?.puuid) this.selfPuuid = live.self.puuid;
         this.currentMatchId = live.matchId;
         if (!this.hasEmittedPregame) {
           this.hasEmittedPregame = true;
@@ -253,6 +265,7 @@ export class MatchWatcher extends TypedEmitter<MatchWatchEventMap> {
           this.emitItem("locked", live);
         }
       } else if (live.phase === "ingame") {
+        if (live.self?.puuid) this.selfPuuid = live.self.puuid;
         this.currentMatchId = live.matchId;
         if (this.phase !== "ingame") {
           this.phase = "ingame";
@@ -295,6 +308,9 @@ export class MatchWatcher extends TypedEmitter<MatchWatchEventMap> {
         const match = await this.matches.get(matchId);
         if (match && match.id) {
           this.emitItem("ended", match);
+          if (this.notifier) {
+            void this.postMatchRecap(match);
+          }
           return;
         }
       } catch {}
@@ -308,5 +324,29 @@ export class MatchWatcher extends TypedEmitter<MatchWatchEventMap> {
     };
 
     await attempt();
+  }
+
+  private async postMatchRecap(match: Match): Promise<void> {
+    if (!this.notifier) return;
+    try {
+      let rrChange: number | null = null;
+      if (match.ranked) {
+        try {
+          const history = await this.matches.rankHistory({ count: 5 });
+          const update = history.find((h) => h.matchId === match.id);
+          if (update) {
+            rrChange = update.earned;
+          }
+        } catch {}
+      }
+      await this.notifier.notify(match, (m) =>
+        buildMatchRecapDiscord(m, {
+          rrChange,
+          selfPuuid: this.selfPuuid ?? undefined,
+        }),
+      );
+    } catch (err) {
+      this.emitItem("error", err instanceof Error ? err : new Error(String(err)));
+    }
   }
 }
