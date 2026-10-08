@@ -1,6 +1,6 @@
 {
   "name": "@valoranchi/riot-client",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "TypeScript client and CLI for local Riot Client integration and Valorant inventory inspection.",
   "type": "module",
   "bin": {

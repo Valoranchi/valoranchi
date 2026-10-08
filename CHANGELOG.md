@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-10-08
+
 ### Fixed
 
 - `clientConfig()` and `content()` send the session's headers. Riot answers both with `400 BAD_CLAIMS` without them, so every call failed.
