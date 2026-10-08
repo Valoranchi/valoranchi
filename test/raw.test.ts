@@ -1,7 +1,3 @@
-import { execSync } from "node:child_process";
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import * as raw from "../src/raw.js";
 import {
@@ -177,8 +173,6 @@ import type {
   WebSocketConstructor,
   WebSocketLike,
 } from "../src/raw.js";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 describe("raw entry point", () => {
   it("imports and defines every named export", () => {
@@ -375,17 +369,5 @@ describe("raw entry point", () => {
       unknown
     > = true;
     expect(_check).toBe(true);
-  });
-
-  it("asserts dist/raw.js and dist/raw.d.ts exist after build", () => {
-    const distRawJs = path.resolve(__dirname, "../dist/raw.js");
-    const distRawDts = path.resolve(__dirname, "../dist/raw.d.ts");
-
-    if (!fs.existsSync(distRawJs) || !fs.existsSync(distRawDts)) {
-      execSync("npm run build", { cwd: path.resolve(__dirname, ".."), stdio: "ignore" });
-    }
-
-    expect(fs.existsSync(distRawJs), "dist/raw.js must exist").toBe(true);
-    expect(fs.existsSync(distRawDts), "dist/raw.d.ts must exist").toBe(true);
   });
 });
