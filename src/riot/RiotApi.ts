@@ -380,7 +380,10 @@ export class RiotApi {
   }
 
   async clientConfig(region = this.session.region): Promise<RiotClientConfigResponse> {
-    return this.gateway.get(`${this.session.endpoints.shared}/v1/config/${region}`);
+    return this.gateway.get(
+      `${this.session.endpoints.shared}/v1/config/${region}`,
+      this.session.headers(),
+    );
   }
 
   async offers(): Promise<RiotOffersResponse> {
@@ -407,7 +410,10 @@ export class RiotApi {
   }
 
   async content(): Promise<RiotContentResponse> {
-    return this.gateway.get(`${this.session.endpoints.shared}/content-service/v3/content`);
+    return this.gateway.get(
+      `${this.session.endpoints.shared}/content-service/v3/content`,
+      this.session.headers(),
+    );
   }
 
   async queueConfigs(): Promise<RiotQueueConfigsResponse> {

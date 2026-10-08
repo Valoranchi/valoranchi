@@ -241,6 +241,22 @@ describe("RiotApi", () => {
     );
   });
 
+  it("authenticates the shared config and content requests", async () => {
+    const mockGet = vi.fn().mockResolvedValue({});
+    const fakeGateway = { get: mockGet, put: vi.fn(), post: vi.fn() } as unknown as HttpGateway;
+
+    const api = new RiotApi(fakeGateway, session);
+    await api.clientConfig();
+    await api.content();
+
+    const auth = expect.objectContaining({ Authorization: "Bearer access-token-xyz" });
+    expect(mockGet).toHaveBeenCalledWith("https://shared.na.a.pvp.net/v1/config/latam", auth);
+    expect(mockGet).toHaveBeenCalledWith(
+      "https://shared.na.a.pvp.net/content-service/v3/content",
+      auth,
+    );
+  });
+
   it("calls storefront endpoint with POST and empty object", async () => {
     const mockPost = vi.fn().mockResolvedValue({ SkinsPanelLayout: {} });
     const fakeGateway = {
