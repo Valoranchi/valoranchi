@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `client.matches.instalock()` and `riotclient instalock` lock an agent the moment agent select starts, with an agent per map, fallbacks, an optional delay, hover only and dry run modes. It goes against Riot's rules for third party tools; the docs say so.
+- `client.watch.match({ webhook })` and `riotclient watch match --webhook <url>` post a recap when a match ends: map, result, score, K/D/A, ACS, HS% and RR change, as a Discord embed or JSON.
+- `client.matches.session()`, `riotclient play-session` and `GET /api/matches/session`: today's games, wins, losses, RR net, streak, best and worst match, and a flag after three losses in a row.
+
 ## [0.6.1] - 2026-10-08
 
 ### Fixed

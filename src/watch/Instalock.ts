@@ -15,14 +15,21 @@ export interface InstalockOptions {
   dryRun?: boolean;
 }
 
+export interface InstalockResult {
+  matchId: string;
+  agent: string;
+  map: string;
+  mode: "locked" | "selected" | "dry-run";
+}
+
 export type InstalockEventMap = {
-  locked: [data: { matchId: string; agent: string; map: string }];
+  locked: [data: InstalockResult];
   skipped: [data: { matchId: string; reason: string }];
   error: [error: Error];
 };
 
 export type InstalockItem =
-  | { event: "locked"; at: string; data: { matchId: string; agent: string; map: string } }
+  | { event: "locked"; at: string; data: InstalockResult }
   | { event: "skipped"; at: string; data: { matchId: string; reason: string } }
   | { event: "error"; at: string; data: { message: string; name?: string } };
 
@@ -41,21 +48,13 @@ export interface InstalockHandle {
 
 function pickAgentForMap(
   options: InstalockOptions,
-  map: { uuid: string | null; name: string | null; path?: string },
+  map: { uuid: string | null; name: string | null },
 ): string {
-  if (options.byMap) {
-    if (map.name && options.byMap[map.name]) return options.byMap[map.name]!;
-    if (map.uuid && options.byMap[map.uuid]) return options.byMap[map.uuid]!;
-    const lowerName = map.name?.toLowerCase();
-    const lowerUuid = map.uuid?.toLowerCase();
-    for (const [key, val] of Object.entries(options.byMap)) {
-      const lowerKey = key.toLowerCase();
-      if ((lowerName && lowerKey === lowerName) || (lowerUuid && lowerKey === lowerUuid)) {
-        return val;
-      }
-    }
-  }
-  return options.agent;
+  const keys = [map.name, map.uuid].filter(Boolean).map((key) => key!.toLowerCase());
+  const match = Object.entries(options.byMap ?? {}).find(([key]) =>
+    keys.includes(key.toLowerCase()),
+  );
+  return match?.[1] ?? options.agent;
 }
 
 export class Instalock extends TypedEmitter<InstalockEventMap> implements InstalockHandle {
@@ -126,7 +125,11 @@ export class Instalock extends TypedEmitter<InstalockEventMap> implements Instal
     const data = args[0];
     const item = (
       event === "error"
-        ? { event: "error", at, data: { message: (data as Error).message, name: (data as Error).name } }
+        ? {
+            event: "error",
+            at,
+            data: { message: (data as Error).message, name: (data as Error).name },
+          }
         : { event, at, data }
     ) as InstalockItem;
 
@@ -164,7 +167,7 @@ export class Instalock extends TypedEmitter<InstalockEventMap> implements Instal
         acceptedAgent = candidate;
         break;
       } catch {
-        // Fallback to next candidate
+        continue;
       }
     }
 
@@ -184,6 +187,7 @@ export class Instalock extends TypedEmitter<InstalockEventMap> implements Instal
         matchId: live.matchId,
         agent: acceptedAgent,
         map: mapName,
+        mode: "dry-run",
       });
       if (this.options.once) this.stop();
       return;
@@ -198,6 +202,7 @@ export class Instalock extends TypedEmitter<InstalockEventMap> implements Instal
         matchId: live.matchId,
         agent: acceptedAgent,
         map: mapName,
+        mode: this.options.select ? "selected" : "locked",
       });
     } catch (err) {
       this.emitItem("error", err instanceof Error ? err : new Error(String(err)));

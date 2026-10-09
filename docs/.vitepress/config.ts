@@ -45,6 +45,7 @@ export default defineConfig({
           { text: "Analytics", link: "/guide/analytics" },
           { text: "Real-Time Events", link: "/guide/events" },
           { text: "High-Level Watchers", link: "/guide/watchers" },
+          { text: "Instalock", link: "/guide/instalock" },
           { text: "Serve Mode", link: "/guide/serve" },
           { text: "MCP Server", link: "/guide/mcp" },
           { text: "Single Executable", link: "/guide/executable" },

@@ -181,3 +181,11 @@ Output format:
 {"event":"round","at":"2026-09-29T20:05:00.000Z","data":{"round":1,"ally":1,"enemy":0}}
 {"event":"hit","at":"2026-10-02T12:00:00.000Z","data":{"skin":{"name":"Reaver Vandal",...},"where":"daily",...}}
 ```
+
+## Match recap webhook
+
+`client.watch.match({ webhook })` posts a recap every time a match ends: map, result and score, K/D/A, ACS, HS%, agent and the RR change when Riot has published it. A Discord webhook (`https://discord.com/api/webhooks/...`) gets an embed, green on a win and red on a loss; any other `https:` URL gets the `Match` JSON. Failures are emitted as `error` and never stop the watcher.
+
+```bash
+riotclient watch match --webhook https://discord.com/api/webhooks/...
+```

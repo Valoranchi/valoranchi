@@ -232,6 +232,7 @@ riotclient missions
 riotclient penalties
 riotclient favourites
 riotclient session
+riotclient play-session
 riotclient config
 riotclient friends
 riotclient friend-requests

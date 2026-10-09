@@ -5,6 +5,7 @@ import { PACKAGE_VERSION } from "./version.js";
 import { formatError } from "./formatError.js";
 import { McpServer } from "./mcp/index.js";
 import { RiotClient, type LoadoutChange, type LoadoutGunChange } from "./RiotClient.js";
+import type { InstalockOptions } from "./watch/index.js";
 import {
   isSea,
   openBrowser,
@@ -92,6 +93,8 @@ Matches:
   premier          Print premier eligibility, roster, and season info
   trend            Print competitive rating streak, net RR gains, and climbing pace
   summary          Print player performance summary across recent matches [--count n] [--queue q]
+  play-session     Print today's play session summary [--since <iso>]
+  instalock <agent> Auto-lock an agent in pregame [--on-map Map=Agent...] [--fallback a...] [--delay n] [--select] [--once] [--yes]
   assess [puuid]   Assess player rank anomalies, streaks, and warning flags
   agent-select     Select an agent in pregame (<uuid|name>) (dry-run, --yes to apply)
   agent-lock       Lock in an agent in pregame (<uuid|name>) (dry-run, --yes to apply)
@@ -135,7 +138,8 @@ Raw (unsupported):
 Events:
   watch            Stream real-time events as JSON lines until interrupted
   watch store      Stream store wishlist rotation hits until interrupted [--webhook <url>] [--interval <min>]
-  watch-match      Stream match lifecycle events until interrupted
+  watch match      Stream match lifecycle events until interrupted [--webhook <url>]
+  watch-match      Stream match lifecycle events until interrupted [--webhook <url>]
   watch-friends    Stream friend activity and presence events until interrupted
 
 Server:
@@ -194,8 +198,14 @@ Options:
   --language <lang>  Catalogue language (default: en-US)
   --cache <seconds>  Reuse Riot responses younger than this many seconds
   --no-official-cache Disable official match disk cache
-  --webhook <url>    Webhook URL for store alerts (Discord or generic)
+  --webhook <url>    Webhook URL for store or match alerts (Discord or generic)
   --interval <min>   Check interval in minutes for store watcher
+  --since <iso>      ISO timestamp cutoff for play session
+  --on-map <m=a>     Agent for a map in instalock, e.g. Haven=Omen (repeatable)
+  --fallback <agent> Fallback agent for instalock (repeatable)
+  --delay <ms>       Delay before selecting/locking in milliseconds (0-10000)
+  --select           Select agent without locking in instalock
+  --once             Stop instalock after first match
   --port <n>         Port to bind HTTP server (default: 47800)
   --host <ip>        Host address to bind HTTP server (default: 127.0.0.1)
   --allow-remote     Allow binding HTTP server to non-loopback address
@@ -291,8 +301,11 @@ export async function runWatch(
   return 0;
 }
 
-export async function runWatchMatch(client: RiotClient): Promise<number> {
-  const watcher = client.watch.match();
+export async function runWatchMatch(
+  client: RiotClient,
+  options: { webhook?: string } = {},
+): Promise<number> {
+  const watcher = client.watch.match({ webhook: options.webhook });
   const onSignal = () => {
     process.off("SIGINT", onSignal);
     process.off("SIGTERM", onSignal);
@@ -309,6 +322,61 @@ export async function runWatchMatch(client: RiotClient): Promise<number> {
     process.off("SIGINT", onSignal);
     process.off("SIGTERM", onSignal);
     watcher.stop();
+    await client.close();
+  }
+  return 0;
+}
+
+function instalockOptions(
+  positionals: string[],
+  values: {
+    "on-map"?: string[];
+    fallback?: string[];
+    delay?: string;
+    select?: boolean;
+    once?: boolean;
+    yes?: boolean;
+  },
+): InstalockOptions {
+  const agent = requirePositional(positionals, 1, "Usage: instalock <agent>");
+  const byMap = Object.fromEntries(
+    (values["on-map"] ?? []).map((entry) => {
+      const [map, mapAgent] = entry.split("=");
+      if (!map || !mapAgent) {
+        throw new ValidationError("invalid-argument", `--on-map expects Map=Agent, got "${entry}"`);
+      }
+      return [map.trim(), mapAgent.trim()];
+    }),
+  );
+  return {
+    agent,
+    byMap,
+    fallbacks: values.fallback ?? [],
+    delayMs: values.delay ? Number(values.delay) : undefined,
+    select: Boolean(values.select),
+    once: Boolean(values.once),
+    dryRun: !values.yes,
+  };
+}
+
+export async function runInstalock(client: RiotClient, options: InstalockOptions): Promise<number> {
+  const handle = client.matches.instalock(options);
+  const onSignal = () => {
+    process.off("SIGINT", onSignal);
+    process.off("SIGTERM", onSignal);
+    handle.stop();
+  };
+  process.on("SIGINT", onSignal);
+  process.on("SIGTERM", onSignal);
+
+  try {
+    for await (const item of handle) {
+      process.stdout.write(`${JSON.stringify(item)}\n`);
+    }
+  } finally {
+    process.off("SIGINT", onSignal);
+    process.off("SIGTERM", onSignal);
+    handle.stop();
     await client.close();
   }
   return 0;
@@ -581,6 +649,10 @@ async function executeStandardCommand(
       return client.account.favourites();
     case "session":
       return client.account.session();
+    case "play-session":
+      return client.matches.session({
+        since: typeof options?.rawValues?.since === "string" ? options.rawValues.since : undefined,
+      });
     case "config":
       return client.account.config();
     case "friends":
@@ -1397,6 +1469,12 @@ export async function runCli(args: string[]): Promise<number> {
       "no-official-cache": { type: "boolean", default: false },
       webhook: { type: "string" },
       interval: { type: "string" },
+      since: { type: "string" },
+      "on-map": { type: "string", multiple: true },
+      fallback: { type: "string", multiple: true },
+      delay: { type: "string" },
+      select: { type: "boolean", default: false },
+      once: { type: "boolean", default: false },
     },
     allowPositionals: true,
   });
@@ -1426,6 +1504,9 @@ export async function runCli(args: string[]): Promise<number> {
 
   try {
     if (command === "watch") {
+      if (parsed.positionals[1] === "match") {
+        return await runWatchMatch(client, { webhook: parsed.values.webhook });
+      }
       if (parsed.positionals[1] === "store") {
         const intervalMinutes = parsed.values.interval ? Number(parsed.values.interval) : undefined;
         const webhook = parsed.values.webhook ? String(parsed.values.webhook) : undefined;
@@ -1444,7 +1525,11 @@ export async function runCli(args: string[]): Promise<number> {
     }
 
     if (command === "watch-match") {
-      return await runWatchMatch(client);
+      return await runWatchMatch(client, { webhook: parsed.values.webhook });
+    }
+
+    if (command === "instalock") {
+      return await runInstalock(client, instalockOptions(parsed.positionals, parsed.values));
     }
 
     if (command === "watch-friends") {

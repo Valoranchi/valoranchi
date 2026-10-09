@@ -820,6 +820,21 @@ export const ROUTE_DEFINITIONS: RouteDefinition[] = [
     ],
   },
   {
+    method: "GET",
+    namespace: "matches",
+    action: "session",
+    path: "/api/matches/session",
+    summary: "Get current play session summary",
+    responseSchema: "Session",
+    params: [
+      {
+        name: "since",
+        type: "string",
+        description: "ISO timestamp cutoff for the session",
+      },
+    ],
+  },
+  {
     method: "POST",
     namespace: "matches",
     action: "selectAgent",
@@ -1498,6 +1513,10 @@ export async function dispatchApiRoute(
         });
       case "assess":
         return client.matches.assess(query.puuid);
+      case "session":
+        return client.matches.session({
+          since: query.since ? String(query.since) : undefined,
+        });
       case "selectAgent": {
         const agent = String(body.agent ?? query.agent);
         return dryRun

@@ -30,6 +30,7 @@ const types = [
   "Offer",
   "Order",
   "GameSession",
+  "Session",
   "Content",
   "QueueConfig",
   "Premier",

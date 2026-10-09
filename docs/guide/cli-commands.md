@@ -79,6 +79,8 @@
 | `premier` | Print premier eligibility, roster, and season info |
 | `trend` | Print competitive rating streak, net RR gains, and climbing pace |
 | `summary` | Print player performance summary across recent matches [--count n] [--queue q] |
+| `play-session` | Print today's play session summary [--since &lt;iso&gt;] |
+| `instalock <agent>` | Auto-lock an agent in pregame [--on-map Map=Agent...] [--fallback a...] [--delay n] [--select] [--once] [--yes] |
 | `assess [puuid]` | Assess player rank anomalies, streaks, and warning flags |
 | `agent-select` | Select an agent in pregame (&lt;uuid\|name&gt;) (dry-run, --yes to apply) |
 | `agent-lock` | Lock in an agent in pregame (&lt;uuid\|name&gt;) (dry-run, --yes to apply) |
@@ -131,7 +133,8 @@
 | :--- | :--- |
 | `watch` | Stream real-time events as JSON lines until interrupted |
 | `watch store` | Stream store wishlist rotation hits until interrupted [--webhook &lt;url&gt;] [--interval &lt;min&gt;] |
-| `watch-match` | Stream match lifecycle events until interrupted |
+| `watch match` | Stream match lifecycle events until interrupted [--webhook &lt;url&gt;] |
+| `watch-match` | Stream match lifecycle events until interrupted [--webhook &lt;url&gt;] |
 | `watch-friends` | Stream friend activity and presence events until interrupted |
 
 ### Server
@@ -199,8 +202,14 @@
 | `--language <lang>` | Catalogue language (default: en-US) |
 | `--cache <seconds>` | Reuse Riot responses younger than this many seconds |
 | `--no-official-cache` | Disable official match disk cache |
-| `--webhook <url>` | Webhook URL for store alerts (Discord or generic) |
+| `--webhook <url>` | Webhook URL for store or match alerts (Discord or generic) |
 | `--interval <min>` | Check interval in minutes for store watcher |
+| `--since <iso>` | ISO timestamp cutoff for play session |
+| `--on-map <m=a>` | Agent for a map in instalock, e.g. Haven=Omen (repeatable) |
+| `--fallback <agent>` | Fallback agent for instalock (repeatable) |
+| `--delay <ms>` | Delay before selecting/locking in milliseconds (0-10000) |
+| `--select` | Select agent without locking in instalock |
+| `--once` | Stop instalock after first match |
 | `--port <n>` | Port to bind HTTP server (default: 47800) |
 | `--host <ip>` | Host address to bind HTTP server (default: 127.0.0.1) |
 | `--allow-remote` | Allow binding HTTP server to non-loopback address |

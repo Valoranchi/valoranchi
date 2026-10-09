@@ -113,7 +113,7 @@ describe("Instalock", () => {
     expect(fakeMatches.validateLockAgent).toHaveBeenCalledWith("Omen");
     expect(fakeMatches.selectAgent).toHaveBeenCalledWith("Omen");
     expect(fakeMatches.lockAgent).toHaveBeenCalledWith("Omen");
-    expect(lockedEvents).toEqual([{ matchId: "m-1", agent: "Omen", map: "Haven" }]);
+    expect(lockedEvents).toEqual([{ matchId: "m-1", agent: "Omen", map: "Haven", mode: "locked" }]);
   });
 
   it("falls back to next agent when first choice is taken or invalid", async () => {
@@ -183,7 +183,7 @@ describe("Instalock", () => {
     expect(fakeMatches.validateLockAgent).toHaveBeenCalledWith("Jett");
     expect(fakeMatches.selectAgent).not.toHaveBeenCalled();
     expect(fakeMatches.lockAgent).not.toHaveBeenCalled();
-    expect(lockedEvents).toEqual([{ matchId: "m-1", agent: "Jett", map: "Haven" }]);
+    expect(lockedEvents).toEqual([{ matchId: "m-1", agent: "Jett", map: "Haven", mode: "dry-run" }]);
   });
 
   it("select option only hovers and never calls lockAgent", async () => {
