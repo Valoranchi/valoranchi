@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-10-09
+
 ### Added
 
 - `client.matches.instalock()` and `riotclient instalock` lock an agent the moment agent select starts, with an agent per map, fallbacks, an optional delay, hover only and dry run modes. It goes against Riot's rules for third party tools; the docs say so.
