@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- The Windows executable reports its real version; it printed `0.0.0` because there is no `package.json` to read inside it.
+
 ## [0.7.0] - 2026-10-09
 
 ### Added

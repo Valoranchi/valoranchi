@@ -9,4 +9,4 @@ function readPackageVersion(): string {
   }
 }
 
-export const PACKAGE_VERSION = readPackageVersion();
+export const PACKAGE_VERSION = process.env.RIOTCLIENT_BUNDLED_VERSION ?? readPackageVersion();

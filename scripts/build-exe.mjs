@@ -15,6 +15,11 @@ async function buildExe() {
     target: "node20",
     format: "cjs",
     outfile: "dist/bundle.cjs",
+    define: {
+      "process.env.RIOTCLIENT_BUNDLED_VERSION": JSON.stringify(
+        JSON.parse(fs.readFileSync("package.json", "utf-8")).version,
+      ),
+    },
   });
 
   console.log("Generating SEA preparation blob...");
