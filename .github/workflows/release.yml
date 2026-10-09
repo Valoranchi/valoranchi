@@ -150,8 +150,16 @@ jobs:
       - name: Push commit and tag
         if: ${{ steps.mode.outputs.publish_only != 'true' }}
         run: |
-          git push origin main
-          git push origin ${{ steps.version.outputs.tag }}
+          push() {
+            for attempt in 1 2 3; do
+              git push origin "$1" && return 0
+              echo "::warning::git push origin $1 failed (attempt $attempt), retrying"
+              sleep $((attempt * 10))
+            done
+            return 1
+          }
+          push main
+          push ${{ steps.version.outputs.tag }}
 
       - name: Create GitHub Release
         env:
