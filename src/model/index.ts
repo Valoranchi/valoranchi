@@ -527,6 +527,92 @@ export type Favourite = {
   weapon: string;
 };
 
+export type AgentMastery = {
+  agentId: string;
+  agentName: string;
+  agentIcon: Image;
+  longLevel: number;
+  shortLevel: number;
+  points: number;
+  tracks: { trackId: string; level: number }[];
+};
+
+export type MatchAgentMastery = {
+  agentId: string;
+  agentName: string;
+  agentIcon: Image;
+  pointsBefore: number | null;
+  pointsAfter: number;
+  earned: number;
+  breakdown: {
+    secondsPlayed: number;
+    timePlayed: number;
+    winBonus: number;
+    performanceBonus: number;
+  };
+  longLevelBefore: number | null;
+  longLevelAfter: number;
+  shortLevelBefore: number | null;
+  shortLevelAfter: number;
+};
+
+export type MatchContractProgress = {
+  xp: {
+    roundsPlayed: number;
+    roundsWon: number;
+    gamePlayed: number;
+    gameWon: number;
+    total: number;
+  };
+  kingdomCredits: {
+    roundsPlayed: number;
+    roundsWon: number;
+    gamePlayed: number;
+    total: number;
+  };
+  contractXp: { contractId: string; name: string; before: number; after: number }[];
+  rewards: {
+    contractId: string;
+    type: string;
+    uuid: string;
+    name: string;
+    icon: Image;
+    amount: number;
+  }[];
+};
+
+export type MatchDailyProgress = {
+  progressBefore: number;
+  progressAfter: number;
+  xp: number;
+  kingdomCredits: number;
+};
+
+export type MatchProgress = {
+  matchId: string;
+  agentMastery: MatchAgentMastery | null;
+  contracts: MatchContractProgress | null;
+  daily: MatchDailyProgress | null;
+};
+
+export type DailyCheckpoint = {
+  progress: number;
+  target: number;
+  complete: boolean;
+};
+
+export type DailyQueueRule = {
+  perRoundWon: boolean;
+  perMatch: number;
+};
+
+export type DailyCheckpoints = {
+  checkpoints: DailyCheckpoint[];
+  expiresAt: string;
+  queues: Record<string, DailyQueueRule>;
+  default: DailyQueueRule;
+};
+
 export type LeaderboardEntry = {
   rank: number;
   puuid: string;

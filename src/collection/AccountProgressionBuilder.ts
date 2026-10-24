@@ -2,19 +2,53 @@ import type { Catalogue } from "../catalogue/Catalogue.js";
 import type {
   AccountXp,
   AccountXpHistoryEntry,
+  AgentMastery,
   ContractProgress,
   ContractReward,
+  DailyCheckpoints,
+  DailyQueueRule,
   Favourite,
   Image,
+  MatchAgentMastery,
+  MatchContractProgress,
+  MatchDailyProgress,
+  MatchProgress,
   Mission,
   Penalty,
 } from "../model/index.js";
-import type {
-  RiotAccountXpResponse,
-  RiotContractsResponse,
-  RiotFavoritesResponse,
-  RiotPenaltiesResponse,
+import {
+  ENTITLEMENT_ITEM_TYPES,
+  type RiotAccountXpResponse,
+  type RiotAgentMasteryMatchResponse,
+  type RiotAgentMasteryResponse,
+  type RiotContractsMatchResponse,
+  type RiotContractsResponse,
+  type RiotDailyTicketQueueConfigResponse,
+  type RiotDailyTicketQueueRule,
+  type RiotDailyTicketResponse,
+  type RiotFavoritesResponse,
+  type RiotPenaltiesResponse,
 } from "../riot/types.js";
+
+const DAILY_CHECKPOINT_TARGET = 4;
+
+function describeAgent(
+  catalogue: Catalogue,
+  agentId: string,
+): { agentId: string; agentName: string; agentIcon: Image } {
+  const agent = catalogue.getAgent(agentId);
+  return { agentId, agentName: agent?.displayName ?? "", agentIcon: agent?.displayIcon ?? null };
+}
+
+function entitlementTypeName(itemTypeId: string): string {
+  const id = itemTypeId.toLowerCase();
+  const known = Object.entries(ENTITLEMENT_ITEM_TYPES).find(([, typeId]) => typeId === id);
+  return known ? known[0] : itemTypeId;
+}
+
+function toQueueRule(rule: RiotDailyTicketQueueRule): DailyQueueRule {
+  return { perRoundWon: rule.progressPerRoundWin, perMatch: rule.flatProgressPerMatch };
+}
 
 function resolveRewardDetails(
   catalogue: Catalogue,
@@ -160,5 +194,141 @@ export class AccountProgressionBuilder {
         weapon: weapon?.displayName ?? "",
       };
     });
+  }
+
+  static buildAgentMastery(raw: RiotAgentMasteryResponse, catalogue: Catalogue): AgentMastery[] {
+    return (raw.Bonsais ?? [])
+      .map((bonsai) => ({
+        ...describeAgent(catalogue, bonsai.BonsaiID),
+        longLevel: bonsai.Flourish.LongLevel ?? 0,
+        shortLevel: bonsai.Flourish.ShortLevel ?? 0,
+        points: bonsai.Flourish.Points ?? 0,
+        tracks: (bonsai.TrackProgressList ?? []).map((track) => ({
+          trackId: track.TrackID,
+          level: track.TrackLevel ?? 0,
+        })),
+      }))
+      .sort((a, b) => b.points - a.points);
+  }
+
+  static buildMatchProgress(
+    matchId: string,
+    raw: {
+      mastery: RiotAgentMasteryMatchResponse | null;
+      contracts: RiotContractsMatchResponse | null;
+      dailyTicket: RiotDailyTicketResponse;
+    },
+    catalogue: Catalogue,
+  ): MatchProgress {
+    return {
+      matchId,
+      agentMastery: raw.mastery && this.buildMatchAgentMastery(raw.mastery, catalogue),
+      contracts: raw.contracts && this.buildMatchContracts(raw.contracts, catalogue),
+      daily: this.buildMatchDaily(raw.dailyTicket, matchId),
+    };
+  }
+
+  private static buildMatchAgentMastery(
+    raw: RiotAgentMasteryMatchResponse,
+    catalogue: Catalogue,
+  ): MatchAgentMastery {
+    const { Delta: delta } = raw;
+    const earnings = delta.EarningsBreakdown;
+    return {
+      ...describeAgent(catalogue, raw.PlayedCharacter),
+      pointsBefore: delta.PointsBefore ?? null,
+      pointsAfter: delta.PointsAfter,
+      earned: earnings.TotalMPGranted,
+      breakdown: {
+        secondsPlayed: earnings.SecondsPlayed,
+        timePlayed: earnings.TimePlayedMP,
+        winBonus: earnings.WinBonusMP ?? 0,
+        performanceBonus: earnings.PerformanceBonusMP ?? 0,
+      },
+      longLevelBefore: delta.LongLevelBefore ?? null,
+      longLevelAfter: delta.LongLevelAfter,
+      shortLevelBefore: delta.ShortLevelBefore ?? null,
+      shortLevelAfter: delta.ShortLevelAfter,
+    };
+  }
+
+  private static buildMatchContracts(
+    raw: RiotContractsMatchResponse,
+    catalogue: Catalogue,
+  ): MatchContractProgress {
+    const { XPGrants: xp, DoughGrants: dough } = raw;
+    return {
+      xp: {
+        roundsPlayed: xp.RoundPlayed,
+        roundsWon: xp.RoundWon,
+        gamePlayed: xp.GamePlayed,
+        gameWon: xp.GameWon,
+        total: xp.GamePlayed + xp.GameWon + xp.RoundPlayed + xp.RoundWon,
+      },
+      kingdomCredits: {
+        roundsPlayed: dough.RoundPlayed,
+        roundsWon: dough.RoundWon,
+        gamePlayed: dough.GamePlayed,
+        total: dough.GamePlayed + dough.RoundPlayed + dough.RoundWon,
+      },
+      contractXp: Object.values(raw.ContractDeltas ?? {}).map((delta) => ({
+        contractId: delta.ID,
+        name: catalogue.getContract(delta.ID)?.displayName ?? "",
+        before: delta.TotalXPBefore,
+        after: delta.TotalXPAfter,
+      })),
+      rewards: Object.entries(raw.RewardGrants ?? {}).flatMap(([contractId, grant]) =>
+        (grant.EntitlementRewards ?? []).map((reward) => {
+          const type = entitlementTypeName(reward.ItemTypeID);
+          return {
+            contractId,
+            type,
+            uuid: reward.ItemID,
+            ...resolveRewardDetails(catalogue, type, reward.ItemID),
+            amount: reward.Amount,
+          };
+        }),
+      ),
+    };
+  }
+
+  private static buildMatchDaily(
+    ticket: RiotDailyTicketResponse,
+    matchId: string,
+  ): MatchDailyProgress | null {
+    const processed = (ticket.ProcessedMatches ?? []).find(
+      (match) => match.ID.toLowerCase() === matchId.toLowerCase(),
+    );
+    return processed
+      ? {
+          progressBefore: processed.ProgressBefore,
+          progressAfter: processed.ProgressAfter,
+          xp: processed.XP,
+          kingdomCredits: processed.SoftCurrency,
+        }
+      : null;
+  }
+
+  static buildDailyCheckpoints(
+    ticket: RiotDailyTicketResponse,
+    queueConfig: RiotDailyTicketQueueConfigResponse,
+    now: Date = new Date(),
+  ): DailyCheckpoints {
+    const { RemainingLifetimeSeconds, Milestones } = ticket.DailyRewards;
+    return {
+      checkpoints: Milestones.map((milestone) => ({
+        progress: milestone.Progress,
+        target: DAILY_CHECKPOINT_TARGET,
+        complete: milestone.Progress >= DAILY_CHECKPOINT_TARGET,
+      })),
+      expiresAt: new Date(now.getTime() + RemainingLifetimeSeconds * 1000).toISOString(),
+      queues: Object.fromEntries(
+        Object.entries(queueConfig.queueOverrides ?? {}).map(([queue, rule]) => [
+          queue,
+          toQueueRule(rule),
+        ]),
+      ),
+      default: toQueueRule(queueConfig.default),
+    };
   }
 }
