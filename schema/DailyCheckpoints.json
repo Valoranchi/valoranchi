@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/DailyCheckpoints",
+  "definitions": {
+    "DailyCheckpoints": {
+      "type": "object",
+      "properties": {
+        "checkpoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DailyCheckpoint"
+          }
+        },
+        "expiresAt": {
+          "type": "string"
+        },
+        "queues": {
+          "$ref": "#/definitions/Record%3Cstring%2CDailyQueueRule%3E"
+        },
+        "default": {
+          "$ref": "#/definitions/DailyQueueRule"
+        }
+      },
+      "required": ["checkpoints", "expiresAt", "queues", "default"],
+      "additionalProperties": false
+    },
+    "DailyCheckpoint": {
+      "type": "object",
+      "properties": {
+        "progress": {
+          "type": "number"
+        },
+        "target": {
+          "type": "number"
+        },
+        "complete": {
+          "type": "boolean"
+        }
+      },
+      "required": ["progress", "target", "complete"],
+      "additionalProperties": false
+    },
+    "Record<string,DailyQueueRule>": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/DailyQueueRule"
+      }
+    },
+    "DailyQueueRule": {
+      "type": "object",
+      "properties": {
+        "perRoundWon": {
+          "type": "boolean"
+        },
+        "perMatch": {
+          "type": "number"
+        }
+      },
+      "required": ["perRoundWon", "perMatch"],
+      "additionalProperties": false
+    }
+  }
+}

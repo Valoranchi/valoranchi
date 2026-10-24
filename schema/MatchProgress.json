@@ -1,0 +1,234 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/MatchProgress",
+  "definitions": {
+    "MatchProgress": {
+      "type": "object",
+      "properties": {
+        "matchId": {
+          "type": "string"
+        },
+        "agentMastery": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/MatchAgentMastery"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "contracts": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/MatchContractProgress"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "daily": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/MatchDailyProgress"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": ["matchId", "agentMastery", "contracts", "daily"],
+      "additionalProperties": false
+    },
+    "MatchAgentMastery": {
+      "type": "object",
+      "properties": {
+        "agentId": {
+          "type": "string"
+        },
+        "agentName": {
+          "type": "string"
+        },
+        "agentIcon": {
+          "$ref": "#/definitions/Image"
+        },
+        "pointsBefore": {
+          "type": ["number", "null"]
+        },
+        "pointsAfter": {
+          "type": "number"
+        },
+        "earned": {
+          "type": "number"
+        },
+        "breakdown": {
+          "type": "object",
+          "properties": {
+            "secondsPlayed": {
+              "type": "number"
+            },
+            "timePlayed": {
+              "type": "number"
+            },
+            "winBonus": {
+              "type": "number"
+            },
+            "performanceBonus": {
+              "type": "number"
+            }
+          },
+          "required": ["secondsPlayed", "timePlayed", "winBonus", "performanceBonus"],
+          "additionalProperties": false
+        },
+        "longLevelBefore": {
+          "type": ["number", "null"]
+        },
+        "longLevelAfter": {
+          "type": "number"
+        },
+        "shortLevelBefore": {
+          "type": ["number", "null"]
+        },
+        "shortLevelAfter": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "agentId",
+        "agentName",
+        "agentIcon",
+        "pointsBefore",
+        "pointsAfter",
+        "earned",
+        "breakdown",
+        "longLevelBefore",
+        "longLevelAfter",
+        "shortLevelBefore",
+        "shortLevelAfter"
+      ],
+      "additionalProperties": false
+    },
+    "Image": {
+      "type": ["string", "null"]
+    },
+    "MatchContractProgress": {
+      "type": "object",
+      "properties": {
+        "xp": {
+          "type": "object",
+          "properties": {
+            "roundsPlayed": {
+              "type": "number"
+            },
+            "roundsWon": {
+              "type": "number"
+            },
+            "gamePlayed": {
+              "type": "number"
+            },
+            "gameWon": {
+              "type": "number"
+            },
+            "total": {
+              "type": "number"
+            }
+          },
+          "required": ["roundsPlayed", "roundsWon", "gamePlayed", "gameWon", "total"],
+          "additionalProperties": false
+        },
+        "kingdomCredits": {
+          "type": "object",
+          "properties": {
+            "roundsPlayed": {
+              "type": "number"
+            },
+            "roundsWon": {
+              "type": "number"
+            },
+            "gamePlayed": {
+              "type": "number"
+            },
+            "total": {
+              "type": "number"
+            }
+          },
+          "required": ["roundsPlayed", "roundsWon", "gamePlayed", "total"],
+          "additionalProperties": false
+        },
+        "contractXp": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "contractId": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "before": {
+                "type": "number"
+              },
+              "after": {
+                "type": "number"
+              }
+            },
+            "required": ["contractId", "name", "before", "after"],
+            "additionalProperties": false
+          }
+        },
+        "rewards": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "contractId": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "uuid": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "icon": {
+                "$ref": "#/definitions/Image"
+              },
+              "amount": {
+                "type": "number"
+              }
+            },
+            "required": ["contractId", "type", "uuid", "name", "icon", "amount"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["xp", "kingdomCredits", "contractXp", "rewards"],
+      "additionalProperties": false
+    },
+    "MatchDailyProgress": {
+      "type": "object",
+      "properties": {
+        "progressBefore": {
+          "type": "number"
+        },
+        "progressAfter": {
+          "type": "number"
+        },
+        "xp": {
+          "type": "number"
+        },
+        "kingdomCredits": {
+          "type": "number"
+        }
+      },
+      "required": ["progressBefore", "progressAfter", "xp", "kingdomCredits"],
+      "additionalProperties": false
+    }
+  }
+}

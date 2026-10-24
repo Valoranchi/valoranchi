@@ -70,10 +70,20 @@ describe("MCP Server", () => {
 
   const mockMatchesList = vi.fn().mockResolvedValue([{ id: "match-1", queue: "competitive" }]);
 
+  const mockMatchProgress = vi.fn().mockResolvedValue({
+    matchId: "ec8f25d1-075d-45e5-84ae-ef3891b73827",
+    agentMastery: null,
+    contracts: null,
+    daily: null,
+  });
+
   const fakeClient = {
     account: {
       whoami: mockWhoami,
       wallet: mockWallet,
+      agentMastery: vi.fn().mockResolvedValue([]),
+      dailyCheckpoints: vi.fn().mockResolvedValue({ checkpoints: [] }),
+      matchProgress: mockMatchProgress,
     },
     matches: {
       list: mockMatchesList,
@@ -341,6 +351,35 @@ describe("MCP Server", () => {
     expect((res.result as { structuredContent: unknown }).structuredContent).toEqual({
       account: { puuid: "p" },
       rank: null,
+    });
+    await harness.close();
+  });
+
+  it("exposes the progression tools and requires the match id for matches_progress", () => {
+    const tools = getMcpTools();
+    expect(tools.map((t) => t.name)).toEqual(
+      expect.arrayContaining(["account_mastery", "account_dailies", "matches_progress"]),
+    );
+    expect(tools.find((t) => t.name === "matches_progress")?.inputSchema.required).toEqual([
+      "matchId",
+    ]);
+  });
+
+  it("calls the match progress tool with its match id", async () => {
+    const matchId = "ec8f25d1-075d-45e5-84ae-ef3891b73827";
+    const harness = createHarness(fakeClient);
+    const res = await harness.send({
+      jsonrpc: "2.0",
+      id: 22,
+      method: "tools/call",
+      params: { name: "matches_progress", arguments: { matchId } },
+    });
+    expect(mockMatchProgress).toHaveBeenCalledWith(matchId);
+    expect((res.result as { structuredContent: unknown }).structuredContent).toEqual({
+      matchId,
+      agentMastery: null,
+      contracts: null,
+      daily: null,
     });
     await harness.close();
   });

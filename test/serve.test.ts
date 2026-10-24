@@ -82,6 +82,10 @@ describe("Serve Mode", () => {
   const mockValidateEquip = vi.fn().mockResolvedValue({ valid: true });
   const mockEquip = vi.fn().mockResolvedValue({ Subject: "p-1", Version: 2 });
 
+  const mockAgentMastery = vi.fn().mockResolvedValue([{ agentId: "agent-1", points: 10 }]);
+  const mockDailyCheckpoints = vi.fn().mockResolvedValue({ checkpoints: [], queues: {} });
+  const mockMatchProgress = vi.fn().mockResolvedValue({ matchId: "m-1", daily: null });
+
   const mockValidateDodge = vi.fn().mockResolvedValue({ method: "POST", path: "/dodge" });
   const mockDodge = vi.fn().mockResolvedValue({ dodged: true, matchId: "m-dodge" });
 
@@ -100,6 +104,9 @@ describe("Serve Mode", () => {
       equip: mockEquip,
       validateSaveSettings: vi.fn().mockResolvedValue({}),
       saveSettings: vi.fn().mockResolvedValue({}),
+      agentMastery: mockAgentMastery,
+      dailyCheckpoints: mockDailyCheckpoints,
+      matchProgress: mockMatchProgress,
     },
     social: {
       friends: mockFriends,
@@ -236,6 +243,55 @@ describe("Serve Mode", () => {
     );
     expect(resMatches.status).toBe(200);
     expect(mockListMatches).toHaveBeenCalledWith({ count: 5, queue: "competitive" });
+  });
+
+  it("dispatches the mastery, dailies and match progress routes", async () => {
+    const matchId = "ec8f25d1-075d-45e5-84ae-ef3891b73827";
+
+    const mastery = await requestHttp(`http://127.0.0.1:${testPort}/api/account/mastery`);
+    expect(mastery.status).toBe(200);
+    expect(JSON.parse(mastery.body)).toEqual([{ agentId: "agent-1", points: 10 }]);
+
+    const dailies = await requestHttp(`http://127.0.0.1:${testPort}/api/account/dailies`);
+    expect(dailies.status).toBe(200);
+    expect(JSON.parse(dailies.body)).toEqual({ checkpoints: [], queues: {} });
+
+    const progress = await requestHttp(
+      `http://127.0.0.1:${testPort}/api/matches/progress?matchId=${matchId}`,
+    );
+    expect(progress.status).toBe(200);
+    expect(JSON.parse(progress.body)).toEqual({ matchId: "m-1", daily: null });
+    expect(mockMatchProgress).toHaveBeenCalledWith(matchId);
+  });
+
+  it("describes the progression routes in the OpenAPI specification", async () => {
+    const res = await requestHttp(`http://127.0.0.1:${testPort}/openapi.json`);
+    const spec = JSON.parse(res.body) as {
+      paths: Record<
+        string,
+        {
+          get: {
+            parameters?: Array<{ name: string; in: string; required?: boolean }>;
+            responses: Record<string, { content?: Record<string, { schema: unknown }> }>;
+          };
+        }
+      >;
+    };
+
+    const schemaOf = (route: string) =>
+      spec.paths[route]?.get.responses["200"]?.content?.["application/json"]?.schema;
+    expect(schemaOf("/api/account/mastery")).toEqual({
+      $ref: "#/components/schemas/AgentMastery",
+    });
+    expect(schemaOf("/api/account/dailies")).toEqual({
+      $ref: "#/components/schemas/DailyCheckpoints",
+    });
+    expect(schemaOf("/api/matches/progress")).toEqual({
+      $ref: "#/components/schemas/MatchProgress",
+    });
+    expect(spec.paths["/api/matches/progress"]?.get.parameters).toEqual([
+      expect.objectContaining({ name: "matchId", in: "query", required: true }),
+    ]);
   });
 
   it("defaults to dry-run for writes without dryRun=0", async () => {

@@ -97,6 +97,22 @@ export const ROUTE_DEFINITIONS: RouteDefinition[] = [
   {
     method: "GET",
     namespace: "account",
+    action: "mastery",
+    path: "/api/account/mastery",
+    summary: "Get mastery level and points of every agent",
+    responseSchema: "AgentMastery",
+  },
+  {
+    method: "GET",
+    namespace: "account",
+    action: "dailies",
+    path: "/api/account/dailies",
+    summary: "Get the four daily checkpoints and what each queue adds",
+    responseSchema: "DailyCheckpoints",
+  },
+  {
+    method: "GET",
+    namespace: "account",
     action: "favourites",
     path: "/api/account/favourites",
     summary: "Get favorited skins",
@@ -601,6 +617,22 @@ export const ROUTE_DEFINITIONS: RouteDefinition[] = [
     params: [
       {
         name: "id",
+        type: "string",
+        description: "Match ID",
+        required: true,
+      },
+    ],
+  },
+  {
+    method: "GET",
+    namespace: "matches",
+    action: "progress",
+    path: "/api/matches/progress",
+    summary: "Get the mastery points, XP and Kingdom Credits a match gave",
+    responseSchema: "MatchProgress",
+    params: [
+      {
+        name: "matchId",
         type: "string",
         description: "Match ID",
         required: true,
@@ -1278,6 +1310,10 @@ export async function dispatchApiRoute(
         return client.account.missions();
       case "penalties":
         return client.account.penalties();
+      case "mastery":
+        return client.account.agentMastery();
+      case "dailies":
+        return client.account.dailyCheckpoints();
       case "favourites":
         return client.account.favourites();
       case "session":
@@ -1469,6 +1505,8 @@ export async function dispatchApiRoute(
       case "get":
       case "match":
         return client.matches.get(query.id);
+      case "progress":
+        return client.account.matchProgress(query.matchId);
       case "mmr":
         return client.matches.mmr();
       case "rankHistory":

@@ -12,6 +12,8 @@
 | `xp` | Print account level, XP progression and recent match XP history |
 | `contracts` | Print progression across agent, battlepass and event contracts |
 | `missions` | Print active daily and weekly missions and objectives |
+| `mastery` | Print mastery level and points of every agent, most points first |
+| `dailies` | Print the four daily checkpoints and what each queue adds |
 | `penalties` | Print active penalties and restrictions |
 | `favourites` | Print favorited weapon skins |
 | `session` | Print current client session loop state and playtime |
@@ -68,6 +70,7 @@
 | `matches` | Print recent match history summaries |
 | `matches-sync` | Synchronize match history to local cache [--pages &lt;n&gt;] |
 | `match <id>` | Print full match details by ID |
+| `match-progress <id>` | Print the mastery points, XP and Kingdom Credits a match gave |
 | `mmr` | Print current rank, rating, and MMR breakdown |
 | `rank-history` | Print competitive rating adjustments and tier changes |
 | `live` | Print live pregame or in-game lobby status and loadouts |

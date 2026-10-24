@@ -827,6 +827,57 @@ describe("CLI write commands and dry-run", () => {
     }
   });
 
+  it("dispatches the mastery, dailies and match-progress commands to the account service", async () => {
+    const matchId = "ec8f25d1-075d-45e5-84ae-ef3891b73827";
+    const originalStdout = process.stdout.write;
+    process.stdout.write = (() => true) as typeof process.stdout.write;
+
+    vi.spyOn(RiotClient.prototype, "close").mockResolvedValue(undefined);
+    const masterySpy = vi
+      .spyOn(AccountService.prototype, "agentMastery")
+      .mockResolvedValue([] as never);
+    const dailiesSpy = vi
+      .spyOn(AccountService.prototype, "dailyCheckpoints")
+      .mockResolvedValue({} as never);
+    const progressSpy = vi
+      .spyOn(AccountService.prototype, "matchProgress")
+      .mockResolvedValue({} as never);
+
+    try {
+      expect(await runCli(["mastery"])).toBe(0);
+      expect(masterySpy).toHaveBeenCalledTimes(1);
+
+      expect(await runCli(["dailies"])).toBe(0);
+      expect(dailiesSpy).toHaveBeenCalledTimes(1);
+
+      expect(await runCli(["match-progress", matchId])).toBe(0);
+      expect(progressSpy).toHaveBeenCalledWith(matchId);
+    } finally {
+      process.stdout.write = originalStdout;
+      vi.restoreAllMocks();
+    }
+  });
+
+  it("fails with exit code 6 when match-progress has no match id or an invalid one", async () => {
+    const originalStderr = process.stderr.write;
+    process.stderr.write = (() => true) as typeof process.stderr.write;
+    vi.spyOn(RiotClient.prototype, "close").mockResolvedValue(undefined);
+
+    try {
+      expect(await runCli(["match-progress"])).toBe(6);
+      expect(await runCli(["match-progress", "not-a-uuid"])).toBe(6);
+    } finally {
+      process.stderr.write = originalStderr;
+      vi.restoreAllMocks();
+    }
+  });
+
+  it("lists the mastery, dailies and match-progress commands in the help", () => {
+    expect(USAGE).toContain("  mastery ");
+    expect(USAGE).toContain("  dailies ");
+    expect(USAGE).toContain("  match-progress <id> ");
+  });
+
   it("dispatches expanded remote write commands (dry-run vs --yes)", async () => {
     const originalStdout = process.stdout.write;
     const originalStderr = process.stderr.write;
