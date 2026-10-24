@@ -168,6 +168,20 @@ describe("AccountService.matchProgress", () => {
   );
 });
 
+describe("AccountService.matchProgress without a match id", () => {
+  it("answers with a validation error when the HTTP or MCP argument is missing", async () => {
+    const { service, get } = createService();
+
+    const error = await service
+      .matchProgress(undefined as unknown as string)
+      .catch((e: unknown) => e);
+
+    expect(error).toBeInstanceOf(ValidationError);
+    expect(error).toMatchObject({ reason: "invalid-match-id" });
+    expect(get).not.toHaveBeenCalled();
+  });
+});
+
 describe("AccountService.dailyCheckpoints", () => {
   it("builds the checkpoints and the queue rules from the ticket", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
