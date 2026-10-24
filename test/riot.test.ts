@@ -350,6 +350,44 @@ describe("RiotApi", () => {
     );
   });
 
+  it("calls the agent mastery, contracts match and daily ticket endpoints on pd", async () => {
+    const mockGet = vi.fn().mockResolvedValue({});
+    const api = new RiotApi({ get: mockGet } as unknown as HttpGateway, session);
+
+    await api.agentMastery();
+    await api.agentMasteryMatch("match-1");
+    await api.agentMasteryConfig();
+    await api.contractsMatch("match-1");
+    await api.dailyTicketQueueConfig();
+    await api.agentMastery("other-puuid");
+
+    expect(mockGet.mock.calls.map(([url]) => url)).toEqual([
+      "https://pd.na.a.pvp.net/bloomline/v0/players/puuid-1234",
+      "https://pd.na.a.pvp.net/bloomline/v0/players/puuid-1234/matches/match-1",
+      "https://pd.na.a.pvp.net/bloomline/v0/config/valid-queues",
+      "https://pd.na.a.pvp.net/contracts/v1/players/puuid-1234/matches/match-1",
+      "https://pd.na.a.pvp.net/daily-ticket/v1/queue-config",
+      "https://pd.na.a.pvp.net/bloomline/v0/players/other-puuid",
+    ]);
+    expect(mockGet).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ Authorization: "Bearer access-token-xyz" }),
+    );
+  });
+
+  it("encodes the match id in the progression match endpoints", async () => {
+    const mockGet = vi.fn().mockResolvedValue({});
+    const api = new RiotApi({ get: mockGet } as unknown as HttpGateway, session);
+
+    await api.agentMasteryMatch("../x");
+    await api.contractsMatch("a/b");
+
+    expect(mockGet.mock.calls.map(([url]) => url)).toEqual([
+      "https://pd.na.a.pvp.net/bloomline/v0/players/puuid-1234/matches/..%2Fx",
+      "https://pd.na.a.pvp.net/contracts/v1/players/puuid-1234/matches/a%2Fb",
+    ]);
+  });
+
   it("calls pregame, coreGame, and party endpoints on glz", async () => {
     const mockGet = vi.fn().mockResolvedValue({});
     const mockGetOrNull = vi.fn().mockResolvedValue(null);

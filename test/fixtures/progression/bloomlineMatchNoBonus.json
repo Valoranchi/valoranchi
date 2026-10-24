@@ -1,0 +1,20 @@
+{
+  "MatchID": "ec8f25d1-075d-45e5-84ae-ef3891b73827",
+  "CreatedAt": "2026-10-23T21:23:03.005418611Z",
+  "ShortID": "d816f426-48ea-f052-117f-9697a155b319",
+  "PlayedCharacter": "eb93336a-449b-9c1b-0a54-a891f7921d69",
+  "Delta": {
+    "BonsaiID": "eb93336a-449b-9c1b-0a54-a891f7921d69",
+    "PointsBefore": 3952,
+    "PointsAfter": 5969,
+    "LongLevelBefore": 1,
+    "ShortLevelBefore": 1,
+    "ShortLevelAfter": 1,
+    "LongLevelAfter": 1,
+    "EarningsBreakdown": {
+      "SecondsPlayed": 1513,
+      "TimePlayedMP": 2017,
+      "TotalMPGranted": 2017
+    }
+  }
+}

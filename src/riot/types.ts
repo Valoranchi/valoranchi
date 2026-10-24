@@ -585,9 +585,95 @@ export interface RiotContractsResponse {
   };
 }
 
+export interface RiotContractsMatchXpModifier {
+  Value: number;
+  Name: string;
+  BaseOnly: boolean;
+}
+
+export interface RiotContractsMatchXpGrants {
+  GamePlayed: number;
+  GameWon: number;
+  RoundPlayed: number;
+  RoundWon: number;
+  Missions: unknown;
+  Modifier: {
+    Value: number;
+    BaseMultiplierValue: number;
+    Modifiers: RiotContractsMatchXpModifier[];
+  };
+  NumAFKRounds: number;
+}
+
+export interface RiotContractsMatchDoughGrants {
+  GamePlayed: number;
+  RoundPlayed: number;
+  RoundWon: number;
+}
+
+export interface RiotContractsMatchEntitlementReward {
+  ItemTypeID: string;
+  ItemID: string;
+  Amount: number;
+}
+
+export interface RiotContractsMatchRewardGrant {
+  EntitlementRewards: RiotContractsMatchEntitlementReward[] | null;
+  ItemRewards: unknown[] | null;
+  WalletRewards: unknown[] | null;
+  CounterRewards: unknown[] | null;
+  ProgressionRewards: unknown[] | null;
+}
+
+export interface RiotContractsMatchObjectiveDelta {
+  ID: string;
+  ProgressBefore: number;
+  ProgressAfter: number;
+}
+
+export interface RiotContractsMatchMissionDelta {
+  ID: string;
+  Objectives: Record<string, number>;
+  ObjectiveDeltas: Record<string, RiotContractsMatchObjectiveDelta>;
+}
+
+export interface RiotContractsMatchContractDelta {
+  ID: string;
+  TotalXPBefore: number;
+  TotalXPAfter: number;
+}
+
+export interface RiotContractsMatchResponse {
+  ID: string;
+  CreatedAt: string;
+  StartTime: number;
+  XPGrants: RiotContractsMatchXpGrants;
+  DoughGrants: RiotContractsMatchDoughGrants;
+  RewardGrants?: Record<string, RiotContractsMatchRewardGrant>;
+  MissionDeltas?: Record<string, RiotContractsMatchMissionDelta>;
+  ContractDeltas?: Record<string, RiotContractsMatchContractDelta>;
+  CouldProgressMissions: boolean;
+  MatchSummary: { RoundsTotal: number; RoundsWon: number };
+  XID: string;
+}
+
 export interface RiotDailyTicketMilestone {
   Progress: number;
   BonusApplied: boolean;
+}
+
+export interface RiotDailyTicketProcessedMatch {
+  ID: string;
+  CreatedAt: string;
+  DailyExpireTime: string;
+  PreviousDailyExpireTime?: string;
+  ProgressBefore: number;
+  ProgressAfter: number;
+  XP: number;
+  SoftCurrency: number;
+  WasPenalized: boolean;
+  BonusesApplied: number;
+  DailyBonusState: boolean[];
 }
 
 export interface RiotDailyTicketResponse {
@@ -597,7 +683,75 @@ export interface RiotDailyTicketResponse {
     BonusMilestonesPending: number;
     Milestones: RiotDailyTicketMilestone[];
   };
-  ProcessedMatches?: unknown[];
+  ProcessedMatches?: RiotDailyTicketProcessedMatch[];
+}
+
+export interface RiotDailyTicketQueueRule {
+  flatProgressPerMatch: number;
+  progressPerRoundWin: boolean;
+}
+
+export interface RiotDailyTicketQueueConfigResponse {
+  default: RiotDailyTicketQueueRule;
+  queueOverrides: Record<string, RiotDailyTicketQueueRule>;
+}
+
+export interface RiotAgentMasteryFlourish {
+  ShortLevel?: number;
+  LongLevel?: number;
+  Points?: number;
+  PointsVersion?: number;
+}
+
+export interface RiotAgentMasteryTrack {
+  TrackID: string;
+  TrackLevel?: number;
+}
+
+export interface RiotAgentMasteryItem {
+  BonsaiID: string;
+  Flourish: RiotAgentMasteryFlourish;
+  TrackProgressList: RiotAgentMasteryTrack[];
+}
+
+export interface RiotAgentMasteryResponse {
+  Subject: string;
+  Bonsais: RiotAgentMasteryItem[];
+  LongGroupVersion?: number;
+}
+
+export interface RiotAgentMasteryConfigResponse {
+  ProcessedQueues: string[];
+  PerformanceScoreQueues: string[];
+}
+
+export interface RiotAgentMasteryEarnings {
+  SecondsPlayed: number;
+  TimePlayedMP: number;
+  WinBonusPercent?: number;
+  WinBonusMP?: number;
+  PerformanceBonusPercent?: number;
+  PerformanceBonusMP?: number;
+  TotalMPGranted: number;
+}
+
+export interface RiotAgentMasteryDelta {
+  BonsaiID: string;
+  PointsBefore?: number;
+  PointsAfter: number;
+  ShortLevelBefore?: number;
+  LongLevelBefore?: number;
+  ShortLevelAfter: number;
+  LongLevelAfter: number;
+  EarningsBreakdown: RiotAgentMasteryEarnings;
+}
+
+export interface RiotAgentMasteryMatchResponse {
+  MatchID: string;
+  CreatedAt: string;
+  ShortID: string;
+  PlayedCharacter: string;
+  Delta: RiotAgentMasteryDelta;
 }
 
 export interface RiotPenaltyItem {

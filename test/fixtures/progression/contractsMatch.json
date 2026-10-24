@@ -1,0 +1,103 @@
+{
+  "ID": "ec8f25d1-075d-45e5-84ae-ef3891b73827",
+  "CreatedAt": "2026-10-23T21:23:03.008790042Z",
+  "StartTime": 1792788947611,
+  "XPGrants": {
+    "GamePlayed": 0,
+    "GameWon": 0,
+    "RoundPlayed": 1700,
+    "RoundWon": 800,
+    "Missions": null,
+    "Modifier": {
+      "Value": 1,
+      "BaseMultiplierValue": 1,
+      "Modifiers": [
+        {
+          "Value": 1,
+          "Name": "RESTRICTIONS_XP",
+          "BaseOnly": false
+        }
+      ]
+    },
+    "NumAFKRounds": 0
+  },
+  "DoughGrants": {
+    "GamePlayed": 0,
+    "RoundPlayed": 34,
+    "RoundWon": 16
+  },
+  "RewardGrants": {
+    "d18b7d8f-4971-2f89-5613-248257830e11": {
+      "EntitlementRewards": [
+        {
+          "ItemTypeID": "3f296c07-64c3-494c-923b-fe692a4fa1bd",
+          "ItemID": "b85c3ef6-4737-9a4f-cc60-5286bbd11731",
+          "Amount": 1
+        },
+        {
+          "ItemTypeID": "de7caa6b-adf7-4588-bbd1-143831e786c6",
+          "ItemID": "7230ce4b-41fb-ba89-123c-75bfe4e71a1f",
+          "Amount": 1
+        }
+      ],
+      "ItemRewards": null,
+      "WalletRewards": null,
+      "CounterRewards": null,
+      "ProgressionRewards": null
+    }
+  },
+  "MissionDeltas": {
+    "6427985a-4947-8709-3c0b-6aabecd4736b": {
+      "ID": "6427985a-4947-8709-3c0b-6aabecd4736b",
+      "Objectives": {
+        "2de44730-437a-bbe5-74c6-57b581b72bd2": 45
+      },
+      "ObjectiveDeltas": {
+        "2de44730-437a-bbe5-74c6-57b581b72bd2": {
+          "ID": "2de44730-437a-bbe5-74c6-57b581b72bd2",
+          "ProgressBefore": 46,
+          "ProgressAfter": 91
+        }
+      }
+    },
+    "dd3fb21b-4893-bb58-5ae7-eab1af8b2be6": {
+      "ID": "dd3fb21b-4893-bb58-5ae7-eab1af8b2be6",
+      "Objectives": {
+        "16af3bdf-c353-4c8c-a47c-b4eeac154eaf": 1
+      },
+      "ObjectiveDeltas": {
+        "16af3bdf-c353-4c8c-a47c-b4eeac154eaf": {
+          "ID": "16af3bdf-c353-4c8c-a47c-b4eeac154eaf",
+          "ProgressBefore": 1,
+          "ProgressAfter": 2
+        }
+      }
+    },
+    "dd568075-482c-f018-037d-458cb6279aab": {
+      "ID": "dd568075-482c-f018-037d-458cb6279aab",
+      "Objectives": {
+        "04ff6167-4976-eeb3-3e66-a78c57164351": 10
+      },
+      "ObjectiveDeltas": {
+        "04ff6167-4976-eeb3-3e66-a78c57164351": {
+          "ID": "04ff6167-4976-eeb3-3e66-a78c57164351",
+          "ProgressBefore": 13,
+          "ProgressAfter": 23
+        }
+      }
+    }
+  },
+  "ContractDeltas": {
+    "d18b7d8f-4971-2f89-5613-248257830e11": {
+      "ID": "d18b7d8f-4971-2f89-5613-248257830e11",
+      "TotalXPBefore": 10600,
+      "TotalXPAfter": 15100
+    }
+  },
+  "CouldProgressMissions": true,
+  "MatchSummary": {
+    "RoundsTotal": 17,
+    "RoundsWon": 4
+  },
+  "XID": "34750e53-e831-5983-abfb-a61df9a85db1"
+}

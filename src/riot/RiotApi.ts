@@ -3,14 +3,19 @@ import type { FileResponseCache } from "./ResponseCache.js";
 import type { Session } from "./Session.js";
 import type {
   RiotAccountXpResponse,
+  RiotAgentMasteryConfigResponse,
+  RiotAgentMasteryMatchResponse,
+  RiotAgentMasteryResponse,
   RiotClientConfigResponse,
   RiotCompetitiveUpdatesResponse,
   RiotContentResponse,
+  RiotContractsMatchResponse,
   RiotContractsResponse,
   RiotCoreGameLoadoutsResponse,
   RiotCoreGameMatchResponse,
   RiotCoreGamePlayerResponse,
   RiotCustomGameConfigsResponse,
+  RiotDailyTicketQueueConfigResponse,
   RiotDailyTicketResponse,
   RiotEntitlementsResponse,
   RiotFavoritesResponse,
@@ -340,6 +345,15 @@ export class RiotApi {
     return this.get(`${this.session.endpoints.pd}/contracts/v1/contracts/${puuid}`);
   }
 
+  async contractsMatch(
+    matchId: string,
+    puuid = this.session.puuid,
+  ): Promise<RiotContractsMatchResponse> {
+    return this.get(
+      `${this.session.endpoints.pd}/contracts/v1/players/${puuid}/matches/${encodeURIComponent(matchId)}`,
+    );
+  }
+
   async activateContract(contractId: string): Promise<unknown> {
     const url = `${this.session.endpoints.pd}/contracts/v1/contracts/${this.session.puuid}/special/${contractId}`;
     return this.gateway.post(url, undefined, this.session.headers());
@@ -347,6 +361,27 @@ export class RiotApi {
 
   async dailyTicket(puuid = this.session.puuid): Promise<RiotDailyTicketResponse> {
     return this.get(`${this.session.endpoints.pd}/daily-ticket/v1/${puuid}`);
+  }
+
+  async dailyTicketQueueConfig(): Promise<RiotDailyTicketQueueConfigResponse> {
+    return this.get(`${this.session.endpoints.pd}/daily-ticket/v1/queue-config`);
+  }
+
+  async agentMastery(puuid = this.session.puuid): Promise<RiotAgentMasteryResponse> {
+    return this.get(`${this.session.endpoints.pd}/bloomline/v0/players/${puuid}`);
+  }
+
+  async agentMasteryMatch(
+    matchId: string,
+    puuid = this.session.puuid,
+  ): Promise<RiotAgentMasteryMatchResponse> {
+    return this.get(
+      `${this.session.endpoints.pd}/bloomline/v0/players/${puuid}/matches/${encodeURIComponent(matchId)}`,
+    );
+  }
+
+  async agentMasteryConfig(): Promise<RiotAgentMasteryConfigResponse> {
+    return this.get(`${this.session.endpoints.pd}/bloomline/v0/config/valid-queues`);
   }
 
   async penalties(): Promise<RiotPenaltiesResponse> {

@@ -1,0 +1,65 @@
+{
+  "Version": 219,
+  "DailyRewards": {
+    "RemainingLifetimeSeconds": 46140,
+    "BonusMilestonesPending": 0,
+    "Milestones": [
+      {
+        "Progress": 4,
+        "BonusApplied": false
+      },
+      {
+        "Progress": 4,
+        "BonusApplied": false
+      },
+      {
+        "Progress": 4,
+        "BonusApplied": false
+      },
+      {
+        "Progress": 0,
+        "BonusApplied": false
+      }
+    ]
+  },
+  "ProcessedMatches": [
+    {
+      "ID": "81999bc7-3c2c-41d3-b417-55228c5e9278",
+      "CreatedAt": "2026-10-20T19:33:02.033992833Z",
+      "DailyExpireTime": "2026-10-21T11:00:00Z",
+      "ProgressBefore": 0,
+      "ProgressAfter": 13,
+      "XP": 6000,
+      "SoftCurrency": 900,
+      "WasPenalized": false,
+      "BonusesApplied": 3,
+      "DailyBonusState": [true, true, true, false]
+    },
+    {
+      "ID": "ec8f25d1-075d-45e5-84ae-ef3891b73827",
+      "CreatedAt": "2026-10-23T21:23:02.972735852Z",
+      "DailyExpireTime": "2026-10-24T11:00:00Z",
+      "PreviousDailyExpireTime": "2026-10-21T11:00:00Z",
+      "ProgressBefore": 0,
+      "ProgressAfter": 4,
+      "XP": 2000,
+      "SoftCurrency": 300,
+      "WasPenalized": false,
+      "BonusesApplied": 1,
+      "DailyBonusState": [true, false, false, false]
+    },
+    {
+      "ID": "64750dc4-6543-4cff-80b2-b9596426777a",
+      "CreatedAt": "2026-10-24T21:57:32.039086171Z",
+      "DailyExpireTime": "2026-10-25T11:00:00Z",
+      "PreviousDailyExpireTime": "2026-10-24T11:00:00Z",
+      "ProgressBefore": 0,
+      "ProgressAfter": 12,
+      "XP": 3000,
+      "SoftCurrency": 450,
+      "WasPenalized": false,
+      "BonusesApplied": 0,
+      "DailyBonusState": [false, false, false, false]
+    }
+  ]
+}

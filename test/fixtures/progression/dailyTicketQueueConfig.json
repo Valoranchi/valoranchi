@@ -1,0 +1,128 @@
+{
+  "default": {
+    "flatProgressPerMatch": 0,
+    "progressPerRoundWin": false
+  },
+  "queueOverrides": {
+    "abilitydraftarena": {
+      "flatProgressPerMatch": 4,
+      "progressPerRoundWin": false
+    },
+    "competitive": {
+      "flatProgressPerMatch": 0,
+      "progressPerRoundWin": true
+    },
+    "console_abilitydraftarena": {
+      "flatProgressPerMatch": 4,
+      "progressPerRoundWin": false
+    },
+    "console_competitive": {
+      "flatProgressPerMatch": 0,
+      "progressPerRoundWin": true
+    },
+    "console_dodgeball": {
+      "flatProgressPerMatch": 3,
+      "progressPerRoundWin": false
+    },
+    "console_fortcollins": {
+      "flatProgressPerMatch": 2,
+      "progressPerRoundWin": false
+    },
+    "console_hurm": {
+      "flatProgressPerMatch": 2,
+      "progressPerRoundWin": false
+    },
+    "console_newmap": {
+      "flatProgressPerMatch": 0,
+      "progressPerRoundWin": true
+    },
+    "console_skirmish2v2": {
+      "flatProgressPerMatch": 2,
+      "progressPerRoundWin": false
+    },
+    "console_skirmishascension1v1": {
+      "flatProgressPerMatch": 2,
+      "progressPerRoundWin": false
+    },
+    "console_skirmishascension2v2": {
+      "flatProgressPerMatch": 2,
+      "progressPerRoundWin": false
+    },
+    "console_snowball": {
+      "flatProgressPerMatch": 2,
+      "progressPerRoundWin": false
+    },
+    "console_spikerush": {
+      "flatProgressPerMatch": 2,
+      "progressPerRoundWin": false
+    },
+    "console_swiftplay": {
+      "flatProgressPerMatch": 0,
+      "progressPerRoundWin": true
+    },
+    "console_unrated": {
+      "flatProgressPerMatch": 0,
+      "progressPerRoundWin": true
+    },
+    "console_valaram": {
+      "flatProgressPerMatch": 3,
+      "progressPerRoundWin": false
+    },
+    "dodgeball": {
+      "flatProgressPerMatch": 3,
+      "progressPerRoundWin": false
+    },
+    "fortcollins": {
+      "flatProgressPerMatch": 2,
+      "progressPerRoundWin": false
+    },
+    "ggteam": {
+      "flatProgressPerMatch": 2,
+      "progressPerRoundWin": false
+    },
+    "hurm": {
+      "flatProgressPerMatch": 2,
+      "progressPerRoundWin": false
+    },
+    "newmap": {
+      "flatProgressPerMatch": 0,
+      "progressPerRoundWin": true
+    },
+    "premier": {
+      "flatProgressPerMatch": 0,
+      "progressPerRoundWin": true
+    },
+    "skirmish2v2": {
+      "flatProgressPerMatch": 2,
+      "progressPerRoundWin": false
+    },
+    "skirmishascension1v1": {
+      "flatProgressPerMatch": 2,
+      "progressPerRoundWin": false
+    },
+    "skirmishascension2v2": {
+      "flatProgressPerMatch": 2,
+      "progressPerRoundWin": false
+    },
+    "snowball": {
+      "flatProgressPerMatch": 2,
+      "progressPerRoundWin": false
+    },
+    "spikerush": {
+      "flatProgressPerMatch": 2,
+      "progressPerRoundWin": false
+    },
+    "swiftplay": {
+      "flatProgressPerMatch": 0,
+      "progressPerRoundWin": true
+    },
+    "unrated": {
+      "flatProgressPerMatch": 0,
+      "progressPerRoundWin": true
+    },
+    "valaram": {
+      "flatProgressPerMatch": 3,
+      "progressPerRoundWin": false
+    }
+  }
+}
