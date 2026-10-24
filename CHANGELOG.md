@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `RiotApi.dailyTicket()` reads the daily ticket, the four daily milestones that replaced daily missions in the contracts response.
+
 ### Fixed
 
 - The Windows executable reports its real version; it printed `0.0.0` because there is no `package.json` to read inside it.
