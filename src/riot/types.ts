@@ -585,6 +585,21 @@ export interface RiotContractsResponse {
   };
 }
 
+export interface RiotDailyTicketMilestone {
+  Progress: number;
+  BonusApplied: boolean;
+}
+
+export interface RiotDailyTicketResponse {
+  Version?: number;
+  DailyRewards: {
+    RemainingLifetimeSeconds: number;
+    BonusMilestonesPending: number;
+    Milestones: RiotDailyTicketMilestone[];
+  };
+  ProcessedMatches?: unknown[];
+}
+
 export interface RiotPenaltyItem {
   ID: string;
   Expiry: string;

@@ -11,6 +11,7 @@ import type {
   RiotCoreGameMatchResponse,
   RiotCoreGamePlayerResponse,
   RiotCustomGameConfigsResponse,
+  RiotDailyTicketResponse,
   RiotEntitlementsResponse,
   RiotFavoritesResponse,
   RiotLeaderboardResponse,
@@ -342,6 +343,10 @@ export class RiotApi {
   async activateContract(contractId: string): Promise<unknown> {
     const url = `${this.session.endpoints.pd}/contracts/v1/contracts/${this.session.puuid}/special/${contractId}`;
     return this.gateway.post(url, undefined, this.session.headers());
+  }
+
+  async dailyTicket(puuid = this.session.puuid): Promise<RiotDailyTicketResponse> {
+    return this.get(`${this.session.endpoints.pd}/daily-ticket/v1/${puuid}`);
   }
 
   async penalties(): Promise<RiotPenaltiesResponse> {
