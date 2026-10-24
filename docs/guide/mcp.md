@@ -101,6 +101,8 @@ The MCP server exposes inspection tools across all core domains:
 | `account_xp`              | Account   | Get account level and XP progression                             |
 | `account_contracts`       | Account   | Get agent and battlepass contracts progress                      |
 | `account_missions`        | Account   | Get daily and weekly mission progression                         |
+| `account_mastery`         | Account   | Get mastery level and points of every agent                      |
+| `account_dailies`         | Account   | Get the four daily checkpoints and what each queue adds          |
 | `account_penalties`       | Account   | Check active penalties and restrictions                          |
 | `account_favourites`      | Account   | Get favorited weapon skins                                       |
 | `store_current`           | Store     | Get daily rotation, featured bundles, and night market           |
@@ -109,6 +111,7 @@ The MCP server exposes inspection tools across all core domains:
 | `store_seen`              | Store     | Check when a skin was last seen in the store                     |
 | `matches_list`            | Matches   | Get recent match summaries                                       |
 | `matches_get`             | Matches   | Get detailed match scoreboard and round history                  |
+| `matches_progress`        | Matches   | Get the mastery, XP and Kingdom Credits a match gave             |
 | `matches_mmr`             | Matches   | Get current competitive rating and rank                          |
 | `matches_rankHistory`     | Matches   | Get competitive rank updates and rating changes                  |
 | `matches_trend`           | Matches   | Evaluate competitive rating trend and pace                       |

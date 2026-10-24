@@ -1,6 +1,6 @@
 # Account
 
-The `account` namespace provides access to the signed-in player identity, owned weapon skins, loadouts, wallet currencies, XP progression, agent contracts, favourites, client config, and game settings.
+The `account` namespace provides access to the signed-in player identity, owned weapon skins, loadouts, wallet currencies, XP progression, agent contracts, agent mastery, daily checkpoints, favourites, client config, and game settings.
 
 ## Methods
 
@@ -397,6 +397,90 @@ riotclient penalties
 
 ```json
 []
+```
+
+### agentMastery
+
+Lists the mastery of every agent, ordered from the agent with the most points to the one with the fewest.
+Agents you never played come with every level and their points at zero.
+`longLevel` and `shortLevel` are the two level counters Riot reports for each agent. Riot does not say what each one measures, so the names are kept as they come.
+
+```ts
+const mastery = await client.account.agentMastery();
+console.log(mastery[0].agentName, mastery[0].points);
+```
+
+```bash
+riotclient mastery
+```
+
+```json
+[
+  {
+    "agentId": "eb93336a-449b-9c1b-0a54-a891f7921d69",
+    "agentName": "Phoenix",
+    "agentIcon": "https://media.valorant-api.com/agents/phoenix.png",
+    "longLevel": 1,
+    "shortLevel": 1,
+    "points": 5969,
+    "tracks": [{ "trackId": "2d0a2cda-4c57-a899-88ed-0d9172d61358", "level": 1 }]
+  },
+  {
+    "agentId": "add6443a-41bd-e414-f6ad-e58d267f4e95",
+    "agentName": "Jett",
+    "agentIcon": "https://media.valorant-api.com/agents/jett.png",
+    "longLevel": 0,
+    "shortLevel": 0,
+    "points": 0,
+    "tracks": [{ "trackId": "9f32aa28-42cc-acf1-4292-c3bb9e7d3859", "level": 0 }]
+  }
+]
+```
+
+### dailyCheckpoints
+
+Reads the four daily checkpoints that replaced the daily missions.
+Each checkpoint fills with four charges, so a full ticket adds up to sixteen. `expiresAt` is when the ticket runs out.
+`queues` says what each queue adds: `perRoundWon` means one charge for every round you win, and `perMatch` is a fixed amount for the whole match. `default` applies to any queue that is not listed.
+
+```ts
+const daily = await client.account.dailyCheckpoints();
+const charges = daily.checkpoints.reduce((sum, checkpoint) => sum + checkpoint.progress, 0);
+console.log(`${charges} charges, expires ${daily.expiresAt}`);
+```
+
+```bash
+riotclient dailies
+```
+
+```json
+{
+  "checkpoints": [
+    { "progress": 4, "target": 4, "complete": true },
+    { "progress": 4, "target": 4, "complete": true },
+    { "progress": 4, "target": 4, "complete": true },
+    { "progress": 0, "target": 4, "complete": false }
+  ],
+  "expiresAt": "2026-10-25T10:49:00.000Z",
+  "queues": {
+    "competitive": { "perRoundWon": true, "perMatch": 0 },
+    "spikerush": { "perRoundWon": false, "perMatch": 2 }
+  },
+  "default": { "perRoundWon": false, "perMatch": 0 }
+}
+```
+
+### matchProgress
+
+Reports what a single match gave: the agent mastery points, the XP and Kingdom Credits from contracts, and what it added to the daily checkpoints.
+It is documented with the other match methods in the Matches guide.
+
+```ts
+const progress = await client.account.matchProgress("ec8f25d1-075d-45e5-84ae-ef3891b73827");
+```
+
+```bash
+riotclient match-progress ec8f25d1-075d-45e5-84ae-ef3891b73827
 ```
 
 ### favourites

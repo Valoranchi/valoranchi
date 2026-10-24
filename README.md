@@ -93,6 +93,9 @@ const xp = await client.account.xp();
 const contracts = await client.account.contracts();
 const missions = await client.account.missions();
 const penalties = await client.account.penalties();
+const mastery = await client.account.agentMastery();
+const dailies = await client.account.dailyCheckpoints();
+const progress = await client.account.matchProgress(matchId);
 const favourites = await client.account.favourites();
 const session = await client.account.session();
 const config = await client.account.config();
@@ -230,6 +233,8 @@ riotclient xp
 riotclient contracts
 riotclient missions
 riotclient penalties
+riotclient mastery
+riotclient dailies
 riotclient favourites
 riotclient session
 riotclient play-session
@@ -244,6 +249,7 @@ riotclient offers
 riotclient order <order-id>
 riotclient matches --count 5
 riotclient match <match-id>
+riotclient match-progress <match-id>
 riotclient matches-for <puuid>
 riotclient mmr --pretty
 riotclient mmr-for <puuid>

@@ -78,6 +78,71 @@ riotclient match c9284241-1234-5678-9abc-def012345678
 }
 ```
 
+### matchProgress
+
+Reports what a finished match gave you: the mastery points of the agent you played, the XP and Kingdom Credits from contracts with the rewards that unlocked, and the charges it added to the daily checkpoints.
+Each part is `null` when Riot has nothing for it. Riot answers "not found" for old matches, so those come back with `agentMastery` and `contracts` set to `null`, and `daily` is `null` when the match is not in the history of the daily ticket.
+The method lives in `client.account` and takes the match ID in UUID format. Anything else is rejected with a `VALIDATION` error before a request is made.
+Over HTTP it is `GET /api/matches/progress?matchId=<id>`, and the MCP tool is `matches_progress`.
+
+Mastery splits `earned` into `timePlayed`, `winBonus` and `performanceBonus`. `pointsBefore` and the levels before are `null` the first time you play an agent. The XP and Kingdom Credits of the daily checkpoints are reported apart in `daily` and are not part of `contracts.xp.total`.
+
+```ts
+const progress = await client.account.matchProgress("ec8f25d1-075d-45e5-84ae-ef3891b73827");
+console.log(progress.agentMastery?.earned, progress.daily?.xp);
+```
+
+```bash
+riotclient match-progress ec8f25d1-075d-45e5-84ae-ef3891b73827
+```
+
+```json
+{
+  "matchId": "ec8f25d1-075d-45e5-84ae-ef3891b73827",
+  "agentMastery": {
+    "agentId": "eb93336a-449b-9c1b-0a54-a891f7921d69",
+    "agentName": "Phoenix",
+    "agentIcon": "https://media.valorant-api.com/agents/phoenix.png",
+    "pointsBefore": 3952,
+    "pointsAfter": 5969,
+    "earned": 2017,
+    "breakdown": {
+      "secondsPlayed": 1513,
+      "timePlayed": 2017,
+      "winBonus": 0,
+      "performanceBonus": 0
+    },
+    "longLevelBefore": 1,
+    "longLevelAfter": 1,
+    "shortLevelBefore": 1,
+    "shortLevelAfter": 1
+  },
+  "contracts": {
+    "xp": { "roundsPlayed": 1700, "roundsWon": 800, "gamePlayed": 0, "gameWon": 0, "total": 2500 },
+    "kingdomCredits": { "roundsPlayed": 34, "roundsWon": 16, "gamePlayed": 0, "total": 50 },
+    "contractXp": [
+      {
+        "contractId": "d18b7d8f-4971-2f89-5613-248257830e11",
+        "name": "Battlepass",
+        "before": 10600,
+        "after": 15100
+      }
+    ],
+    "rewards": [
+      {
+        "contractId": "d18b7d8f-4971-2f89-5613-248257830e11",
+        "type": "playerCard",
+        "uuid": "b85c3ef6-4737-9a4f-cc60-5286bbd11731",
+        "name": "Battlepass Card",
+        "icon": "https://media.valorant-api.com/playercards/b85c3ef6-4737-9a4f-cc60-5286bbd11731/smallart.png",
+        "amount": 1
+      }
+    ]
+  },
+  "daily": { "progressBefore": 0, "progressAfter": 4, "xp": 2000, "kingdomCredits": 300 }
+}
+```
+
 ### mmr
 
 Fetches competitive MMR details, including current rank tier, ranking rating (RR), peak rank, and last match rating delta.
