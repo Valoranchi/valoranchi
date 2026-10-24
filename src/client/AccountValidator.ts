@@ -3,7 +3,18 @@ import { ValidationError } from "../errors.js";
 import type { OwnedItems } from "../model/index.js";
 import type { RiotContractsResponse, RiotFavoritesResponse } from "../riot/types.js";
 
+const MATCH_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export class AccountValidator {
+  static validateMatchId(matchId: string): string {
+    if (!MATCH_ID_PATTERN.test(matchId)) {
+      throw new ValidationError("invalid-match-id", "Expected a match id in uuid format", {
+        matchId,
+      });
+    }
+    return matchId.toLowerCase();
+  }
+
   static validateActivateContract(
     rawContracts: RiotContractsResponse,
     ownedItems: OwnedItems,

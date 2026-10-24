@@ -4,16 +4,19 @@ import { GameSessionBuilder } from "../collection/GameSessionBuilder.js";
 import { LoadoutBuilder } from "../collection/LoadoutBuilder.js";
 import { LoadoutWriter } from "../collection/LoadoutWriter.js";
 import { PlayerSettingsBuilder } from "../collection/PlayerSettingsBuilder.js";
-import { ValidationError } from "../errors.js";
+import { RiotApiError, ValidationError } from "../errors.js";
 import type {
   AccountXp,
+  AgentMastery,
   ClientInfo,
   CollectionValue,
   ContractProgress,
+  DailyCheckpoints,
   Favourite,
   GameSession,
   Loadout,
   LoadoutDiff,
+  MatchProgress,
   Mission,
   OwnedItems,
   Penalty,
@@ -33,6 +36,15 @@ import { AccountValidator } from "./AccountValidator.js";
 import type { AccountApi } from "./api.js";
 import type { ClientContext } from "./ClientContext.js";
 import { LoadoutValidator, type LoadoutChange, type LoadoutGunChange } from "./LoadoutValidator.js";
+
+async function nullWhenNotFound<T>(request: Promise<T>): Promise<T | null> {
+  try {
+    return await request;
+  } catch (error) {
+    if (error instanceof RiotApiError && error.status === 404) return null;
+    throw error;
+  }
+}
 
 export class AccountService implements AccountApi {
   constructor(private readonly context: ClientContext) {}
@@ -267,6 +279,42 @@ export class AccountService implements AccountApi {
     const session = await this.context.sessions.session();
     const raw = await this.context.api(session).penalties();
     return AccountProgressionBuilder.buildPenalties(raw);
+  }
+
+  async agentMastery(): Promise<AgentMastery[]> {
+    const session = await this.context.sessions.session();
+    const [raw, catalogue] = await Promise.all([
+      this.context.api(session).agentMastery(),
+      this.context.catalogue(),
+    ]);
+    return AccountProgressionBuilder.buildAgentMastery(raw, catalogue);
+  }
+
+  async matchProgress(matchId: string): Promise<MatchProgress> {
+    const id = AccountValidator.validateMatchId(matchId);
+    const session = await this.context.sessions.session();
+    const api = this.context.api(session);
+    const [mastery, contracts, dailyTicket, catalogue] = await Promise.all([
+      nullWhenNotFound(api.agentMasteryMatch(id)),
+      nullWhenNotFound(api.contractsMatch(id)),
+      api.dailyTicket(),
+      this.context.catalogue(),
+    ]);
+    return AccountProgressionBuilder.buildMatchProgress(
+      id,
+      { mastery, contracts, dailyTicket },
+      catalogue,
+    );
+  }
+
+  async dailyCheckpoints(): Promise<DailyCheckpoints> {
+    const session = await this.context.sessions.session();
+    const api = this.context.api(session);
+    const [ticket, queueConfig] = await Promise.all([
+      api.dailyTicket(),
+      api.dailyTicketQueueConfig(),
+    ]);
+    return AccountProgressionBuilder.buildDailyCheckpoints(ticket, queueConfig);
   }
 
   async favourites(): Promise<Favourite[]> {

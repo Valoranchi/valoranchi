@@ -1,5 +1,6 @@
 import type {
   AccountXp,
+  AgentMastery,
   BlockedPlayer,
   CatalogSkin,
   ClientInfo,
@@ -9,6 +10,7 @@ import type {
   Conversation,
   CustomGameConfigs,
   CustomGameSettings,
+  DailyCheckpoints,
   Favourite,
   Friend,
   FriendRequest,
@@ -18,6 +20,7 @@ import type {
   Loadout,
   LoadoutDiff,
   Match,
+  MatchProgress,
   MatchSummary,
   MatchSyncResult,
   Message,
@@ -76,6 +79,9 @@ export interface AccountApi {
   activateContract(uuid: string): Promise<ContractProgress[]>;
   validateActivateContract(uuid: string): Promise<{ contractId: string }>;
   penalties(): Promise<Penalty[]>;
+  agentMastery(): Promise<AgentMastery[]>;
+  matchProgress(matchId: string): Promise<MatchProgress>;
+  dailyCheckpoints(): Promise<DailyCheckpoints>;
   favourites(): Promise<Favourite[]>;
   addFavourite(skin: string): Promise<Favourite[]>;
   validateAddFavourite(skin: string): Promise<{ ItemID: string }>;
