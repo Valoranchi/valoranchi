@@ -38,6 +38,8 @@ riotclient matches --count 5 --queue competitive
 Retrieves complete post-match statistics for a match ID, including player scoreboards, rounds, kills, and team scores.
 Player agents, ranks, weapons, and damage breakdowns are fully resolved.
 
+Matches that Riot has scored give each player a `performance`: a `score` from 0 to 500 where 250 is the average, and a `grade` that is `pass`, `merit` from 330 or `distinction` from 420. The score splits into `combat` and `support`, each with a trend from `double_down` to `double_up` and a breakdown by factor (`damage`, `killImpact`, `deathImpact` and `trades` for combat; `assists`, `plants`, `defuses` and `utilityUsage` for support). Older matches have no score and `performance` is `null`. `mvp` is the puuid of the MVP of the match, and each team carries its own.
+
 ```ts
 const match = await client.matches.get("c9284241-1234-5678-9abc-def012345678");
 console.log(match.teams, match.players.length);
@@ -68,9 +70,22 @@ riotclient match c9284241-1234-5678-9abc-def012345678
     "name": "Episode 9 Act 2"
   },
   "teams": [
-    { "id": "Blue", "won": true, "roundsWon": 13, "roundsPlayed": 22 },
-    { "id": "Red", "won": false, "roundsWon": 9, "roundsPlayed": 22 }
+    {
+      "id": "Blue",
+      "won": true,
+      "roundsWon": 13,
+      "roundsPlayed": 22,
+      "mvp": "4a7b9c1d-1234-5678-9abc-def012345678"
+    },
+    {
+      "id": "Red",
+      "won": false,
+      "roundsWon": 9,
+      "roundsPlayed": 22,
+      "mvp": "8d2e6f10-1234-5678-9abc-def012345678"
+    }
   ],
+  "mvp": "4a7b9c1d-1234-5678-9abc-def012345678",
   "players": [],
   "rounds": [],
   "self": { "team": "Blue", "won": true },
