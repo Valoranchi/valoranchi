@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `client.account.agentMastery()`, `riotclient mastery` and `GET /api/account/mastery`: the mastery level and points of every agent, most points first, with the agents never played at zero. The raw layer gets `RiotApi.agentMastery()` and `RiotApi.agentMasteryConfig()`.
 - `client.account.matchProgress(matchId)`, `riotclient match-progress <id>` and `GET /api/matches/progress`: what a match gave, which is the mastery points with their win and performance bonuses, the XP and Kingdom Credits from contracts with the rewards that unlocked, and the charges it added to the daily checkpoints. Mastery and contracts come back as `null` for a match Riot no longer has. The raw layer gets `RiotApi.agentMasteryMatch()` and `RiotApi.contractsMatch()`.
 - `client.account.dailyCheckpoints()`, `riotclient dailies` and `GET /api/account/dailies`: the four daily checkpoints against a target of four, when they expire, and what each queue adds. The raw layer gets `RiotApi.dailyTicketQueueConfig()`, and `RiotDailyTicketResponse` now types `ProcessedMatches`.
+- `performance` on every `MatchPlayer`, the score Riot gives each player of a match: 0 to 500 with the average at 250, its combat and support halves with their trends and factor breakdowns, and a pass, merit or distinction grade. It is `null` for matches that have none. `Match` and each of its teams also get an `mvp`, the puuid of the MVP, and the raw layer types the new `match-details` fields.
 
 ## [0.8.0] - 2026-10-24
 
