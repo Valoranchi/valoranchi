@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-10-25
+
 ### Added
 
 - `performance` on every `MatchPlayer`, the score Riot gives each player of a match: 0 to 500 with the average at 250, its combat and support halves with their trends and factor breakdowns, and a pass, merit or distinction grade. It is `null` for matches that have none. `Match` and each of its teams also get an `mvp`, the puuid of the MVP, and the raw layer types the new `match-details` fields.
