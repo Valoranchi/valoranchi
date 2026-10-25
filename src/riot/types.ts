@@ -248,6 +248,62 @@ export interface RiotPlayerStats {
   assists: number;
   playtimeMillis?: number;
   abilityCasts?: RiotPlayerAbilityCasts;
+  TempValueA?: number; // total damage
+  TempValueB?: number;
+  TempValueC?: number;
+  TempValueD?: number;
+  TempValueE?: number;
+}
+
+export interface RiotCombatBreakdown {
+  damage?: string;
+  killImpact?: string;
+  deathImpact?: string;
+  trades?: string;
+}
+
+export interface RiotSupportBreakdown {
+  assists?: string;
+  plants?: string;
+  defuses?: string;
+  utilityUsage?: string;
+}
+
+export interface RiotPerformanceRatings {
+  TempValueO?: string; // grade
+  TempValueM?: string; // combat trend
+  TempValueN?: string; // support trend
+  TempValueP?: RiotCombatBreakdown;
+  TempValueQ?: RiotSupportBreakdown;
+}
+
+export interface RiotGradeCutoffs {
+  distinction?: number;
+  merit?: number;
+  pass?: number;
+}
+
+export interface RiotPerformanceScale {
+  TempValueV?: number; // minimum
+  TempValueR?: number; // average
+  TempValueU?: number; // maximum
+  TempValueS?: RiotGradeCutoffs;
+}
+
+export interface RiotPlayerScores {
+  TempValueF?: number; // overall score
+  TempValueG?: number; // combat sub score
+  TempValueH?: number; // support sub score
+  TempValueA?: number; // damage per round
+  TempValueB?: number;
+  TempValueC?: number;
+  TempValueD?: number;
+  TempValueE?: number;
+  TempValueI?: number;
+  TempValueJ?: number;
+  TempValueK?: number;
+  TempValueL?: RiotPerformanceRatings;
+  TempValueT?: RiotPerformanceScale;
 }
 
 export interface RiotMatchPlayer {
@@ -258,6 +314,7 @@ export interface RiotMatchPlayer {
   partyId?: string;
   characterId: string;
   stats?: RiotPlayerStats | null;
+  scores?: RiotPlayerScores | null;
   competitiveTier?: number;
   playerCard?: string;
   playerTitle?: string;
@@ -270,6 +327,8 @@ export interface RiotMatchTeam {
   roundsPlayed: number;
   roundsWon: number;
   numPoints?: number;
+  mvp?: string;
+  tempR?: number; // placement of the team, apparently
 }
 
 export interface RiotFinishingDamage {
@@ -321,6 +380,8 @@ export interface RiotMatchDetailsResponse {
   players: RiotMatchPlayer[];
   teams: RiotMatchTeam[] | null;
   roundResults?: RiotRoundResult[] | null;
+  matchMvp?: string;
+  hasTempValues?: boolean;
 }
 
 export interface RiotSeasonalInfo {
