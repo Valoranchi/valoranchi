@@ -27,9 +27,10 @@ function makeMatch(
     mode: "Bomb",
     season: { uuid: "season-1", name: "Act 1" },
     teams: [
-      { id: "Blue", won: Boolean(won), roundsWon: allyRounds, roundsPlayed },
-      { id: "Red", won: result === "loss", roundsWon: enemyRounds, roundsPlayed },
+      { id: "Blue", won: Boolean(won), roundsWon: allyRounds, roundsPlayed, mvp: null },
+      { id: "Red", won: result === "loss", roundsWon: enemyRounds, roundsPlayed, mvp: null },
     ],
+    mvp: null,
     players: [
       {
         puuid: "self-puuid",
@@ -57,6 +58,7 @@ function makeMatch(
           defuses: 1,
           abilityCasts: { c: 1, q: 2, e: 4, x: 1 },
         },
+        performance: null,
       },
     ],
     rounds: [],

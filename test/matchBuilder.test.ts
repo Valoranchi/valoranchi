@@ -32,8 +32,8 @@ describe("MatchBuilder", () => {
     expect(match.map.name).toBe("Ascent");
     expect(match.queue).toBe("competitive");
     expect(match.teams).toEqual([
-      { id: "Blue", won: true, roundsPlayed: 20, roundsWon: 13 },
-      { id: "Red", won: false, roundsPlayed: 20, roundsWon: 7 },
+      { id: "Blue", won: true, roundsPlayed: 20, roundsWon: 13, mvp: null },
+      { id: "Red", won: false, roundsPlayed: 20, roundsWon: 7, mvp: null },
     ]);
 
     expect(match.players).toHaveLength(2);

@@ -23,9 +23,10 @@ const sampleMatch: Match = {
   mode: "Bomb",
   season: { uuid: "season-1", name: "EP 9 ACT 2" },
   teams: [
-    { id: "Blue", won: true, roundsWon: 13, roundsPlayed: 20 },
-    { id: "Red", won: false, roundsWon: 7, roundsPlayed: 20 },
+    { id: "Blue", won: true, roundsWon: 13, roundsPlayed: 20, mvp: null },
+    { id: "Red", won: false, roundsWon: 7, roundsPlayed: 20, mvp: null },
   ],
+  mvp: null,
   players: [
     {
       puuid: "self-puuid",
@@ -53,6 +54,7 @@ const sampleMatch: Match = {
         defuses: 1,
         abilityCasts: { c: 2, q: 4, e: 10, x: 2 },
       },
+      performance: null,
     },
     {
       puuid: "enemy-puuid",
@@ -80,6 +82,7 @@ const sampleMatch: Match = {
         defuses: 0,
         abilityCasts: { c: 5, q: 3, e: 12, x: 1 },
       },
+      performance: null,
     },
   ],
   rounds: [],
@@ -119,8 +122,8 @@ describe("MatchRecap builder", () => {
     const defeatMatch: Match = {
       ...sampleMatch,
       teams: [
-        { id: "Blue", won: false, roundsWon: 8, roundsPlayed: 21 },
-        { id: "Red", won: true, roundsWon: 13, roundsPlayed: 21 },
+        { id: "Blue", won: false, roundsWon: 8, roundsPlayed: 21, mvp: null },
+        { id: "Red", won: true, roundsWon: 13, roundsPlayed: 21, mvp: null },
       ],
       self: { team: "Blue", won: false },
     };

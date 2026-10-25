@@ -295,6 +295,31 @@ export type MatchSummary = {
   map: { uuid: string | null; name: string | null; path: string };
 };
 
+export type PerformanceTrend = "double_up" | "up" | "neutral" | "down" | "double_down";
+
+export type PerformanceGrade = "pass" | "merit" | "distinction";
+
+export type PlayerPerformance = {
+  score: number; // 0 to 500
+  combat: number;
+  support: number;
+  grade: PerformanceGrade;
+  combatTrend: PerformanceTrend;
+  supportTrend: PerformanceTrend;
+  combatBreakdown: {
+    damage: PerformanceTrend;
+    killImpact: PerformanceTrend;
+    deathImpact: PerformanceTrend;
+    trades: PerformanceTrend;
+  };
+  supportBreakdown: {
+    assists: PerformanceTrend;
+    plants: PerformanceTrend;
+    defuses: PerformanceTrend;
+    utilityUsage: PerformanceTrend;
+  };
+};
+
 export type MatchPlayer = {
   puuid: string;
   gameName: string;
@@ -321,6 +346,7 @@ export type MatchPlayer = {
     defuses: number;
     abilityCasts: { c: number; q: number; e: number; x: number };
   } | null;
+  performance: PlayerPerformance | null;
 };
 
 export type MatchRound = {
@@ -356,7 +382,14 @@ export type Match = {
   map: { uuid: string | null; name: string | null; path: string };
   mode: string;
   season: { uuid: string; name: string | null };
-  teams: Array<{ id: string; won: boolean; roundsWon: number; roundsPlayed: number }>;
+  teams: Array<{
+    id: string;
+    won: boolean;
+    roundsWon: number;
+    roundsPlayed: number;
+    mvp: string | null;
+  }>;
+  mvp: string | null;
   players: MatchPlayer[];
   rounds: MatchRound[];
   self: { team: string; won: boolean | null } | null;
