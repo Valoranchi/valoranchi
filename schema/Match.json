@@ -77,11 +77,17 @@
               },
               "roundsPlayed": {
                 "type": "number"
+              },
+              "mvp": {
+                "type": ["string", "null"]
               }
             },
-            "required": ["id", "won", "roundsWon", "roundsPlayed"],
+            "required": ["id", "won", "roundsWon", "roundsPlayed", "mvp"],
             "additionalProperties": false
           }
+        },
+        "mvp": {
+          "type": ["string", "null"]
         },
         "players": {
           "type": "array",
@@ -132,6 +138,7 @@
         "mode",
         "season",
         "teams",
+        "mvp",
         "players",
         "rounds",
         "self",
@@ -275,6 +282,16 @@
               "type": "null"
             }
           ]
+        },
+        "performance": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/PlayerPerformance"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -288,7 +305,8 @@
         "accountLevel",
         "card",
         "title",
-        "stats"
+        "stats",
+        "performance"
       ],
       "additionalProperties": false
     },
@@ -380,6 +398,86 @@
       },
       "required": ["uuid", "name", "text"],
       "additionalProperties": false
+    },
+    "PlayerPerformance": {
+      "type": "object",
+      "properties": {
+        "score": {
+          "type": "number"
+        },
+        "combat": {
+          "type": "number"
+        },
+        "support": {
+          "type": "number"
+        },
+        "grade": {
+          "$ref": "#/definitions/PerformanceGrade"
+        },
+        "combatTrend": {
+          "$ref": "#/definitions/PerformanceTrend"
+        },
+        "supportTrend": {
+          "$ref": "#/definitions/PerformanceTrend"
+        },
+        "combatBreakdown": {
+          "type": "object",
+          "properties": {
+            "damage": {
+              "$ref": "#/definitions/PerformanceTrend"
+            },
+            "killImpact": {
+              "$ref": "#/definitions/PerformanceTrend"
+            },
+            "deathImpact": {
+              "$ref": "#/definitions/PerformanceTrend"
+            },
+            "trades": {
+              "$ref": "#/definitions/PerformanceTrend"
+            }
+          },
+          "required": ["damage", "killImpact", "deathImpact", "trades"],
+          "additionalProperties": false
+        },
+        "supportBreakdown": {
+          "type": "object",
+          "properties": {
+            "assists": {
+              "$ref": "#/definitions/PerformanceTrend"
+            },
+            "plants": {
+              "$ref": "#/definitions/PerformanceTrend"
+            },
+            "defuses": {
+              "$ref": "#/definitions/PerformanceTrend"
+            },
+            "utilityUsage": {
+              "$ref": "#/definitions/PerformanceTrend"
+            }
+          },
+          "required": ["assists", "plants", "defuses", "utilityUsage"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "score",
+        "combat",
+        "support",
+        "grade",
+        "combatTrend",
+        "supportTrend",
+        "combatBreakdown",
+        "supportBreakdown"
+      ],
+      "additionalProperties": false
+    },
+    "PerformanceGrade": {
+      "type": "string",
+      "enum": ["pass", "merit", "distinction"]
+    },
+    "PerformanceTrend": {
+      "type": "string",
+      "enum": ["double_up", "up", "neutral", "down", "double_down"]
     },
     "MatchRound": {
       "type": "object",
