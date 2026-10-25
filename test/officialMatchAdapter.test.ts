@@ -114,8 +114,8 @@ describe("OfficialMatchAdapter", () => {
     expect(match.map.name).toBe("Ascent");
     expect(match.queue).toBe("competitive");
     expect(match.teams).toEqual([
-      { id: "Blue", won: true, roundsPlayed: 1, roundsWon: 1 },
-      { id: "Red", won: false, roundsPlayed: 1, roundsWon: 0 },
+      { id: "Blue", won: true, roundsPlayed: 1, roundsWon: 1, mvp: null },
+      { id: "Red", won: false, roundsPlayed: 1, roundsWon: 0, mvp: null },
     ]);
     expect(match.self).toEqual({ team: "Blue", won: true });
     expect(match.rounds[0]!.kills[0]!.weapon).toEqual({
