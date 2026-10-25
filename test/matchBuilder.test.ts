@@ -4,7 +4,8 @@ import { describe, expect, it } from "vitest";
 import { Catalogue } from "../src/catalogue/Catalogue.js";
 import type { ValorantApiCatalogueData } from "../src/catalogue/types.js";
 import { MatchBuilder } from "../src/collection/MatchBuilder.js";
-import type { RiotMatchDetailsResponse } from "../src/riot/types.js";
+import type { Match } from "../src/model/index.js";
+import type { RiotMatchDetailsResponse, RiotMatchPlayer } from "../src/riot/types.js";
 
 const catalogueData = JSON.parse(
   fs.readFileSync(path.join(import.meta.dirname, "fixtures", "catalogue.json"), "utf-8"),
@@ -20,6 +21,16 @@ const deathmatchMatch = JSON.parse(
     "utf-8",
   ),
 ) as RiotMatchDetailsResponse;
+
+const performanceMatch = JSON.parse(
+  fs.readFileSync(
+    path.join(import.meta.dirname, "fixtures", "matchDetailsPerformance.json"),
+    "utf-8",
+  ),
+) as RiotMatchDetailsResponse;
+
+const SELF_PUUID = "11111111-2222-4333-8444-555555555555";
+const TOP_PUUID = "00000000-0000-4000-8000-000000000002";
 
 describe("MatchBuilder", () => {
   const catalogue = new Catalogue(catalogueData);
@@ -117,5 +128,94 @@ describe("MatchBuilder", () => {
         path: "/Game/Maps/Ascent/Ascent",
       },
     });
+  });
+});
+
+describe("MatchBuilder performance", () => {
+  const catalogue = new Catalogue(catalogueData);
+
+  const build = (details: RiotMatchDetailsResponse): Match =>
+    new MatchBuilder(details, catalogue, SELF_PUUID).build();
+
+  const topPlayerWith = (mutate: (player: RiotMatchPlayer) => void) => {
+    const details = structuredClone(performanceMatch);
+    mutate(details.players.find((p) => p.subject === TOP_PUUID)!);
+    return build(details).players.find((p) => p.puuid === TOP_PUUID)!;
+  };
+
+  it("exposes the MVP of the match and the MVP of each team", () => {
+    const match = build(performanceMatch);
+
+    expect(match.mvp).toBe(TOP_PUUID);
+    expect(match.teams.map((t) => [t.id, t.mvp])).toEqual([
+      ["Red", SELF_PUUID],
+      ["Blue", TOP_PUUID],
+    ]);
+  });
+
+  it("builds the performance of a player from the scores, rounded", () => {
+    const player = build(performanceMatch).players.find((p) => p.puuid === TOP_PUUID);
+
+    expect(player?.performance).toEqual({
+      score: 410,
+      combat: 370,
+      support: 500,
+      grade: "merit",
+      combatTrend: "up",
+      supportTrend: "double_up",
+      combatBreakdown: {
+        damage: "up",
+        killImpact: "double_up",
+        deathImpact: "neutral",
+        trades: "double_up",
+      },
+      supportBreakdown: {
+        assists: "double_up",
+        plants: "neutral",
+        defuses: "double_up",
+        utilityUsage: "double_up",
+      },
+    });
+  });
+
+  it("leaves performance null for a player without scores", () => {
+    expect(topPlayerWith((p) => delete p.scores).performance).toBeNull();
+    expect(topPlayerWith((p) => (p.scores = null)).performance).toBeNull();
+  });
+
+  it("leaves performance null for a player without an overall score", () => {
+    expect(topPlayerWith((p) => delete p.scores?.TempValueF).performance).toBeNull();
+  });
+
+  it("maps an unknown trend to neutral and an unknown grade to pass", () => {
+    const { performance } = topPlayerWith((p) => {
+      const ratings = p.scores!.TempValueL!;
+      ratings.TempValueO = "legend";
+      ratings.TempValueM = "sideways";
+      ratings.TempValueP!.killImpact = "triple_up";
+    });
+
+    expect(performance?.grade).toBe("pass");
+    expect(performance?.combatTrend).toBe("neutral");
+    expect(performance?.combatBreakdown.killImpact).toBe("neutral");
+    expect(performance?.combatBreakdown.damage).toBe("up");
+    expect(performance?.supportTrend).toBe("double_up");
+  });
+
+  it("falls back to neutral trends and a pass when the ratings are missing", () => {
+    const { performance } = topPlayerWith((p) => delete p.scores!.TempValueL);
+
+    expect(performance?.score).toBe(410);
+    expect(performance?.grade).toBe("pass");
+    expect(performance?.combatTrend).toBe("neutral");
+    expect(performance?.supportBreakdown.assists).toBe("neutral");
+  });
+
+  it("has no performance and no MVPs for a match from before the score existed", () => {
+    const match = build(standardMatch);
+
+    expect(match.mvp).toBeNull();
+    expect(match.teams.every((t) => t.mvp === null)).toBe(true);
+    expect(match.players.every((p) => p.performance === null)).toBe(true);
   });
 });
