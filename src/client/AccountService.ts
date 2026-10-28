@@ -12,6 +12,7 @@ import type {
   CollectionValue,
   ContractProgress,
   DailyCheckpoints,
+  GoldStars,
   Favourite,
   GameSession,
   Loadout,
@@ -288,6 +289,13 @@ export class AccountService implements AccountApi {
       this.context.catalogue(),
     ]);
     return AccountProgressionBuilder.buildAgentMastery(raw, catalogue);
+  }
+
+  async goldStars(): Promise<GoldStars> {
+    const session = await this.context.sessions.session();
+    const api = this.context.api(session);
+    const [definitions, player] = await Promise.all([api.goldStars(), api.goldStarPlayer()]);
+    return AccountProgressionBuilder.buildGoldStars(definitions, player);
   }
 
   async matchProgress(matchId: string): Promise<MatchProgress> {

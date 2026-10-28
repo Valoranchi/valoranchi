@@ -8,6 +8,8 @@ import type {
   DailyCheckpoints,
   DailyQueueRule,
   Favourite,
+  GoldStar,
+  GoldStars,
   Image,
   MatchAgentMastery,
   MatchContractProgress,
@@ -27,6 +29,9 @@ import {
   type RiotDailyTicketQueueRule,
   type RiotDailyTicketResponse,
   type RiotFavoritesResponse,
+  type RiotGoldStarPlayerResponse,
+  type RiotGoldStarSeason,
+  type RiotGoldStarsResponse,
   type RiotPenaltiesResponse,
 } from "../riot/types.js";
 
@@ -79,6 +84,8 @@ function resolveRewardDetails(
   const skin = catalogue.getSkin(uuid);
   return { name: skin?.displayName ?? "", icon: skin?.displayIcon ?? null };
 }
+
+const LIFETIME_SEASON_ID = "00000000-0000-0000-0000-000000000000";
 
 export class AccountProgressionBuilder {
   static buildAccountXp(raw: RiotAccountXpResponse): AccountXp {
@@ -209,6 +216,42 @@ export class AccountProgressionBuilder {
         })),
       }))
       .sort((a, b) => b.points - a.points);
+  }
+
+  static buildGoldStars(
+    definitions: RiotGoldStarsResponse,
+    player: RiotGoldStarPlayerResponse,
+  ): GoldStars {
+    const seasons = Object.values(player.tempS ?? {});
+    const lifetime = seasons.find((season) => season.tempS === LIFETIME_SEASON_ID);
+    const progress = (season: RiotGoldStarSeason | undefined): GoldStar[] =>
+      definitions.map((definition) => {
+        const earned = season?.tempA?.[definition.id];
+        return {
+          id: definition.id,
+          threshold: definition.tempT,
+          count: earned?.tempC ?? 0,
+          best: earned?.tempB ?? null,
+        };
+      });
+
+    return {
+      lifetime: progress(lifetime),
+      seasons: seasons
+        .filter((season) => season.tempS !== LIFETIME_SEASON_ID)
+        .map((season) => ({ seasonId: season.tempS, goldStars: progress(season) })),
+      recentMatches: (player.tempM ?? []).map((match) => ({
+        matchId: match.id,
+        playedAt: new Date(match.tempG).toISOString(),
+        players: Object.entries(match.tempP ?? {}).map(([puuid, entry]) => ({
+          puuid,
+          values: Object.values(entry.tempA ?? {}).map((value) => ({
+            id: value.id,
+            value: value.tempV,
+          })),
+        })),
+      })),
+    };
   }
 
   static buildMatchProgress(

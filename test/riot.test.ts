@@ -360,6 +360,8 @@ describe("RiotApi", () => {
     await api.contractsMatch("match-1");
     await api.dailyTicketQueueConfig();
     await api.agentMastery("other-puuid");
+    await api.goldStars();
+    await api.goldStarPlayer();
 
     expect(mockGet.mock.calls.map(([url]) => url)).toEqual([
       "https://pd.na.a.pvp.net/bloomline/v0/players/puuid-1234",
@@ -368,6 +370,8 @@ describe("RiotApi", () => {
       "https://pd.na.a.pvp.net/contracts/v1/players/puuid-1234/matches/match-1",
       "https://pd.na.a.pvp.net/daily-ticket/v1/queue-config",
       "https://pd.na.a.pvp.net/bloomline/v0/players/other-puuid",
+      "https://pd.na.a.pvp.net/goldstars/v1/goldstars",
+      "https://pd.na.a.pvp.net/goldstars/v1/players/puuid-1234",
     ]);
     expect(mockGet).toHaveBeenCalledWith(
       expect.any(String),

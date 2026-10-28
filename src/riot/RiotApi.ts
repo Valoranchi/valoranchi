@@ -4,6 +4,8 @@ import type { Session } from "./Session.js";
 import type {
   RiotAccountXpResponse,
   RiotAgentMasteryConfigResponse,
+  RiotGoldStarPlayerResponse,
+  RiotGoldStarsResponse,
   RiotAgentMasteryMatchResponse,
   RiotAgentMasteryResponse,
   RiotClientConfigResponse,
@@ -382,6 +384,14 @@ export class RiotApi {
 
   async agentMasteryConfig(): Promise<RiotAgentMasteryConfigResponse> {
     return this.get(`${this.session.endpoints.pd}/bloomline/v0/config/valid-queues`);
+  }
+
+  async goldStars(): Promise<RiotGoldStarsResponse> {
+    return this.get(`${this.session.endpoints.pd}/goldstars/v1/goldstars`);
+  }
+
+  async goldStarPlayer(puuid = this.session.puuid): Promise<RiotGoldStarPlayerResponse> {
+    return this.get(`${this.session.endpoints.pd}/goldstars/v1/players/${puuid}`);
   }
 
   async penalties(): Promise<RiotPenaltiesResponse> {

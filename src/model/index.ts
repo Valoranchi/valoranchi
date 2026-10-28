@@ -628,6 +628,25 @@ export type MatchProgress = {
   daily: MatchDailyProgress | null;
 };
 
+export type GoldStar = {
+  id: string;
+  threshold: number;
+  count: number;
+  best: number | null;
+};
+
+export type GoldStarMatch = {
+  matchId: string;
+  playedAt: string;
+  players: { puuid: string; values: { id: string; value: number }[] }[];
+};
+
+export type GoldStars = {
+  lifetime: GoldStar[];
+  seasons: { seasonId: string; goldStars: GoldStar[] }[];
+  recentMatches: GoldStarMatch[];
+};
+
 export type DailyCheckpoint = {
   progress: number;
   target: number;

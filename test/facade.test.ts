@@ -241,7 +241,7 @@ describe("RiotClient facade", () => {
           };
         if (path.includes("/chat/v4/blocked"))
           return { blocked: [{ puuid: "b1", game_name: "Block", game_tag: "003" }] };
-        if (path.includes("/chat/v6/conversations"))
+        if (path.includes("/chat/v7/conversations"))
           return { conversations: [{ cid: "f1@la1.pvp.net", type: "chat" }] };
         if (path.includes("/chat/v6/messages"))
           return {
@@ -668,7 +668,7 @@ describe("RiotClient facade", () => {
             };
           if (path.includes("/chat/v4/blocked"))
             return { blocked: [{ puuid: "b1", game_name: "Block", game_tag: "004" }] };
-          if (path.includes("/chat/v6/conversations"))
+          if (path.includes("/chat/v7/conversations"))
             return { conversations: [{ cid: "f1@la1.pvp.net", type: "chat" }] };
           if (path.includes("/chat/v1/session"))
             return { puuid: "self-puuid", game_name: "Me", game_tag: "000" };

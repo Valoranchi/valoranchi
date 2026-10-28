@@ -8,6 +8,7 @@ import type {
   Content,
   ContractProgress,
   Conversation,
+  GoldStars,
   CustomGameConfigs,
   CustomGameSettings,
   DailyCheckpoints,
@@ -80,6 +81,7 @@ export interface AccountApi {
   validateActivateContract(uuid: string): Promise<{ contractId: string }>;
   penalties(): Promise<Penalty[]>;
   agentMastery(): Promise<AgentMastery[]>;
+  goldStars(): Promise<GoldStars>;
   matchProgress(matchId: string): Promise<MatchProgress>;
   dailyCheckpoints(): Promise<DailyCheckpoints>;
   favourites(): Promise<Favourite[]>;

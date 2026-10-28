@@ -781,6 +781,43 @@ export interface RiotAgentMasteryResponse {
   LongGroupVersion?: number;
 }
 
+export interface RiotGoldStarDefinition {
+  id: string;
+  tempT: number;
+}
+
+export type RiotGoldStarsResponse = RiotGoldStarDefinition[];
+
+export interface RiotGoldStarProgress {
+  id: string;
+  tempC: number;
+  tempB: number;
+}
+
+export interface RiotGoldStarSeason {
+  tempS: string;
+  tempA: Record<string, RiotGoldStarProgress>;
+}
+
+export interface RiotGoldStarMatchValue {
+  id: string;
+  tempV: number;
+  tempB: boolean;
+}
+
+export interface RiotGoldStarMatch {
+  id: string;
+  tempG: number;
+  tempP: Record<string, { tempA: Record<string, RiotGoldStarMatchValue> }>;
+}
+
+export interface RiotGoldStarPlayerResponse {
+  puuid: string;
+  version: number;
+  tempS: Record<string, RiotGoldStarSeason>;
+  tempM?: RiotGoldStarMatch[];
+}
+
 export interface RiotAgentMasteryConfigResponse {
   ProcessedQueues: string[];
   PerformanceScoreQueues: string[];

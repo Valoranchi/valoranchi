@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `client.account.goldStars()`: the gold stars of the competitive hub, each with its threshold, how many times it was earned and the best value, for life and per season, plus the values every player reached in the last matches Riot scored. The raw layer gets `RiotApi.goldStars()`, `RiotApi.goldStarPlayer()` and the obfuscated response types.
+- `ChatApi.markRead(cid, messageId)`, which marks a conversation read so the game and the Riot Client stop counting it as unread.
+- `ChatApi.session({ timeoutMs })`, a single attempt with a deadline that answers `null` instead of waiting for the client to warm up, for checking whether anyone is signed in.
+- `PlayerAccountApi`, which turns a riot id into a puuid through the Riot Client, and `ProductLauncherApi`, which asks the Riot Client to launch the game.
+- `RiotClientLocalApi.probe(path, timeoutMs)`, the single attempt `session({ timeoutMs })` is built on.
+
+### Changed
+
+- `ChatApi.conversations()` reads chat v7. The Riot Client marks the v6 conversation endpoints as deleted.
+
 ## [0.10.0] - 2026-10-25
 
 ### Added

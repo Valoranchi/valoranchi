@@ -437,6 +437,48 @@ riotclient mastery
 ]
 ```
 
+### goldStars
+
+Reads the gold stars of the competitive hub: the accolades a match can earn when a stat passes its `threshold`.
+Every gold star comes in `lifetime`, the ones never earned with `count` at zero and `best` as `null`, and again under each season in `seasons`.
+`recentMatches` holds the last matches Riot scored, with the value every player of each match reached.
+Riot only gives each gold star an id, so naming them is left to the caller.
+
+```ts
+const stars = await client.account.goldStars();
+const earned = stars.lifetime.filter((star) => star.count > 0);
+console.log(`${earned.length} of ${stars.lifetime.length} gold stars earned`);
+```
+
+```json
+{
+  "lifetime": [
+    { "id": "6dc31cfd-41da-895f-9246-a8b63558cdb8", "threshold": 170, "count": 1, "best": 189.5 },
+    { "id": "4815a8a2-4649-9bfe-afd2-38ae9cc22898", "threshold": 420, "count": 0, "best": null }
+  ],
+  "seasons": [
+    {
+      "seasonId": "d816f426-48ea-f052-117f-9697a155b319",
+      "goldStars": [
+        { "id": "6dc31cfd-41da-895f-9246-a8b63558cdb8", "threshold": 170, "count": 1, "best": 189.5 }
+      ]
+    }
+  ],
+  "recentMatches": [
+    {
+      "matchId": "11111111-2222-4333-8444-555555555555",
+      "playedAt": "2026-10-20T18:57:39.514Z",
+      "players": [
+        {
+          "puuid": "00000000-0000-4000-8000-000000000002",
+          "values": [{ "id": "6dc31cfd-41da-895f-9246-a8b63558cdb8", "value": 182.8 }]
+        }
+      ]
+    }
+  ]
+}
+```
+
 ### dailyCheckpoints
 
 Reads the four daily checkpoints that replaced the daily missions.
