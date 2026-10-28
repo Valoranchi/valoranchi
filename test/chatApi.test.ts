@@ -56,7 +56,7 @@ describe("ChatApi", () => {
 
   it("merges conversations from all 4 endpoints and deduplicates by cid", async () => {
     const mockFetch = async (url: string) => {
-      if (url.endsWith("/chat/v6/conversations")) {
+      if (url.endsWith("/chat/v7/conversations")) {
         return {
           ok: true,
           status: 200,
@@ -69,7 +69,7 @@ describe("ChatApi", () => {
           text: async () => "",
         };
       }
-      if (url.endsWith("/chat/v6/conversations/ares-parties")) {
+      if (url.endsWith("/chat/v7/conversations/ares-parties")) {
         return {
           ok: true,
           status: 200,
@@ -82,11 +82,11 @@ describe("ChatApi", () => {
           text: async () => "",
         };
       }
-      if (url.endsWith("/chat/v6/conversations/ares-pregame")) {
+      if (url.endsWith("/chat/v7/conversations/ares-pregame")) {
         // Simulating 404 or empty outside game
         return { ok: false, status: 404, json: async () => ({}), text: async () => "" };
       }
-      if (url.endsWith("/chat/v6/conversations/ares-coregame")) {
+      if (url.endsWith("/chat/v7/conversations/ares-coregame")) {
         return {
           ok: true,
           status: 200,

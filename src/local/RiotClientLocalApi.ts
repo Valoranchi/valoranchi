@@ -26,6 +26,7 @@ export type LocalApiFetchFn = (
     body?: string;
     headers?: Record<string, string>;
     dispatcher?: Agent;
+    signal?: AbortSignal;
   },
 ) => Promise<LocalApiResponse>;
 
@@ -107,6 +108,20 @@ export class RiotClientLocalApi {
     );
   }
 
+  async probe<T>(path: string, timeoutMs: number): Promise<T | null> {
+    try {
+      const response = await this.fetchFn(this.url(path), {
+        method: "GET",
+        headers: { Authorization: this.authorization },
+        dispatcher: this.agent,
+        signal: AbortSignal.timeout(timeoutMs),
+      });
+      return response.ok ? ((await response.json()) as T) : null;
+    } catch {
+      return null;
+    }
+  }
+
   async get<T>(path: string, headers?: Record<string, string>): Promise<T | null> {
     return this.request<T>("GET", path, undefined, headers);
   }
@@ -129,8 +144,7 @@ export class RiotClientLocalApi {
     body?: unknown,
     customHeaders?: Record<string, string>,
   ): Promise<T | null> {
-    const normalized = path.startsWith("/") ? path : `/${path}`;
-    const url = `https://127.0.0.1:${this.port}${normalized}`;
+    const url = this.url(path);
     const serializedBody =
       body !== undefined ? (typeof body === "string" ? body : JSON.stringify(body)) : undefined;
 
@@ -187,6 +201,10 @@ export class RiotClientLocalApi {
         return { kind: "not-ready" };
       }
     });
+  }
+
+  private url(path: string): string {
+    return `https://127.0.0.1:${this.port}${path.startsWith("/") ? path : `/${path}`}`;
   }
 
   private async withWarmupRetry<T>(

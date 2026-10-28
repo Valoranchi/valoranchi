@@ -10,6 +10,8 @@ export {
   type LocalApiFetchFn,
 } from "./local/RiotClientLocalApi.js";
 export { ChatApi } from "./local/ChatApi.js";
+export { PlayerAccountApi, type RawAliasLookupEntry } from "./local/PlayerAccountApi.js";
+export { ProductLauncherApi } from "./local/ProductLauncherApi.js";
 export {
   RiotSocket,
   parseFrame,

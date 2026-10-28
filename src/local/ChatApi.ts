@@ -55,10 +55,10 @@ export class ChatApi {
     };
 
     const results = await Promise.all([
-      read("/chat/v6/conversations"),
-      read("/chat/v6/conversations/ares-parties"),
-      read("/chat/v6/conversations/ares-pregame"),
-      read("/chat/v6/conversations/ares-coregame"),
+      read("/chat/v7/conversations"),
+      read("/chat/v7/conversations/ares-parties"),
+      read("/chat/v7/conversations/ares-pregame"),
+      read("/chat/v7/conversations/ares-coregame"),
     ]);
 
     const byCid = new Map<string, RawConversation>();
@@ -79,7 +79,14 @@ export class ChatApi {
     return res?.messages ?? [];
   }
 
-  async session(): Promise<RawChatSession | null> {
+  async markRead(cid: string, messageId: string): Promise<void> {
+    await this.localApi.post("/chat/v7/conversations/read", { cid, id: messageId });
+  }
+
+  async session(options?: { timeoutMs?: number }): Promise<RawChatSession | null> {
+    if (options?.timeoutMs !== undefined) {
+      return this.localApi.probe<RawChatSession>("/chat/v1/session", options.timeoutMs);
+    }
     try {
       const res = await this.localApi.get<RawChatSession>("/chat/v1/session");
       return res ?? null;
