@@ -11,7 +11,7 @@ Applications maintaining their own domain models or custom architectures can con
 - **Riot PVP API**: `RiotApi` exposes raw methods for matchmaking, loadouts, contracts, and storefront.
 - **Local Client API**: `RiotClientLocalApi`, `ChatApi`, `PlayerAccountApi` (riot id lookups) and `ProductLauncherApi` (launching the game) handle loopback queries.
 - **Player Preferences**: `PlayerPreferencesApi` reads and writes the player's settings through Riot's preferences service and falls back to the running game, and `PreferenceCodec` packs and unpacks the payload.
-- **Sockets & Frames**: `RiotSocket` and `parseFrame` manage real-time WebSocket communication.
+- **Sockets & Frames**: `RiotSocket`, `parseFrame` and `classifyFrame` (which sorts a frame by what it is about) manage real-time WebSocket communication.
 - **Validation**: Individual validators (`LoadoutValidator`, `PartyValidator`, `StoreValidator`, `MatchValidator`).
 - **Catalogue & Caching**: `ValorantApi`, `MemoryCatalogueCache`, `FileCatalogueStore`, and `FileResponseCache`.
 

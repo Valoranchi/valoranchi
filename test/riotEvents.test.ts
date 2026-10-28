@@ -417,6 +417,43 @@ describe("RiotEvents", () => {
     expect(messages[0]!.from.gameName).toBe("FriendOne");
   });
 
+  it("emits conversation with the unread count of each conversation in the frame", () => {
+    const events = new RiotEvents(
+      fakeSocket as unknown as RiotSocket,
+      mockChatApi as ChatApi,
+      catalogueLoader,
+      puuidResolver,
+    );
+
+    const conversations: Array<{ cid: string; unreadCount: number }> = [];
+    events.on("conversation", (c) => conversations.push(c));
+
+    fakeSocket.sendFrame({
+      uri: "/chat/v7/conversations",
+      eventType: "Update",
+      data: {
+        conversations: [
+          { cid: "friend@la1.pvp.net", type: "chat", unread_count: 3 },
+          { type: "chat", unread_count: 9 },
+          { cid: "quiet@la1.pvp.net", type: "chat" },
+        ],
+      },
+    });
+
+    expect(conversations).toEqual([
+      { cid: "friend@la1.pvp.net", unreadCount: 3 },
+      { cid: "quiet@la1.pvp.net", unreadCount: 0 },
+    ]);
+
+    fakeSocket.sendFrame({
+      uri: "/chat/v6/conversations",
+      eventType: "Update",
+      data: { conversations: "none" },
+    });
+    fakeSocket.sendFrame({ uri: "/chat/v6/conversations", eventType: "Update", data: null });
+    expect(conversations).toHaveLength(2);
+  });
+
   it("handles game and party transitions and dedupes plural relay duplicates", async () => {
     const events = new RiotEvents(
       fakeSocket as unknown as RiotSocket,

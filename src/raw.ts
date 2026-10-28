@@ -30,6 +30,7 @@ export {
   type WebSocketConstructor,
   type WebSocketLike,
 } from "./local/RiotSocket.js";
+export { classifyFrame, type RiotFrameKind } from "./local/FrameKind.js";
 export { ValorantApi, MemoryCatalogueCache } from "./catalogue/ValorantApi.js";
 export { Catalogue } from "./catalogue/Catalogue.js";
 export {

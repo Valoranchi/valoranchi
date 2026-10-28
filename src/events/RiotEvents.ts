@@ -7,8 +7,10 @@ import type {
   RawChatMessage,
   RawChatPresence,
   RawChatSession,
+  RawConversationsResponse,
   RawFriendRequest,
 } from "../local/chatTypes.js";
+import { classifyFrame, frameResource } from "../local/FrameKind.js";
 import { decodeValorantPresence } from "../local/Presence.js";
 import type { RiotFrame, RiotSocket } from "../local/RiotSocket.js";
 import type { Friend, FriendRequest, Message, ValorantPresence } from "../model/index.js";
@@ -22,6 +24,7 @@ export type RiotEventMap = {
   "friend:removed": [{ puuid: string }];
   "friend:request": [{ request: FriendRequest; change: "created" | "resolved" }];
   message: [Message];
+  conversation: [{ cid: string; unreadCount: number }];
   party: [{ partyId: string }];
   game: [{ phase: "pregame" | "ingame"; matchId: string }];
   "self:state": [
@@ -143,19 +146,28 @@ export class RiotEvents extends TypedEmitter<RiotEventMap> {
   }
 
   private async routeFrame(frame: RiotFrame): Promise<void> {
-    if (frame.uri.startsWith("/product-session/v1/session-heartbeats/")) {
-      return;
-    }
-    if (frame.uri.startsWith("/chat/v4/presences")) {
-      await this.handlePresence(frame);
-    } else if (frame.uri.startsWith("/chat/v4/friendrequests")) {
-      this.handleFriendRequest(frame);
-    } else if (frame.uri.startsWith("/chat/v4/friends")) {
-      await this.handleFriends(frame);
-    } else if (frame.uri.startsWith("/chat/v6/messages")) {
-      await this.handleMessage(frame);
-    } else {
-      this.handleRelay(frame);
+    const kind = classifyFrame(frame);
+    switch (kind) {
+      case "presences":
+        await this.handlePresence(frame);
+        break;
+      case "friend-requests":
+        this.handleFriendRequest(frame);
+        break;
+      case "friends":
+        await this.handleFriends(frame);
+        break;
+      case "chat-message":
+        await this.handleMessage(frame);
+        break;
+      case "chat-conversation":
+        this.handleConversations(frame);
+        break;
+      case "party":
+      case "pregame":
+      case "coregame":
+        this.handleRelay(frame, kind);
+        break;
     }
   }
 
@@ -255,15 +267,29 @@ export class RiotEvents extends TypedEmitter<RiotEventMap> {
     }
   }
 
-  private handleRelay(frame: RiotFrame): void {
-    const data = frame.data as { resource?: string; timestamp?: string | number } | undefined;
-    const resource = typeof data?.resource === "string" ? data.resource : frame.uri;
+  private handleConversations(frame: RiotFrame): void {
+    const data = frame.data as RawConversationsResponse | undefined;
+    const conversations = data?.conversations;
+    if (!Array.isArray(conversations)) return;
+
+    for (const conversation of conversations) {
+      if (!conversation?.cid) continue;
+      this.emit("conversation", {
+        cid: conversation.cid,
+        unreadCount: conversation.unread_count ?? 0,
+      });
+    }
+  }
+
+  private handleRelay(frame: RiotFrame, kind: "party" | "pregame" | "coregame"): void {
+    const data = frame.data as { timestamp?: string | number } | undefined;
+    const resource = frameResource(frame);
     const timestamp = data?.timestamp != null ? String(data.timestamp) : "";
     const dedupeKey = `${resource}@${timestamp}`;
 
     if (this.isDuplicateRelay(dedupeKey)) return;
 
-    if (resource.includes("ares-parties") || resource.includes("/parties/v1/parties/")) {
+    if (kind === "party") {
       const match =
         resource.match(/\/parties\/v1\/parties\/([a-zA-Z0-9-]+)/i) ??
         resource.match(/parties\/([a-zA-Z0-9-]+)/i);
@@ -273,13 +299,9 @@ export class RiotEvents extends TypedEmitter<RiotEventMap> {
 
     if (resource.includes("/players/")) return;
 
-    const isPregame = resource.includes("ares-pregame") || resource.includes("/pregame/");
-    const isCoregame = resource.includes("ares-core-game") || resource.includes("/core-game/");
-    if (!isPregame && !isCoregame) return;
-
     const matchId = extractLastUuid(resource);
     if (matchId) {
-      this.emit("game", { phase: isPregame ? "pregame" : "ingame", matchId });
+      this.emit("game", { phase: kind === "pregame" ? "pregame" : "ingame", matchId });
     }
   }
 

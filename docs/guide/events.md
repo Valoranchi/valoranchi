@@ -51,6 +51,7 @@ The library types all event payloads through `RiotEventMap`:
 | `friend:removed`  | `{ puuid: string }`                                             | Emitted when a friend is unfriended.                             |
 | `friend:request`  | `{ request: FriendRequest; change: "created" \| "resolved" }`   | Emitted on incoming or outgoing friend request changes.          |
 | `message`         | `Message`                                                       | Emitted when receiving whispers or chat room messages.           |
+| `conversation`    | `{ cid: string; unreadCount: number }`                          | Emitted per conversation in a chat update with its unread count. |
 | `party`           | `{ partyId: string }`                                           | Emitted when active party ID changes or members join/leave.      |
 | `game`            | `{ phase: "pregame" \| "ingame"; matchId: string }`             | Emitted on game phase transitions (agent select or match start). |
 | `self:state`      | `{ state: string \| null; presence: ValorantPresence \| null }` | Emitted when the local player's presence state updates.          |

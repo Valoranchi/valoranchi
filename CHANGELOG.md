@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `PlayerPreferencesApi` and `PreferenceCodec` in the raw layer. The first reads and writes the player's `Ares.PlayerSettings` through Riot's preferences service and falls back to the running game, the second packs and unpacks the payload the service speaks.
+- `classifyFrame(frame)` and `RiotFrameKind` in the raw layer, which sort a frame from the local websocket as a chat session, message or conversation, friends, friend requests, presences, party, pregame, core game, match details, heartbeat or anything else. `RiotEvents` routes its frames with it.
+- The `conversation` event of `RiotEvents`, which carries the `cid` and the `unreadCount` of every conversation in a chat conversation frame, so a chat read in the game or in the Riot Client can be followed without polling.
 
 ### Changed
 
