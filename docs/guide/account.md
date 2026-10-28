@@ -670,7 +670,8 @@ riotclient config
 ### settings
 
 Fetches player keybindings, mouse sensitivity, and crosshair configuration from the cloud.
-Requires VALORANT to be running so the local remoting token can read the configuration.
+VALORANT does not have to be open: the Riot Client credentials are enough to read them from Riot's preferences service, and the running game is only a fallback.
+When neither answers it throws a `ValidationError` with the reason `preferences-unavailable`.
 
 ```ts
 const settings = await client.account.settings();
@@ -708,6 +709,7 @@ riotclient settings
 
 Writes modified keybindings and settings back to the Riot cloud settings store.
 Requires explicit confirmation `{ confirm: true }` in code or `--confirm` in the CLI.
+Like `settings`, it works with VALORANT closed: the preferences service is tried first and the running game second.
 
 ```ts
 const settings = await client.account.settings();

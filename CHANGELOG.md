@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `PlayerPreferencesApi` and `PreferenceCodec` in the raw layer. The first reads and writes the player's `Ares.PlayerSettings` through Riot's preferences service and falls back to the running game, the second packs and unpacks the payload the service speaks.
+
+### Changed
+
+- `client.account.settings()` and `saveSettings()` read and write through Riot's preferences service first and use the game only as a fallback, so VALORANT no longer has to be open. When neither answers they throw `preferences-unavailable`, which replaces `game-not-running`, and `validateSaveSettings()` no longer needs the game either.
+
 ## [0.11.0] - 2026-10-28
 
 ### Added

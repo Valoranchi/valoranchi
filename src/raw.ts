@@ -13,6 +13,13 @@ export { ChatApi } from "./local/ChatApi.js";
 export { PlayerAccountApi, type RawAliasLookupEntry } from "./local/PlayerAccountApi.js";
 export { ProductLauncherApi } from "./local/ProductLauncherApi.js";
 export {
+  PlayerPreferencesApi,
+  type PlayerPreferencesOptions,
+  type PreferenceRead,
+  type PreferenceSource,
+} from "./local/PlayerPreferencesApi.js";
+export { PreferenceCodec, type PreferenceBlob } from "./riot/PreferenceCodec.js";
+export {
   RiotSocket,
   parseFrame,
   type RiotCredentialsResolver,

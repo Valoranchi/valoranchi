@@ -19,14 +19,14 @@ When a validation rule fails, the library raises a `ValidationError` containing 
 
 ### Account
 
-| Reason               | Description                                                                 |
-| :------------------- | :-------------------------------------------------------------------------- |
-| `contract-not-agent` | Attempted to activate a non-agent contract (e.g. battlepass or event pass). |
-| `agent-owned`        | Attempted to activate a contract for an agent that is already unlocked.     |
-| `contract-active`    | Attempted to activate an agent contract that is already active.             |
-| `not-favourite`      | Attempted to remove a skin from favourites that is not currently favorited. |
-| `already-favourite`  | Attempted to add a skin to favourites that is already marked as favourite.  |
-| `game-not-running`   | Attempted to read or save cloud player settings without VALORANT running.   |
+| Reason                    | Description                                                                                                     |
+| :------------------------ | :-------------------------------------------------------------------------------------------------------------- |
+| `contract-not-agent`      | Attempted to activate a non-agent contract (e.g. battlepass or event pass).                                     |
+| `agent-owned`             | Attempted to activate a contract for an agent that is already unlocked.                                         |
+| `contract-active`         | Attempted to activate an agent contract that is already active.                                                 |
+| `not-favourite`           | Attempted to remove a skin from favourites that is not currently favorited.                                     |
+| `already-favourite`       | Attempted to add a skin to favourites that is already marked as favourite.                                      |
+| `preferences-unavailable` | Attempted to read or save cloud player settings while neither Riot's preferences service nor VALORANT answered. |
 
 ### Loadout
 

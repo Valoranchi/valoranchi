@@ -5,6 +5,7 @@ import { LoadoutBuilder } from "../collection/LoadoutBuilder.js";
 import { LoadoutWriter } from "../collection/LoadoutWriter.js";
 import { PlayerSettingsBuilder } from "../collection/PlayerSettingsBuilder.js";
 import { RiotApiError, ValidationError } from "../errors.js";
+import { PLAYER_SETTINGS_TYPE, PlayerPreferencesApi } from "../local/PlayerPreferencesApi.js";
 import type {
   AccountXp,
   AgentMastery,
@@ -45,6 +46,13 @@ async function nullWhenNotFound<T>(request: Promise<T>): Promise<T | null> {
     if (error instanceof RiotApiError && error.status === 404) return null;
     throw error;
   }
+}
+
+function preferencesUnavailable(): ValidationError {
+  return new ValidationError(
+    "preferences-unavailable",
+    "Player preferences could not be reached, neither through Riot's preferences service nor through the game",
+  );
 }
 
 export class AccountService implements AccountApi {
@@ -421,19 +429,9 @@ export class AccountService implements AccountApi {
   }
 
   async settings(): Promise<PlayerSettings> {
-    const localApi = this.context.sessions.localApi();
-    const gameAuth = await localApi.gameAuthorization();
-    if (!gameAuth) {
-      throw new ValidationError(
-        "game-not-running",
-        "Valorant must be running to access player settings",
-      );
-    }
-    const res = await localApi.get<{ type?: string; data?: Record<string, unknown> }>(
-      "/player-preferences/v1/data-json/Ares.PlayerSettings",
-      { Authorization: gameAuth },
-    );
-    return PlayerSettingsBuilder.build(res?.data ?? {});
+    const stored = await this.preferences().read();
+    if (!stored) throw preferencesUnavailable();
+    return PlayerSettingsBuilder.build(stored.data);
   }
 
   async validateSaveSettings(
@@ -443,14 +441,6 @@ export class AccountService implements AccountApi {
     if (options?.confirm !== true) {
       throw new ValidationError("confirm-required", "Settings save requires confirmation");
     }
-    const localApi = this.context.sessions.localApi();
-    const gameAuth = await localApi.gameAuthorization();
-    if (!gameAuth) {
-      throw new ValidationError(
-        "game-not-running",
-        "Valorant must be running to save player settings",
-      );
-    }
     const payload =
       typeof data === "object" &&
       data !== null &&
@@ -458,17 +448,18 @@ export class AccountService implements AccountApi {
       typeof (data as { raw: unknown }).raw === "object"
         ? ((data as { raw: Record<string, unknown> }).raw ?? {})
         : (data as Record<string, unknown>);
-    return { type: "Ares.PlayerSettings", data: payload };
+    return { type: PLAYER_SETTINGS_TYPE, data: payload };
   }
 
   async saveSettings(data: unknown, options?: { confirm?: boolean }): Promise<PlayerSettings> {
     const validated = await this.validateSaveSettings(data, options);
-    const localApi = this.context.sessions.localApi();
-    const gameAuth = await localApi.gameAuthorization();
-    await localApi.put("/player-preferences/v1/data-json/Ares.PlayerSettings", validated, {
-      Authorization: gameAuth!,
-    });
+    const source = await this.preferences().write(validated.data, validated.type);
+    if (!source) throw preferencesUnavailable();
     return this.settings();
+  }
+
+  private preferences(): PlayerPreferencesApi {
+    return new PlayerPreferencesApi(this.context.sessions.localApi());
   }
 
   async client(): Promise<ClientInfo> {

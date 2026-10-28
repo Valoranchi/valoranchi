@@ -9,7 +9,7 @@ import { AccountValidator } from "../src/client/AccountValidator.js";
 import { MatchValidator } from "../src/client/MatchValidator.js";
 import { PartyValidator } from "../src/client/PartyValidator.js";
 import { StoreValidator } from "../src/client/StoreValidator.js";
-import { ValidationError } from "../src/errors.js";
+import { RiotClientNotRunningError, ValidationError } from "../src/errors.js";
 import type { RiotClientLocalApi } from "../src/local/RiotClientLocalApi.js";
 import type { OwnedItems, Store, Wallet } from "../src/model/index.js";
 import { RiotClient } from "../src/RiotClient.js";
@@ -836,20 +836,31 @@ describe("live actions and party refusal validators for all 15 reasons", () => {
     );
   });
 
-  it("refuses save settings when game is not running (game-not-running)", async () => {
-    const noValClient = new RiotClient({
+  describe("when neither Riot's preferences service nor the game answers", () => {
+    const unreachableClient = new RiotClient({
       lockfilePath,
       catalogueDir: null,
       localApiFactory: () =>
         ({
+          entitlementsToken: async () => {
+            throw new RiotClientNotRunningError();
+          },
           gameAuthorization: async () => null,
           close: async () => undefined,
         }) as unknown as RiotClientLocalApi,
     });
 
-    await expect(
-      noValClient.account.validateSaveSettings({}, { confirm: true }),
-    ).rejects.toThrowError(expect.objectContaining({ reason: "game-not-running" }));
+    it("refuses save settings (preferences-unavailable)", async () => {
+      await expect(
+        unreachableClient.account.saveSettings({}, { confirm: true }),
+      ).rejects.toThrowError(expect.objectContaining({ reason: "preferences-unavailable" }));
+    });
+
+    it("still validates a settings save, because the game is not required", async () => {
+      await expect(
+        unreachableClient.account.validateSaveSettings({}, { confirm: true }),
+      ).resolves.toEqual({ type: "Ares.PlayerSettings", data: {} });
+    });
   });
 });
 

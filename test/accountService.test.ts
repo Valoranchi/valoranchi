@@ -5,8 +5,9 @@ import { Catalogue } from "../src/catalogue/Catalogue.js";
 import type { ValorantApiCatalogueData } from "../src/catalogue/types.js";
 import { AccountService } from "../src/client/AccountService.js";
 import type { ClientContext } from "../src/client/ClientContext.js";
-import { RiotApiError, ValidationError } from "../src/errors.js";
+import { RiotApiError, RiotClientNotRunningError, ValidationError } from "../src/errors.js";
 import type { HttpGateway } from "../src/riot/HttpGateway.js";
+import { PreferenceCodec } from "../src/riot/PreferenceCodec.js";
 import { RiotApi } from "../src/riot/RiotApi.js";
 import { Session } from "../src/riot/Session.js";
 
@@ -194,5 +195,84 @@ describe("AccountService.dailyCheckpoints", () => {
     expect(daily.expiresAt).toBe("2026-10-25T10:49:00.000Z");
     expect(daily.queues.competitive).toEqual({ perRoundWon: true, perMatch: 0 });
     expect(daily.default).toEqual({ perRoundWon: false, perMatch: 0 });
+  });
+});
+
+describe("AccountService player settings", () => {
+  const withoutGame = {
+    entitlementsToken: async () => ({ accessToken: "access", token: "jwt", subject: PUUID }),
+    gameAuthorization: async () => null,
+  };
+
+  function settingsService(localApi: Record<string, unknown>) {
+    const context = { sessions: { localApi: () => localApi } } as unknown as ClientContext;
+    return new AccountService(context);
+  }
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("reads the settings from Riot's preferences service while the game is closed", async () => {
+    const cloud = { actionMappings: [{ actionName: "Fire", key: "Mouse1", bindIndex: 1 }] };
+    vi.stubGlobal(
+      "fetch",
+      async () => new Response(JSON.stringify({ data: PreferenceCodec.encode(cloud) })),
+    );
+
+    const settings = await settingsService(withoutGame).settings();
+
+    expect(settings.binds).toEqual([
+      {
+        command: "Fire",
+        key: "Mouse1",
+        alt: false,
+        ctrl: false,
+        shift: false,
+        agent: null,
+        slot: 1,
+      },
+    ]);
+    expect(settings.raw).toEqual(cloud);
+  });
+
+  it("saves through the service and answers the settings it reads back", async () => {
+    let stored: Record<string, unknown> = { actionMappings: [] };
+    const fetchFn = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+      if (init?.method === "PUT") {
+        stored = PreferenceCodec.decode((JSON.parse(String(init.body)) as { data: string }).data);
+        return new Response(null, { status: 204 });
+      }
+      return new Response(JSON.stringify({ data: PreferenceCodec.encode(stored) }));
+    });
+    vi.stubGlobal("fetch", fetchFn);
+    const edited = { raw: { actionMappings: [{ actionName: "Jump", key: "Space" }] } };
+
+    const saved = await settingsService(withoutGame).saveSettings(edited, { confirm: true });
+
+    expect(saved.binds.map((bind) => bind.command)).toEqual(["Jump"]);
+    expect(fetchFn.mock.calls.map(([, init]) => init?.method)).toEqual(["PUT", "GET"]);
+  });
+
+  it("fails with preferences-unavailable when neither the service nor the game answers", async () => {
+    const service = settingsService({
+      entitlementsToken: async () => {
+        throw new RiotClientNotRunningError();
+      },
+      gameAuthorization: async () => null,
+    });
+
+    await expect(service.settings()).rejects.toMatchObject({ reason: "preferences-unavailable" });
+    await expect(service.saveSettings({}, { confirm: true })).rejects.toMatchObject({
+      reason: "preferences-unavailable",
+    });
+  });
+
+  it("still asks for confirmation before it reaches for any source", async () => {
+    const service = settingsService({});
+
+    await expect(service.saveSettings({}, {})).rejects.toMatchObject({
+      reason: "confirm-required",
+    });
   });
 });

@@ -510,7 +510,7 @@ Every party write is validated against the live party state before any request r
 
 ### Player Settings & Local API Caveats
 
-- `game-not-running`: Thrown when accessing or saving cloud player settings without VALORANT running. The local endpoint requires basic authentication using the `-remoting-auth-token` passed to VALORANT's process launch arguments.
+- `preferences-unavailable`: Thrown when reading or saving player settings and neither Riot's preferences service nor the running game answers. The service is tried first, with the Riot Client credentials, so VALORANT does not have to be open. The game's local endpoint is the fallback and requires basic authentication using the `-remoting-auth-token` passed to VALORANT's process launch arguments.
 - **Settings synchronization**: VALORANT re-reads settings from Riot's cloud only upon process launch. Writing settings with `account.saveSettings()` updates the cloud copy, but if the in-game Settings menu is opened in a running VALORANT client, the game client will overwrite the cloud copy with its in-memory settings.
 - **Own Presence Writes**: Updating own presence (`PUT /chat/v2/me`) is not supported by this client version and is skipped.
 - **Raw Escape Hatches**: `client.local` and `client.riot` provide low-level HTTP access (`get`, `post`, `put`, `delete`) to local loopback and remote Riot endpoints respectively. This is provided as an escape hatch for unmodeled routes and is an unsupported surface.
