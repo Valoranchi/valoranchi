@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-10-28
+
 ### Added
 
 - `client.account.goldStars()`: the gold stars of the competitive hub, each with its threshold, how many times it was earned and the best value, for life and per season, plus the values every player reached in the last matches Riot scored. The raw layer gets `RiotApi.goldStars()`, `RiotApi.goldStarPlayer()` and the obfuscated response types.
