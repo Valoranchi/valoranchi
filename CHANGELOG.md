@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-10-29
+
 ### Added
 
 - `PlayerPreferencesApi` and `PreferenceCodec` in the raw layer. The first reads and writes the player's `Ares.PlayerSettings` through Riot's preferences service and falls back to the running game, the second packs and unpacks the payload the service speaks.
