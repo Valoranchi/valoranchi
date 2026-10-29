@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { Catalogue } from "../src/catalogue/Catalogue.js";
 import type { ValorantApiCatalogueData } from "../src/catalogue/types.js";
 import { AccountProgressionBuilder } from "../src/collection/AccountProgressionBuilder.js";
+import { GoldStarsBuilder } from "../src/collection/GoldStarsBuilder.js";
 import type {
   RiotAgentMasteryMatchResponse,
   RiotAgentMasteryResponse,
@@ -373,7 +374,7 @@ describe("AccountProgressionBuilder.buildDailyCheckpoints", () => {
   });
 });
 
-describe("AccountProgressionBuilder.buildGoldStars", () => {
+describe("GoldStarsBuilder.build", () => {
   const definitions = fixture<RiotGoldStarsResponse>("goldStars");
   const player = fixture<RiotGoldStarPlayerResponse>("goldStarPlayer");
   const ADR = "6dc31cfd-41da-895f-9246-a8b63558cdb8";
@@ -381,17 +382,21 @@ describe("AccountProgressionBuilder.buildGoldStars", () => {
   const SEASON = "d816f426-48ea-f052-117f-9697a155b319";
 
   it("lists every gold star for life, the unearned ones at zero", () => {
-    const { lifetime } = AccountProgressionBuilder.buildGoldStars(definitions, player);
+    const { lifetime } = GoldStarsBuilder.build(definitions, player);
 
     expect(lifetime).toHaveLength(definitions.length);
     expect(lifetime.find((star) => star.id === ADR)).toEqual({
       id: ADR,
+      key: "damage",
+      name: "Damage",
       threshold: 170,
       count: 1,
       best: 189.5,
     });
     expect(lifetime.find((star) => star.id === NEVER_EARNED)).toEqual({
       id: NEVER_EARNED,
+      key: "masterful",
+      name: "Masterful",
       threshold: 420,
       count: 0,
       best: null,
@@ -399,14 +404,14 @@ describe("AccountProgressionBuilder.buildGoldStars", () => {
   });
 
   it("keeps each season apart from the lifetime totals", () => {
-    const { seasons } = AccountProgressionBuilder.buildGoldStars(definitions, player);
+    const { seasons } = GoldStarsBuilder.build(definitions, player);
 
     expect(seasons.map((season) => season.seasonId)).toEqual([SEASON]);
     expect(seasons[0].goldStars.find((star) => star.id === ADR)?.count).toBe(1);
   });
 
   it("reads the recent matches with every player's values", () => {
-    const { recentMatches } = AccountProgressionBuilder.buildGoldStars(definitions, player);
+    const { recentMatches } = GoldStarsBuilder.build(definitions, player);
 
     expect(recentMatches).toHaveLength(1);
     expect(recentMatches[0].matchId).toBe("11111111-2222-4333-8444-555555555555");
@@ -418,8 +423,23 @@ describe("AccountProgressionBuilder.buildGoldStars", () => {
     });
   });
 
+  it("names every gold star Riot defines today", () => {
+    const { lifetime } = GoldStarsBuilder.build(definitions, player);
+
+    expect(lifetime.every((star) => star.key !== null && star.name !== null)).toBe(true);
+    expect(new Set(lifetime.map((star) => star.key)).size).toBe(lifetime.length);
+  });
+
+  it("leaves a gold star Riot adds later unnamed", () => {
+    const { lifetime } = GoldStarsBuilder.build([{ id: "new-star", tempT: 3 }], player);
+
+    expect(lifetime).toEqual([
+      { id: "new-star", key: null, name: null, threshold: 3, count: 0, best: null },
+    ]);
+  });
+
   it("answers zeros for a player Riot has nothing on", () => {
-    const empty = AccountProgressionBuilder.buildGoldStars(definitions, {
+    const empty = GoldStarsBuilder.build(definitions, {
       puuid: "p",
       version: 1,
       tempS: {},

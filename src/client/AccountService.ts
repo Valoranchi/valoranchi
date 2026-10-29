@@ -1,4 +1,5 @@
 import { AccountProgressionBuilder } from "../collection/AccountProgressionBuilder.js";
+import { GoldStarsBuilder } from "../collection/GoldStarsBuilder.js";
 import { CollectionBuilder } from "../collection/CollectionBuilder.js";
 import { GameSessionBuilder } from "../collection/GameSessionBuilder.js";
 import { LoadoutBuilder } from "../collection/LoadoutBuilder.js";
@@ -220,13 +221,13 @@ export class AccountService implements AccountApi {
     if (!change) return false;
     return Boolean(
       change.guns?.length ||
-      change.sprays?.length ||
-      change.flex !== undefined ||
-      change.card ||
-      change.title ||
-      change.levelBorder ||
-      change.incognito !== undefined ||
-      change.hideAccountLevel !== undefined,
+        change.sprays?.length ||
+        change.flex !== undefined ||
+        change.card ||
+        change.title ||
+        change.levelBorder ||
+        change.incognito !== undefined ||
+        change.hideAccountLevel !== undefined,
     );
   }
 
@@ -303,7 +304,7 @@ export class AccountService implements AccountApi {
     const session = await this.context.sessions.session();
     const api = this.context.api(session);
     const [definitions, player] = await Promise.all([api.goldStars(), api.goldStarPlayer()]);
-    return AccountProgressionBuilder.buildGoldStars(definitions, player);
+    return GoldStarsBuilder.build(definitions, player);
   }
 
   async matchProgress(matchId: string): Promise<MatchProgress> {

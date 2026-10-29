@@ -628,8 +628,24 @@ export type MatchProgress = {
   daily: MatchDailyProgress | null;
 };
 
+export type GoldStarKey =
+  | "mvp"
+  | "masterful"
+  | "topFrag"
+  | "aces"
+  | "clutches"
+  | "kills"
+  | "damage"
+  | "trades"
+  | "assists"
+  | "headshots"
+  | "firstBloods"
+  | "spikePlants";
+
 export type GoldStar = {
   id: string;
+  key: GoldStarKey | null;
+  name: string | null;
   threshold: number;
   count: number;
   best: number | null;

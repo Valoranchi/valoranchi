@@ -60,6 +60,7 @@ export {
   type BuyValidationResult,
 } from "./client/StoreValidator.js";
 
+export { GoldStarsBuilder } from "./collection/GoldStarsBuilder.js";
 export {
   LoadoutWriter,
   type RiotLoadoutGunPut,

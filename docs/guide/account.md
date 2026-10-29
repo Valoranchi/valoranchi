@@ -442,7 +442,8 @@ riotclient mastery
 Reads the gold stars of the competitive hub: the accolades a match can earn when a stat passes its `threshold`.
 Every gold star comes in `lifetime`, the ones never earned with `count` at zero and `best` as `null`, and again under each season in `seasons`.
 `recentMatches` holds the last matches Riot scored, with the value every player of each match reached.
-Riot only gives each gold star an id, so naming them is left to the caller.
+Riot only gives each gold star an id. The ones known today come with a stable `key` (`mvp`, `masterful`, `topFrag`, `aces`, `clutches`, `kills`, `damage`, `trades`, `assists`, `headshots`, `firstBloods`, `spikePlants`) and the `name` the game shows; one Riot adds later comes with both as `null`.
+The game's competitive hub shows the counts of the current act, which is its entry in `seasons`.
 
 ```ts
 const stars = await client.account.goldStars();
@@ -453,14 +454,35 @@ console.log(`${earned.length} of ${stars.lifetime.length} gold stars earned`);
 ```json
 {
   "lifetime": [
-    { "id": "6dc31cfd-41da-895f-9246-a8b63558cdb8", "threshold": 170, "count": 1, "best": 189.5 },
-    { "id": "4815a8a2-4649-9bfe-afd2-38ae9cc22898", "threshold": 420, "count": 0, "best": null }
+    {
+      "id": "6dc31cfd-41da-895f-9246-a8b63558cdb8",
+      "key": "damage",
+      "name": "Damage",
+      "threshold": 170,
+      "count": 1,
+      "best": 189.5
+    },
+    {
+      "id": "4815a8a2-4649-9bfe-afd2-38ae9cc22898",
+      "key": "masterful",
+      "name": "Masterful",
+      "threshold": 420,
+      "count": 0,
+      "best": null
+    }
   ],
   "seasons": [
     {
       "seasonId": "d816f426-48ea-f052-117f-9697a155b319",
       "goldStars": [
-        { "id": "6dc31cfd-41da-895f-9246-a8b63558cdb8", "threshold": 170, "count": 1, "best": 189.5 }
+        {
+          "id": "6dc31cfd-41da-895f-9246-a8b63558cdb8",
+          "key": "damage",
+          "name": "Damage",
+          "threshold": 170,
+          "count": 1,
+          "best": 189.5
+        }
       ]
     }
   ],

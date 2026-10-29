@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `key` and `name` on every `GoldStar`: the twelve gold stars of the competitive hub, from MVP to Spike Plants, each with a stable key and the name the game shows. A gold star Riot adds later comes with both as `null`. The raw layer gets `GoldStarsBuilder`.
+
 ## [0.12.0] - 2026-10-29
 
 ### Added

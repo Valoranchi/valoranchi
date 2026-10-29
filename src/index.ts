@@ -115,6 +115,7 @@ export type {
   Friend,
   FriendRequest,
   GoldStar,
+  GoldStarKey,
   GoldStarMatch,
   GoldStars,
   Image,
