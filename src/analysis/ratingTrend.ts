@@ -45,11 +45,10 @@ function calculateTargets(
 
   const isUnranked = tier === 0;
   const ratingToDemote = isUnranked ? 0 : currentRating;
+  // A loss stops at 0 RR, and only a loss taken at 0 RR demotes.
   const lossesAtCurrentPace =
     !isUnranked && averages.averageLoss && averages.averageLoss > 0
-      ? currentRating === 0
-        ? 1
-        : Math.ceil(currentRating / averages.averageLoss)
+      ? Math.ceil(currentRating / averages.averageLoss) + 1
       : null;
 
   return {

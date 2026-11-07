@@ -40,7 +40,7 @@ riotclient trend
   },
   "toDemotion": {
     "rating": 65,
-    "lossesAtCurrentPace": 4
+    "lossesAtCurrentPace": 6
   },
   "pace": "climbing"
 }
@@ -53,7 +53,7 @@ riotclient trend
 - `winRate`: Proportion of wins in the analyzed sample (0.0 to 1.0).
 - `perGame`: Average RR gained per win (`averageGain`) and RR lost per defeat (`averageLoss`).
 - `toNextRank`: RR remaining to reach 100 RR for promotion, with estimated `winsAtCurrentPace`.
-- `toDemotion`: RR buffer before falling below 0 RR, with estimated `lossesAtCurrentPace`.
+- `toDemotion`: RR left above 0 RR, with estimated `lossesAtCurrentPace`: the losses that reach 0 RR plus the one taken there, which is what demotes.
 - `pace`: Trend momentum category based on the last 10 games:
   - `"climbing"`: Net RR > +15.
   - `"falling"`: Net RR < -15.

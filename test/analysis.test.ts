@@ -74,7 +74,7 @@ describe("ratingTrend", () => {
 
     expect(trend.toDemotion).toEqual({
       rating: 72,
-      lossesAtCurrentPace: 5,
+      lossesAtCurrentPace: 6,
     });
 
     expect(trend.pace).toBe("climbing");
@@ -109,7 +109,31 @@ describe("ratingTrend", () => {
     const trend = ratingTrend(lossUpdates, resolver.fromTier(15, 20));
     expect(trend.streak).toEqual({ kind: "loss", length: 10 });
     expect(trend.pace).toBe("falling");
-    expect(trend.toDemotion.lossesAtCurrentPace).toBe(2);
+    expect(trend.toDemotion.lossesAtCurrentPace).toBe(3);
+  });
+
+  it.each([
+    [0, 1],
+    [1, 2],
+    [20, 2],
+    [21, 3],
+  ])("counts the loss taken at 0 RR on top of those reaching it from %i RR", (rating, losses) => {
+    const update: RiotCompetitiveUpdate = {
+      MatchID: "m",
+      MapID: "",
+      SeasonID: "",
+      MatchStartTime: 1000,
+      TierAfterUpdate: 15,
+      TierBeforeUpdate: 15,
+      RankedRatingAfterUpdate: rating,
+      RankedRatingBeforeUpdate: rating + 20,
+      RankedRatingEarned: -20,
+      RankedRatingPerformanceBonus: 0,
+      CompetitiveMovement: "MOVEMENT_DOWN",
+      AFKPenalty: 0,
+    };
+    const trend = ratingTrend([update], resolver.fromTier(15, rating));
+    expect(trend.toDemotion.lossesAtCurrentPace).toBe(losses);
   });
 });
 

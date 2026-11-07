@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `toDemotion.lossesAtCurrentPace` of `ratingTrend` now counts the loss taken at 0 RR. A loss stops at 0 RR and only the next one demotes, so 20 RR with an average loss of 20 is two losses and not one.
+
 ## [0.13.0] - 2026-10-29
 
 ### Added
