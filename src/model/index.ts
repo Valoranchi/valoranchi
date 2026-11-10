@@ -607,10 +607,14 @@ export type EsportsMatchTeam = {
   teamId: string;
   result: "win" | "loss" | "tie" | null;
   gameWins: number;
+  // the structuralId of the match this team came out of, or null when it was seeded
+  originId: string | null;
 };
 
 export type EsportsMatch = {
   id: string;
+  // its place in the bracket, which the teams of later matches name as their origin
+  structuralId: string | null;
   leagueId: string;
   tournamentId: string;
   stageId: string;
@@ -627,12 +631,16 @@ export type EsportsStanding = {
   losses: number;
 };
 
+export type EsportsRound = { name: string; slug: string; matchIds: string[] };
+
 export type EsportsStageSection = {
   id: string;
   name: string;
   slug: string;
   type: string;
-  rounds: { name: string; slug: string; matchIds: string[] }[];
+  rounds: EsportsRound[];
+  // the bracket as drawn: each column lists its rounds top to bottom, rounds flattens them
+  columns: EsportsRound[][];
   standings: EsportsStanding[];
 };
 

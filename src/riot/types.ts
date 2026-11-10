@@ -923,10 +923,14 @@ export interface RiotEsportsMatchTeam {
   TeamID: string;
   Result?: string;
   GameWins?: number;
+  OriginStructuralID?: string;
+  OriginType?: string;
+  OriginSlot?: number;
 }
 
 export interface RiotEsportsMatch {
   ID: string;
+  StructuralID?: string;
   LeagueID: string;
   TournamentID: string;
   StageID: string;

@@ -6,6 +6,7 @@ import type {
   EsportsMatchTeam,
   EsportsOverview,
   EsportsPlayer,
+  EsportsRound,
   EsportsStage,
   EsportsStageSection,
   EsportsStream,
@@ -17,6 +18,7 @@ import type {
   RiotEsportsMatchesResponse,
   RiotEsportsOverviewResponse,
   RiotEsportsStage,
+  RiotEsportsStageCell,
   RiotEsportsStageSection,
   RiotEsportsStagesResponse,
   RiotEsportsStream,
@@ -74,6 +76,7 @@ function toStreams(streams: RiotEsportsStream[] | null | undefined): EsportsStre
 function toMatch(match: RiotEsportsMatch): EsportsMatch {
   return {
     id: match.ID,
+    structuralId: match.StructuralID || null,
     leagueId: match.LeagueID,
     tournamentId: match.TournamentID,
     stageId: match.StageID,
@@ -84,20 +87,26 @@ function toMatch(match: RiotEsportsMatch): EsportsMatch {
       teamId: team.TeamID,
       result: toResult(team.Result),
       gameWins: team.GameWins ?? 0,
+      originId:
+        team.OriginType === "match" && team.OriginStructuralID ? team.OriginStructuralID : null,
     })),
     streams: toStreams(match.Streams),
   };
 }
 
+function toRound(cell: RiotEsportsStageCell): EsportsRound {
+  return { name: cell.Name, slug: cell.Slug, matchIds: cell.MatchIDs ?? [] };
+}
+
 function toSection(section: RiotEsportsStageSection): EsportsStageSection {
+  const columns = (section.Columns ?? []).map((column) => (column.Cells ?? []).map(toRound));
   return {
     id: section.ID,
     name: section.Name,
     slug: section.Slug,
     type: section.Type,
-    rounds: (section.Columns ?? [])
-      .flatMap((column) => column.Cells ?? [])
-      .map((cell) => ({ name: cell.Name, slug: cell.Slug, matchIds: cell.MatchIDs ?? [] })),
+    rounds: columns.flat(),
+    columns,
     standings: (section.Standings ?? []).map(({ Team }) => ({
       teamId: Team.TeamID,
       wins: Team.TeamRecord?.Wins ?? 0,
