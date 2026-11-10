@@ -386,6 +386,8 @@ riotclient contract-activate 45d176ab-40f0-4032-9cb7-7ff769d67b2d --yes
 Retrieves active penalties and restrictions applied to the player account.
 Returns empty array when account is in good standing with zero restrictions.
 
+Each penalty has its `id`, `reason` and `expiresAt`. When Riot sends them, it also has `issuedAt` (the start of the game that caused it), `matchId`, `gamesRemaining`, `queueIds` (the queues it blocks), `warning` (`type` and `tier`), `restriction` (`type` and `reason`) and `effects`, the name of every effect Riot applies, such as `QueueRestriction` or `Warning`. A field Riot does not send is `null`, and `queueIds` and `effects` are empty lists.
+
 ```ts
 const penalties = await client.account.penalties();
 console.log(penalties);
@@ -396,7 +398,20 @@ riotclient penalties
 ```
 
 ```json
-[]
+[
+  {
+    "id": "7c2f1e9a-0b4d-4c8e-9a6f-3d1b2c5e8f70",
+    "reason": "Leaving",
+    "expiresAt": "2026-11-20T00:00:00Z",
+    "issuedAt": "2026-11-13T18:20:00.000Z",
+    "matchId": "5b8e2a71-3c9d-4f60-8e1a-7d2c4b9f0a13",
+    "gamesRemaining": 2,
+    "queueIds": ["competitive"],
+    "warning": null,
+    "restriction": null,
+    "effects": ["QueueRestriction"]
+  }
+]
 ```
 
 ### agentMastery
