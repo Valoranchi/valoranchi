@@ -607,7 +607,7 @@ export type EsportsMatchTeam = {
   teamId: string;
   result: "win" | "loss" | "tie" | null;
   gameWins: number;
-  // the structuralId of the match this team came out of, or null when it was seeded
+  // the structuralId of the match this team came out of, or null when it came from a seed or a standing
   originId: string | null;
 };
 
