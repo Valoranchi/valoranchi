@@ -1,0 +1,86 @@
+{
+  "Matches": [
+    {
+      "ID": "115576361461142741",
+      "LeagueID": "107254585505459304",
+      "TournamentID": "115576361459045501",
+      "StageID": "115576361460159615",
+      "StageName": "Eliminatorias",
+      "StructuralID": "match_939cb357b7",
+      "StartTime": "2026-10-08T09:00:00Z",
+      "State": "completed",
+      "Destinations": {
+        "Win": {
+          "StructuralID": "match_fa61b6a8b9",
+          "Type": "match",
+          "Slot": 1
+        },
+        "Loss": {
+          "StructuralID": "match_d721dcc3f7",
+          "Type": "match",
+          "Slot": 1
+        }
+      },
+      "MatchTeams": [
+        {
+          "TeamID": "105748037960121143",
+          "OriginStructuralID": "decisionPoint_9b1c2de418",
+          "OriginType": "decisionPoint",
+          "OriginSlot": 1,
+          "Result": "loss",
+          "GameWins": 0
+        },
+        {
+          "TeamID": "105680891295502820",
+          "OriginStructuralID": "decisionPoint_9b1c2de418",
+          "OriginType": "decisionPoint",
+          "OriginSlot": 2,
+          "Result": "win",
+          "GameWins": 2
+        }
+      ],
+      "Streams": []
+    },
+    {
+      "ID": "115576361461208331",
+      "LeagueID": "107254585505459304",
+      "TournamentID": "115576361459045501",
+      "StageID": "115576361460159615",
+      "StageName": "Eliminatorias",
+      "StructuralID": "match_5f190d55b9",
+      "StartTime": "2026-10-18T06:00:00Z",
+      "State": "completed",
+      "Destinations": {
+        "Win": {
+          "StructuralID": "",
+          "Type": "standing",
+          "Slot": 1
+        },
+        "Loss": {
+          "StructuralID": "",
+          "Type": "standing",
+          "Slot": 2
+        }
+      },
+      "MatchTeams": [
+        {
+          "TeamID": "107745125595754895",
+          "OriginStructuralID": "match_a603acb896",
+          "OriginType": "match",
+          "OriginSlot": 1,
+          "Result": "win",
+          "GameWins": 3
+        },
+        {
+          "TeamID": "106013381894847385",
+          "OriginStructuralID": "match_0e0b0aa42e",
+          "OriginType": "match",
+          "OriginSlot": 1,
+          "Result": "loss",
+          "GameWins": 1
+        }
+      ],
+      "Streams": []
+    }
+  ]
+}

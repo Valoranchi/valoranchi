@@ -1,0 +1,60 @@
+{
+  "Leagues": [
+    {
+      "ID": "107254585505459304",
+      "Name": "Champions",
+      "ImageURL": "http://static.lolesports.com/leagues/1636575094815_VCT_Spark_Gold.png",
+      "TournamentIDs": ["115576361459045501"],
+      "TeamIDs": ["107745125595754895", "106013381894847385"]
+    },
+    {
+      "ID": "109940824119741550",
+      "Name": "Masters",
+      "ImageURL": "http://static.lolesports.com/leagues/1685263111965_VCT_SPARK_RGB_PURPLE.png",
+      "TournamentIDs": ["115576357309128270"],
+      "TeamIDs": ["106013381894847385"]
+    }
+  ],
+  "Tournaments": [
+    {
+      "ID": "115576361459045501",
+      "Name": "Champions Shanghai",
+      "LeagueID": "107254585505459304",
+      "LeagueName": "",
+      "StartTime": "2026-09-23T22:00:00Z",
+      "EndTime": "2026-10-18T12:00:00Z",
+      "StageIDs": ["115576361460159614", "115576361460159615"],
+      "TeamIDs": ["107745125595754895", "106013381894847385"]
+    }
+  ],
+  "Teams": [
+    {
+      "ID": "107745125595754895",
+      "Name": "LOUD",
+      "Code": "LOUD",
+      "BaseImageURL": "http://static.lolesports.com/teams/1644060140569_LOUDGreen.png",
+      "HighResImageURL": "https://am-a.akamaihd.net/image?resize=256:256&f=http%3A%2F%2Fstatic.lolesports.com%2Fteams%2F1644060140569_LOUDGreen.png",
+      "LowResImageURL": "https://am-a.akamaihd.net/image?resize=128:128&f=http%3A%2F%2Fstatic.lolesports.com%2Fteams%2F1644060140569_LOUDGreen.png",
+      "HomeLeagueID": "109974795266458277",
+      "TeamMemberIDs": ["107729647161362937", "111918157299291121"],
+      "BundleID": "",
+      "BundleDataAssetID": "8feb9ed1-441a-73b6-55ed-ff836011701e",
+      "DataAssetID": "190B1797-4421-E6F1-F578-C5B2F05DE4FB"
+    },
+    {
+      "ID": "106013381894847385",
+      "Name": "Team Vitality",
+      "Code": "VIT",
+      "BaseImageURL": "http://static.lolesports.com/teams/1722030793680_VITALITY_YELLOW.png",
+      "HighResImageURL": "https://am-a.akamaihd.net/image?resize=256:256&f=http%3A%2F%2Fstatic.lolesports.com%2Fteams%2F1722030793680_VITALITY_YELLOW.png",
+      "LowResImageURL": "https://am-a.akamaihd.net/image?resize=128:128&f=http%3A%2F%2Fstatic.lolesports.com%2Fteams%2F1722030793680_VITALITY_YELLOW.png",
+      "HomeLeagueID": "106109559530232966",
+      "TeamMemberIDs": ["112121889203093337", "106230271915475632"],
+      "BundleID": "",
+      "BundleDataAssetID": "e7ce2a70-46c2-61e2-bcdd-82a88a9d0d5c",
+      "DataAssetID": "67F497F3-4655-0974-B486-E89345AFB05B"
+    }
+  ],
+  "Seasons": null,
+  "Splits": null
+}
