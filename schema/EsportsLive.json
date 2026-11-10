@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/EsportsLive",
+  "definitions": {
+    "EsportsLive": {
+      "type": "object",
+      "properties": {
+        "matches": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EsportsLiveWindow"
+          }
+        },
+        "tournaments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EsportsLiveWindow"
+          }
+        }
+      },
+      "required": ["matches", "tournaments"],
+      "additionalProperties": false
+    },
+    "EsportsLiveWindow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "startsAt": {
+          "type": "string"
+        },
+        "endsAt": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "startsAt", "endsAt"],
+      "additionalProperties": false
+    }
+  }
+}

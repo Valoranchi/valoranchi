@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/EsportsStage",
+  "definitions": {
+    "EsportsStage": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EsportsStageSection"
+          }
+        }
+      },
+      "required": ["id", "name", "slug", "sections"],
+      "additionalProperties": false
+    },
+    "EsportsStageSection": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "rounds": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "slug": {
+                "type": "string"
+              },
+              "matchIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": ["name", "slug", "matchIds"],
+            "additionalProperties": false
+          }
+        },
+        "standings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EsportsStanding"
+          }
+        }
+      },
+      "required": ["id", "name", "slug", "type", "rounds", "standings"],
+      "additionalProperties": false
+    },
+    "EsportsStanding": {
+      "type": "object",
+      "properties": {
+        "teamId": {
+          "type": "string"
+        },
+        "wins": {
+          "type": "number"
+        },
+        "losses": {
+          "type": "number"
+        }
+      },
+      "required": ["teamId", "wins", "losses"],
+      "additionalProperties": false
+    }
+  }
+}
