@@ -1,0 +1,43 @@
+{
+  "TeamMembers": [
+    {
+      "ID": "107736211832747525",
+      "Handle": "kamo",
+      "FirstName": "Kamil",
+      "LastName": "Frąckowiak",
+      "ImageURL": "https://am-a.akamaihd.net/image?resize=256:256&f=http%3A%2F%2Fstatic.lolesports.com%2Fplayers%2F1784890123163_kamo-01.png",
+      "Positions": [
+        {
+          "Name": "Jugador",
+          "Slug": "player"
+        }
+      ]
+    },
+    {
+      "ID": "107729648820931094",
+      "Handle": "Kicks",
+      "FirstName": "Kimmie",
+      "LastName": "Laasner",
+      "ImageURL": "https://am-a.akamaihd.net/image?resize=256:256&f=http%3A%2F%2Fstatic.lolesports.com%2Fplayers%2F1784890142807_Kicks-01.png",
+      "Positions": [
+        {
+          "Name": "Jugador",
+          "Slug": "player"
+        }
+      ]
+    },
+    {
+      "ID": "107723772674746660",
+      "Handle": "MiniBoo",
+      "FirstName": "Dominykas",
+      "LastName": "Lukaševičius",
+      "ImageURL": "https://am-a.akamaihd.net/image?resize=256:256&f=http%3A%2F%2Fstatic.lolesports.com%2Fplayers%2F1774667126873_miniboo.png",
+      "Positions": [
+        {
+          "Name": "Jugador",
+          "Slug": "player"
+        }
+      ]
+    }
+  ]
+}

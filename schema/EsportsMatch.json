@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/EsportsMatch",
+  "definitions": {
+    "EsportsMatch": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "leagueId": {
+          "type": "string"
+        },
+        "tournamentId": {
+          "type": "string"
+        },
+        "stageId": {
+          "type": "string"
+        },
+        "stageName": {
+          "type": ["string", "null"]
+        },
+        "startsAt": {
+          "type": "string"
+        },
+        "state": {
+          "$ref": "#/definitions/EsportsMatchState"
+        },
+        "teams": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EsportsMatchTeam"
+          }
+        },
+        "streams": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EsportsStream"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "leagueId",
+        "tournamentId",
+        "stageId",
+        "stageName",
+        "startsAt",
+        "state",
+        "teams",
+        "streams"
+      ],
+      "additionalProperties": false
+    },
+    "EsportsMatchState": {
+      "type": "string",
+      "enum": ["unstarted", "inProgress", "completed", "unknown"]
+    },
+    "EsportsMatchTeam": {
+      "type": "object",
+      "properties": {
+        "teamId": {
+          "type": "string"
+        },
+        "result": {
+          "type": ["string", "null"],
+          "enum": ["win", "loss", "tie", null]
+        },
+        "gameWins": {
+          "type": "number"
+        }
+      },
+      "required": ["teamId", "result", "gameWins"],
+      "additionalProperties": false
+    },
+    "EsportsStream": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string"
+        },
+        "parameter": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "url": {
+          "type": ["string", "null"]
+        }
+      },
+      "required": ["provider", "parameter", "locale", "url"],
+      "additionalProperties": false
+    }
+  }
+}

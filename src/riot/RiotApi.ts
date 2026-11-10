@@ -20,6 +20,11 @@ import type {
   RiotDailyTicketQueueConfigResponse,
   RiotDailyTicketResponse,
   RiotEntitlementsResponse,
+  RiotEsportsLiveEventTimesResponse,
+  RiotEsportsMatchesResponse,
+  RiotEsportsOverviewResponse,
+  RiotEsportsStagesResponse,
+  RiotEsportsTeamMembersResponse,
   RiotFavoritesResponse,
   RiotLeaderboardResponse,
   RiotLoadoutResponse,
@@ -41,6 +46,10 @@ import type {
 } from "./types.js";
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+
+function encodeIds(ids: readonly string[]): string {
+  return ids.map((id) => encodeURIComponent(id)).join(",");
+}
 
 export class RiotApi {
   private readonly gateway: HttpGateway;
@@ -396,6 +405,70 @@ export class RiotApi {
 
   async penalties(): Promise<RiotPenaltiesResponse> {
     return this.get(`${this.session.endpoints.pd}/restrictions/v3/penalties`);
+  }
+
+  async esportsOverview(
+    locale: string,
+    leagueIds: readonly string[],
+  ): Promise<RiotEsportsOverviewResponse> {
+    const query = this.esportsQuery(locale, { leagueID: encodeIds(leagueIds) });
+    return this.get(`${this.session.endpoints.pd}/esports-service/v2/overview${query}`);
+  }
+
+  async esportsUpcomingMatches(
+    locale: string,
+    leagueIds: readonly string[],
+  ): Promise<RiotEsportsMatchesResponse> {
+    const query = this.esportsQuery(locale, { leagueID: encodeIds(leagueIds) });
+    return this.get(`${this.session.endpoints.pd}/esports-service/v2/upcomingMatches${query}`);
+  }
+
+  async esportsLiveEventTimes(
+    locale: string,
+    leagueIds: readonly string[],
+  ): Promise<RiotEsportsLiveEventTimesResponse> {
+    const query = this.esportsQuery(locale, {
+      leagueID: encodeIds(leagueIds),
+      includePickemData: "true",
+    });
+    return this.get(`${this.session.endpoints.pd}/esports-service/v2/liveEventTimes${query}`);
+  }
+
+  async esportsMatches(
+    locale: string,
+    matchIds: readonly string[],
+  ): Promise<RiotEsportsMatchesResponse> {
+    const url = `${this.session.endpoints.pd}/esports-service/v2/matches${this.esportsQuery(locale, {})}`;
+    return this.cached(`POST ${url} ${matchIds.join(",")}`, () =>
+      this.gateway.post<RiotEsportsMatchesResponse>(
+        url,
+        { MatchIDs: matchIds },
+        this.session.headers(),
+      ),
+    );
+  }
+
+  async esportsStages(
+    locale: string,
+    stageIds: readonly string[],
+  ): Promise<RiotEsportsStagesResponse> {
+    const query = this.esportsQuery(locale, { stageID: encodeIds(stageIds) });
+    return this.get(`${this.session.endpoints.pd}/esports-service/v2/stages${query}`);
+  }
+
+  async esportsTeamMembers(
+    locale: string,
+    teamId: string,
+  ): Promise<RiotEsportsTeamMembersResponse> {
+    const query = this.esportsQuery(locale, { teamID: encodeURIComponent(teamId) });
+    return this.get(`${this.session.endpoints.pd}/esports-service/v2/teamMembers${query}`);
+  }
+
+  private esportsQuery(locale: string, extra: Record<string, string>): string {
+    const params = Object.entries(extra)
+      .map(([key, value]) => `&${key}=${value}`)
+      .join("");
+    return `?locale=${encodeURIComponent(locale)}&sport=val${params}`;
   }
 
   async favorites(puuid = this.session.puuid): Promise<RiotFavoritesResponse> {

@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/EsportsPlayer",
+  "definitions": {
+    "EsportsPlayer": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "handle": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": ["string", "null"]
+        },
+        "lastName": {
+          "type": ["string", "null"]
+        },
+        "image": {
+          "type": ["string", "null"]
+        },
+        "role": {
+          "type": ["string", "null"]
+        },
+        "roleName": {
+          "type": ["string", "null"]
+        }
+      },
+      "required": ["id", "handle", "firstName", "lastName", "image", "role", "roleName"],
+      "additionalProperties": false
+    }
+  }
+}

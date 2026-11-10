@@ -28,6 +28,7 @@ describe("RiotClient facade", () => {
     const client = new RiotClient({ lockfilePath: "non-existent" });
     expect(client.account).toBeDefined();
     expect(client.social).toBeDefined();
+    expect(client.esports).toBeDefined();
     expect(client.store).toBeDefined();
     expect(client.matches).toBeDefined();
     expect(client.party).toBeDefined();
@@ -35,6 +36,13 @@ describe("RiotClient facade", () => {
     expect(typeof client.events).toBe("function");
     expect(typeof client.serve).toBe("function");
     expect(typeof client.close).toBe("function");
+  });
+
+  it("answers the esports calls that need no request without reaching the game", async () => {
+    const client = new RiotClient({ lockfilePath: "non-existent" });
+    await expect(client.esports.matches([])).resolves.toEqual([]);
+    await expect(client.esports.stages([])).resolves.toEqual([]);
+    await expect(client.esports.roster("")).rejects.toThrow(ValidationError);
   });
 
   it("throws RiotClientNotRunningError when lockfile is absent", async () => {

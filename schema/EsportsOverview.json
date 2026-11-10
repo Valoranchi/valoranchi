@@ -1,0 +1,121 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/EsportsOverview",
+  "definitions": {
+    "EsportsOverview": {
+      "type": "object",
+      "properties": {
+        "leagues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EsportsLeague"
+          }
+        },
+        "tournaments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EsportsTournament"
+          }
+        },
+        "teams": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EsportsTeam"
+          }
+        }
+      },
+      "required": ["leagues", "tournaments", "teams"],
+      "additionalProperties": false
+    },
+    "EsportsLeague": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "image": {
+          "type": ["string", "null"]
+        },
+        "tournamentIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "teamIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["id", "name", "image", "tournamentIds", "teamIds"],
+      "additionalProperties": false
+    },
+    "EsportsTournament": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "leagueId": {
+          "type": "string"
+        },
+        "startsAt": {
+          "type": "string"
+        },
+        "endsAt": {
+          "type": "string"
+        },
+        "stageIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "teamIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["id", "name", "leagueId", "startsAt", "endsAt", "stageIds", "teamIds"],
+      "additionalProperties": false
+    },
+    "EsportsTeam": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "image": {
+          "type": ["string", "null"]
+        },
+        "homeLeagueId": {
+          "type": ["string", "null"]
+        },
+        "memberIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["id", "name", "code", "image", "homeLeagueId", "memberIds"],
+      "additionalProperties": false
+    }
+  }
+}

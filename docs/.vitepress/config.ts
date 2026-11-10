@@ -41,6 +41,7 @@ export default defineConfig({
           { text: "Social", link: "/guide/social" },
           { text: "Store", link: "/guide/store" },
           { text: "Matches", link: "/guide/matches" },
+          { text: "Esports", link: "/guide/esports" },
           { text: "Party", link: "/guide/party" },
           { text: "Analytics", link: "/guide/analytics" },
           { text: "Real-Time Events", link: "/guide/events" },

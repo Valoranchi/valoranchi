@@ -61,6 +61,8 @@ export {
 } from "./client/StoreValidator.js";
 
 export { GoldStarsBuilder } from "./collection/GoldStarsBuilder.js";
+export { AccountProgressionBuilder } from "./collection/AccountProgressionBuilder.js";
+export { EsportsBuilder, VCT_LEAGUE_IDS } from "./collection/EsportsBuilder.js";
 export {
   LoadoutWriter,
   type RiotLoadoutGunPut,

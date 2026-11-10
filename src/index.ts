@@ -9,6 +9,8 @@ export {
 } from "./RiotClient.js";
 export type {
   AccountApi,
+  EsportsApi,
+  EsportsOptions,
   LocalRawApi,
   MatchesApi,
   OfficialApi,
@@ -18,6 +20,7 @@ export type {
   StoreApi,
 } from "./client/api.js";
 export { PartyValidator, type PartyAction } from "./client/PartyValidator.js";
+export { VCT_LEAGUE_IDS } from "./collection/EsportsBuilder.js";
 export { RiotEvents, toFriendRequest, type RiotEventMap } from "./events/RiotEvents.js";
 export { TypedEmitter } from "./events/TypedEmitter.js";
 export {
@@ -112,6 +115,20 @@ export type {
   Cost,
   DailyCheckpoints,
   DailyOffer,
+  EsportsLeague,
+  EsportsLive,
+  EsportsLiveWindow,
+  EsportsMatch,
+  EsportsMatchState,
+  EsportsMatchTeam,
+  EsportsOverview,
+  EsportsPlayer,
+  EsportsStage,
+  EsportsStageSection,
+  EsportsStanding,
+  EsportsStream,
+  EsportsTeam,
+  EsportsTournament,
   Friend,
   FriendRequest,
   GoldStar,

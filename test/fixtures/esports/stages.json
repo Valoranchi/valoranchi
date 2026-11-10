@@ -1,0 +1,90 @@
+{
+  "Stages": [
+    {
+      "ID": "115576361460159614",
+      "Name": "Grupos",
+      "Slug": "groups",
+      "Sections": [
+        {
+          "ID": "115576361460487296",
+          "Name": "Grupo A",
+          "Slug": "group_a",
+          "Type": "bracket",
+          "Columns": [
+            {
+              "Cells": [
+                {
+                  "Slug": "round_1",
+                  "Name": "Ronda 1",
+                  "MatchIDs": ["115576361461077125", "115576361461077129"]
+                }
+              ]
+            },
+            {
+              "Cells": [
+                {
+                  "Slug": "upper_bracket_finals",
+                  "Name": "Llave superior - Final",
+                  "MatchIDs": ["115576361461077133"]
+                },
+                {
+                  "Slug": "lower_bracket_round_1",
+                  "Name": "Llave inferior - Ronda 1",
+                  "MatchIDs": ["115576361461077137"]
+                }
+              ]
+            },
+            {
+              "Cells": [
+                {
+                  "Slug": "lower_bracket_finals",
+                  "Name": "Llave inferior - Final",
+                  "MatchIDs": ["115576361461077141"]
+                }
+              ]
+            }
+          ],
+          "Standings": [
+            {
+              "Team": {
+                "TeamID": "105748037960121143",
+                "TeamRecord": {
+                  "Wins": 2,
+                  "Losses": 0
+                }
+              }
+            },
+            {
+              "Team": {
+                "TeamID": "105827039633208481",
+                "TeamRecord": {
+                  "Wins": 2,
+                  "Losses": 1
+                }
+              }
+            },
+            {
+              "Team": {
+                "TeamID": "105720659034682989",
+                "TeamRecord": {
+                  "Wins": 1,
+                  "Losses": 2
+                }
+              }
+            },
+            {
+              "Team": {
+                "TeamID": "111878266367184534",
+                "TeamRecord": {
+                  "Wins": 0,
+                  "Losses": 2
+                }
+              }
+            }
+          ],
+          "Rankings": []
+        }
+      ]
+    }
+  ]
+}

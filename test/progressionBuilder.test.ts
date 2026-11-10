@@ -13,6 +13,7 @@ import type {
   RiotDailyTicketResponse,
   RiotGoldStarPlayerResponse,
   RiotGoldStarsResponse,
+  RiotPenaltiesResponse,
 } from "../src/riot/types.js";
 
 function fixture<T>(name: string): T {
@@ -448,5 +449,64 @@ describe("GoldStarsBuilder.build", () => {
     expect(empty.lifetime.every((star) => star.count === 0 && star.best === null)).toBe(true);
     expect(empty.seasons).toEqual([]);
     expect(empty.recentMatches).toEqual([]);
+  });
+});
+
+describe("AccountProgressionBuilder.buildPenalties", () => {
+  it("reads every field Riot gives about a penalty", () => {
+    const [penalty] = AccountProgressionBuilder.buildPenalties({
+      Penalties: [
+        {
+          ID: "pen-full",
+          Expiry: "2026-11-20T00:00:00Z",
+          Reason: "Leaving",
+          IssuingGameStartUnixMillis: 1783000000000,
+          IssuingMatchID: "match-1",
+          GamesRemaining: 2,
+          ApplyToAllPlatforms: true,
+          QueueRestrictionEffect: { QueueIDs: ["competitive"] },
+          WarningEffect: { WarningType: "AFK", WarningTier: 1 },
+          RiotRestrictionEffect: { RestrictionType: "chat", RestrictionReason: "Harassment" },
+          XPMultiplierEffect: {},
+        },
+      ],
+    });
+    expect(penalty).toEqual({
+      id: "pen-full",
+      reason: "Leaving",
+      expiresAt: "2026-11-20T00:00:00Z",
+      issuedAt: new Date(1783000000000).toISOString(),
+      matchId: "match-1",
+      gamesRemaining: 2,
+      queueIds: ["competitive"],
+      warning: { type: "AFK", tier: 1 },
+      restriction: { type: "chat", reason: "Harassment" },
+      effects: ["QueueRestriction", "Warning", "RiotRestriction", "XPMultiplier"],
+    });
+  });
+
+  it("fills the optional fields when Riot only sends the id and the expiry", () => {
+    const [penalty] = AccountProgressionBuilder.buildPenalties({
+      Penalties: [{ ID: "pen-min", Expiry: "2026-11-20T00:00:00Z" }],
+    });
+    expect(penalty).toEqual({
+      id: "pen-min",
+      reason: "",
+      expiresAt: "2026-11-20T00:00:00Z",
+      issuedAt: null,
+      matchId: null,
+      gamesRemaining: null,
+      queueIds: [],
+      warning: null,
+      restriction: null,
+      effects: [],
+    });
+  });
+
+  it("leaves out the effects Riot sends as null", () => {
+    const raw = {
+      Penalties: [{ ID: "pen-null", Expiry: "2026-11-20T00:00:00Z", GameBanEffect: null }],
+    } as unknown as RiotPenaltiesResponse;
+    expect(AccountProgressionBuilder.buildPenalties(raw)[0]?.effects).toEqual([]);
   });
 });
