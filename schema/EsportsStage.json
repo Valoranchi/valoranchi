@@ -42,23 +42,16 @@
         "rounds": {
           "type": "array",
           "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "slug": {
-                "type": "string"
-              },
-              "matchIds": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
-            },
-            "required": ["name", "slug", "matchIds"],
-            "additionalProperties": false
+            "$ref": "#/definitions/EsportsRound"
+          }
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/EsportsRound"
+            }
           }
         },
         "standings": {
@@ -68,7 +61,26 @@
           }
         }
       },
-      "required": ["id", "name", "slug", "type", "rounds", "standings"],
+      "required": ["id", "name", "slug", "type", "rounds", "columns", "standings"],
+      "additionalProperties": false
+    },
+    "EsportsRound": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "matchIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["name", "slug", "matchIds"],
       "additionalProperties": false
     },
     "EsportsStanding": {

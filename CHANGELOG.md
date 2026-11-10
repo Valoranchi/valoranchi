@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `columns` on the esports stage sections, `structuralId` on the matches and `originId` on their teams: the bracket as drawn, where each match sits in it and which match each team came out of. The `EsportsRound` type is exported.
+
 ## [0.14.0] - 2026-11-10
 
 ### Added

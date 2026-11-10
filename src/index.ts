@@ -123,6 +123,7 @@ export type {
   EsportsMatchTeam,
   EsportsOverview,
   EsportsPlayer,
+  EsportsRound,
   EsportsStage,
   EsportsStageSection,
   EsportsStanding,

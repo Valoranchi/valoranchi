@@ -100,6 +100,7 @@ describe("EsportsBuilder.buildMatches", () => {
     );
     expect(first).toEqual({
       id: "115576361461142741",
+      structuralId: "match_939cb357b7",
       leagueId: "107254585505459304",
       tournamentId: "115576361459045501",
       stageId: "115576361460159615",
@@ -107,14 +108,15 @@ describe("EsportsBuilder.buildMatches", () => {
       startsAt: "2026-10-08T09:00:00Z",
       state: "completed",
       teams: [
-        { teamId: "105748037960121143", result: "loss", gameWins: 0 },
-        { teamId: "105680891295502820", result: "win", gameWins: 2 },
+        { teamId: "105748037960121143", result: "loss", gameWins: 0, originId: null },
+        { teamId: "105680891295502820", result: "win", gameWins: 2, originId: null },
       ],
       streams: [],
     });
+    expect(second?.structuralId).toBe("match_5f190d55b9");
     expect(second?.teams).toEqual([
-      { teamId: "107745125595754895", result: "win", gameWins: 3 },
-      { teamId: "106013381894847385", result: "loss", gameWins: 1 },
+      { teamId: "107745125595754895", result: "win", gameWins: 3, originId: "match_a603acb896" },
+      { teamId: "106013381894847385", result: "loss", gameWins: 1, originId: "match_0e0b0aa42e" },
     ]);
   });
 
@@ -160,10 +162,25 @@ describe("EsportsBuilder.buildMatches", () => {
       ],
     });
     expect(match?.state).toBe("unknown");
-    expect(match?.teams).toEqual([{ teamId: "t1", result: null, gameWins: 0 }]);
+    expect(match?.teams).toEqual([{ teamId: "t1", result: null, gameWins: 0, originId: null }]);
     expect(match?.streams).toEqual([
       { provider: "kick", parameter: "channel", locale: "", url: null },
     ]);
+  });
+
+  it("gives a null origin to teams not from a match and a null structural id when Riot sends none", () => {
+    const [match] = EsportsBuilder.buildMatches({
+      Matches: [
+        rawMatch({
+          MatchTeams: [
+            { TeamID: "t1", OriginType: "standing", OriginStructuralID: "standing_1" },
+            { TeamID: "t2" },
+          ],
+        }),
+      ],
+    });
+    expect(match?.structuralId).toBeNull();
+    expect(match?.teams.map((team) => team.originId)).toEqual([null, null]);
   });
 });
 
@@ -189,6 +206,17 @@ describe("EsportsBuilder.buildStages", () => {
       { teamId: "105720659034682989", wins: 1, losses: 2 },
       { teamId: "111878266367184534", wins: 0, losses: 2 },
     ]);
+  });
+
+  it("keeps the columns of the bracket as drawn and flattens them into the rounds", () => {
+    const [stage] = EsportsBuilder.buildStages(fixture<RiotEsportsStagesResponse>("stages"));
+    const [section] = stage?.sections ?? [];
+    expect(section?.columns.map((column) => column.length)).toEqual([1, 2, 1]);
+    expect(section?.columns[1]?.map((round) => round.slug)).toEqual([
+      "upper_bracket_finals",
+      "lower_bracket_round_1",
+    ]);
+    expect(section?.rounds).toEqual(section?.columns.flat());
   });
 });
 

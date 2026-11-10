@@ -39,3 +39,5 @@ Notes:
 - A team's `result` is `win`, `loss` or `tie`, or `null` when the match has none yet.
 - `matches([])` and `stages([])` return an empty list without a request. `roster("")` throws a `ValidationError`.
 - Image URLs come back as `https`.
+
+The brackets also say how they are laid out. `columns` gives each column of a stage section with its rounds from top to bottom, and `rounds` is the same rounds in one list. Every match has a `structuralId` for its place in the bracket, and each team has an `originId`: the `structuralId` of the match it came out of, or `null` when it did not come from a match. With those ids an app can draw the bracket and the lines that connect each match to the ones before it.
