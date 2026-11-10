@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-11-10
+
 ### Added
 
 - `client.esports`: the VALORANT esports of the game's hub. `overview()` gives the leagues, tournaments and teams, `upcoming()` and `matches()` give matches with their results, game wins, state and streams, `stages()` gives the brackets and standings, `roster()` gives the players and coaches of a team and `live()` gives the windows when a league is live. The raw layer gets the six esports endpoints of `RiotApi`, `EsportsBuilder` and `VCT_LEAGUE_IDS`.
