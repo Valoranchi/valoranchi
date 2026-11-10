@@ -12,6 +12,9 @@ import type { ClientContext } from "./ClientContext.js";
 
 const DEFAULT_LOCALE = "en-US";
 
+const leaguesOf = (options: EsportsOptions): readonly string[] =>
+  options.leagueIds?.length ? options.leagueIds : VCT_LEAGUE_IDS;
+
 export class EsportsService implements EsportsApi {
   constructor(private readonly context: ClientContext) {}
 
@@ -19,7 +22,7 @@ export class EsportsService implements EsportsApi {
     const session = await this.context.sessions.session();
     const raw = await this.context
       .api(session)
-      .esportsOverview(options.locale ?? DEFAULT_LOCALE, options.leagueIds ?? VCT_LEAGUE_IDS);
+      .esportsOverview(options.locale ?? DEFAULT_LOCALE, leaguesOf(options));
     return EsportsBuilder.buildOverview(raw);
   }
 
@@ -27,10 +30,7 @@ export class EsportsService implements EsportsApi {
     const session = await this.context.sessions.session();
     const raw = await this.context
       .api(session)
-      .esportsUpcomingMatches(
-        options.locale ?? DEFAULT_LOCALE,
-        options.leagueIds ?? VCT_LEAGUE_IDS,
-      );
+      .esportsUpcomingMatches(options.locale ?? DEFAULT_LOCALE, leaguesOf(options));
     return EsportsBuilder.buildMatches(raw);
   }
 
@@ -38,7 +38,7 @@ export class EsportsService implements EsportsApi {
     const session = await this.context.sessions.session();
     const raw = await this.context
       .api(session)
-      .esportsLiveEventTimes(options.locale ?? DEFAULT_LOCALE, options.leagueIds ?? VCT_LEAGUE_IDS);
+      .esportsLiveEventTimes(options.locale ?? DEFAULT_LOCALE, leaguesOf(options));
     return EsportsBuilder.buildLive(raw);
   }
 
