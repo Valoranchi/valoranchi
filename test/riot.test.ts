@@ -379,6 +379,32 @@ describe("RiotApi", () => {
     );
   });
 
+  it("calls the esports service with locale, sport and the requested ids", async () => {
+    const mockGet = vi.fn().mockResolvedValue({});
+    const mockPost = vi.fn().mockResolvedValue({ Matches: [] });
+    const api = new RiotApi({ get: mockGet, post: mockPost } as unknown as HttpGateway, session);
+
+    await api.esportsOverview("en-US", ["107254585505459304", "109940824119741550"]);
+    await api.esportsUpcomingMatches("en-US", ["107254585505459304", "109940824119741550"]);
+    await api.esportsLiveEventTimes("en-US", ["107254585505459304", "109940824119741550"]);
+    await api.esportsStages("en-US", ["115576361460159614", "115576361460159615"]);
+    await api.esportsTeamMembers("en-US", "107745125595754895");
+    await api.esportsMatches("en-US", ["115576361461142741", "115576361461208331"]);
+
+    expect(mockGet.mock.calls.map(([url]) => url)).toEqual([
+      "https://pd.na.a.pvp.net/esports-service/v2/overview?locale=en-US&sport=val&leagueID=107254585505459304,109940824119741550",
+      "https://pd.na.a.pvp.net/esports-service/v2/upcomingMatches?locale=en-US&sport=val&leagueID=107254585505459304,109940824119741550",
+      "https://pd.na.a.pvp.net/esports-service/v2/liveEventTimes?locale=en-US&sport=val&leagueID=107254585505459304,109940824119741550&includePickemData=true",
+      "https://pd.na.a.pvp.net/esports-service/v2/stages?locale=en-US&sport=val&stageID=115576361460159614,115576361460159615",
+      "https://pd.na.a.pvp.net/esports-service/v2/teamMembers?locale=en-US&sport=val&teamID=107745125595754895",
+    ]);
+    expect(mockPost).toHaveBeenCalledWith(
+      "https://pd.na.a.pvp.net/esports-service/v2/matches?locale=en-US&sport=val",
+      { MatchIDs: ["115576361461142741", "115576361461208331"] },
+      expect.objectContaining({ Authorization: "Bearer access-token-xyz" }),
+    );
+  });
+
   it("encodes the match id in the progression match endpoints", async () => {
     const mockGet = vi.fn().mockResolvedValue({});
     const api = new RiotApi({ get: mockGet } as unknown as HttpGateway, session);

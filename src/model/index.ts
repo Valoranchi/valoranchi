@@ -552,6 +552,116 @@ export type Penalty = {
   id: string;
   reason: string;
   expiresAt: string;
+  issuedAt: string | null;
+  matchId: string | null;
+  gamesRemaining: number | null;
+  queueIds: string[];
+  warning: { type: string; tier: number } | null;
+  restriction: { type: string; reason: string } | null;
+  effects: string[];
+};
+
+export type EsportsLeague = {
+  id: string;
+  name: string;
+  image: string | null;
+  tournamentIds: string[];
+  teamIds: string[];
+};
+
+export type EsportsTournament = {
+  id: string;
+  name: string;
+  leagueId: string;
+  startsAt: string;
+  endsAt: string;
+  stageIds: string[];
+  teamIds: string[];
+};
+
+export type EsportsTeam = {
+  id: string;
+  name: string;
+  code: string;
+  image: string | null;
+  homeLeagueId: string | null;
+  memberIds: string[];
+};
+
+export type EsportsOverview = {
+  leagues: EsportsLeague[];
+  tournaments: EsportsTournament[];
+  teams: EsportsTeam[];
+};
+
+export type EsportsStream = {
+  provider: string;
+  parameter: string;
+  locale: string;
+  url: string | null;
+};
+
+export type EsportsMatchState = "unstarted" | "inProgress" | "completed" | "unknown";
+
+export type EsportsMatchTeam = {
+  teamId: string;
+  result: "win" | "loss" | "tie" | null;
+  gameWins: number;
+};
+
+export type EsportsMatch = {
+  id: string;
+  leagueId: string;
+  tournamentId: string;
+  stageId: string;
+  stageName: string | null;
+  startsAt: string;
+  state: EsportsMatchState;
+  teams: EsportsMatchTeam[];
+  streams: EsportsStream[];
+};
+
+export type EsportsStanding = {
+  teamId: string;
+  wins: number;
+  losses: number;
+};
+
+export type EsportsStageSection = {
+  id: string;
+  name: string;
+  slug: string;
+  type: string;
+  rounds: { name: string; slug: string; matchIds: string[] }[];
+  standings: EsportsStanding[];
+};
+
+export type EsportsStage = {
+  id: string;
+  name: string;
+  slug: string;
+  sections: EsportsStageSection[];
+};
+
+export type EsportsPlayer = {
+  id: string;
+  handle: string;
+  firstName: string | null;
+  lastName: string | null;
+  image: string | null;
+  role: string | null;
+  roleName: string | null;
+};
+
+export type EsportsLiveWindow = {
+  id: string;
+  startsAt: string;
+  endsAt: string;
+};
+
+export type EsportsLive = {
+  matches: EsportsLiveWindow[];
+  tournaments: EsportsLiveWindow[];
 };
 
 export type Favourite = {
@@ -936,7 +1046,11 @@ export type PerformanceSummary = {
 };
 
 export type AssessmentFlag =
-  "low-level-high-rank" | "inflated" | "underranked" | "long-streak" | "new-act";
+  | "low-level-high-rank"
+  | "inflated"
+  | "underranked"
+  | "long-streak"
+  | "new-act";
 
 export type AssessmentWarning = {
   flag: AssessmentFlag;
@@ -1082,4 +1196,3 @@ export type Session = {
   worstMatch: SessionMatchAcs | null;
   tilt: boolean;
 };
-

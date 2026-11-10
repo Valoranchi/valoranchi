@@ -175,11 +175,30 @@ export class AccountProgressionBuilder {
   }
 
   static buildPenalties(raw: RiotPenaltiesResponse): Penalty[] {
-    return (raw.Penalties ?? []).map((p) => ({
-      id: p.ID,
-      reason: p.Reason,
-      expiresAt: p.Expiry,
-    }));
+    return (raw.Penalties ?? []).map((p) => {
+      const issuedAt = p.IssuingGameStartUnixMillis;
+      const warning = p.WarningEffect;
+      const restriction = p.RiotRestrictionEffect;
+      return {
+        id: p.ID,
+        reason: p.Reason ?? restriction?.RestrictionReason ?? "",
+        expiresAt: p.Expiry,
+        issuedAt:
+          typeof issuedAt === "number" && issuedAt > 0 ? new Date(issuedAt).toISOString() : null,
+        matchId: p.IssuingMatchID ?? null,
+        gamesRemaining: p.GamesRemaining ?? null,
+        queueIds: p.QueueRestrictionEffect?.QueueIDs ?? [],
+        warning: warning?.WarningType
+          ? { type: warning.WarningType, tier: warning.WarningTier ?? 0 }
+          : null,
+        restriction: restriction?.RestrictionType
+          ? { type: restriction.RestrictionType, reason: restriction.RestrictionReason ?? "" }
+          : null,
+        effects: Object.entries(p)
+          .filter(([key, value]) => key.endsWith("Effect") && value !== undefined && value !== null)
+          .map(([key]) => key.slice(0, -"Effect".length)),
+      };
+    });
   }
 
   static buildFavourites(raw: RiotFavoritesResponse, catalogue: Catalogue): Favourite[] {

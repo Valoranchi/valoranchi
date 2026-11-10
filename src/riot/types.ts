@@ -855,13 +855,140 @@ export interface RiotAgentMasteryMatchResponse {
 export interface RiotPenaltyItem {
   ID: string;
   Expiry: string;
-  Reason: string;
+  Reason?: string;
+  IssuingGameStartUnixMillis?: number;
+  IssuingMatchID?: string;
+  GamesRemaining?: number;
+  ApplyToAllPlatforms?: boolean;
+  QueueRestrictionEffect?: { QueueIDs: string[] };
+  QueueDelayEffect?: Record<string, unknown>;
+  RankedRRPenalizedEffect?: Record<string, unknown>;
+  RiotRestrictionEffect?: { RestrictionType: string; RestrictionReason: string };
+  WarningEffect?: { WarningType: string; WarningTier: number };
+  XPMultiplierEffect?: Record<string, unknown>;
+  GameBanEffect?: Record<string, unknown>;
+  TextChatMutedEffect?: Record<string, unknown>;
+  VoiceChatMutedEffect?: Record<string, unknown>;
 }
 
 export interface RiotPenaltiesResponse {
   Subject?: string;
   Penalties: RiotPenaltyItem[];
+  Infractions?: unknown[];
   Version?: number;
+}
+
+export interface RiotEsportsLeague {
+  ID: string;
+  Name: string;
+  ImageURL: string;
+  TournamentIDs: string[];
+  TeamIDs: string[];
+}
+
+export interface RiotEsportsTournament {
+  ID: string;
+  Name: string;
+  LeagueID: string;
+  StartTime: string;
+  EndTime: string;
+  StageIDs: string[];
+  TeamIDs: string[];
+}
+
+export interface RiotEsportsTeam {
+  ID: string;
+  Name: string;
+  Code: string;
+  BaseImageURL?: string;
+  HighResImageURL?: string;
+  LowResImageURL?: string;
+  HomeLeagueID?: string;
+  TeamMemberIDs?: string[];
+}
+
+export interface RiotEsportsOverviewResponse {
+  Leagues: RiotEsportsLeague[] | null;
+  Tournaments: RiotEsportsTournament[] | null;
+  Teams: RiotEsportsTeam[] | null;
+}
+
+export interface RiotEsportsStream {
+  Provider?: string;
+  Parameter?: string;
+  Locale?: string;
+}
+
+export interface RiotEsportsMatchTeam {
+  TeamID: string;
+  Result?: string;
+  GameWins?: number;
+}
+
+export interface RiotEsportsMatch {
+  ID: string;
+  LeagueID: string;
+  TournamentID: string;
+  StageID: string;
+  StageName?: string;
+  StartTime: string;
+  State: string;
+  MatchTeams: RiotEsportsMatchTeam[] | null;
+  Streams?: RiotEsportsStream[] | null;
+}
+
+export interface RiotEsportsMatchesResponse {
+  Matches: RiotEsportsMatch[] | null;
+}
+
+export interface RiotEsportsStageCell {
+  Slug: string;
+  Name: string;
+  MatchIDs: string[] | null;
+}
+
+export interface RiotEsportsStageSection {
+  ID: string;
+  Name: string;
+  Slug: string;
+  Type: string;
+  Columns: { Cells: RiotEsportsStageCell[] | null }[] | null;
+  Standings: { Team: { TeamID: string; TeamRecord?: { Wins: number; Losses: number } } }[] | null;
+}
+
+export interface RiotEsportsStage {
+  ID: string;
+  Name: string;
+  Slug: string;
+  Sections: RiotEsportsStageSection[] | null;
+}
+
+export interface RiotEsportsStagesResponse {
+  Stages: RiotEsportsStage[] | null;
+}
+
+export interface RiotEsportsTeamMember {
+  ID: string;
+  Handle: string;
+  FirstName?: string;
+  LastName?: string;
+  ImageURL?: string;
+  Positions?: { Name: string; Slug: string }[] | null;
+}
+
+export interface RiotEsportsTeamMembersResponse {
+  TeamMembers: RiotEsportsTeamMember[] | null;
+}
+
+export interface RiotEsportsLiveWindow {
+  ID: string;
+  StartTimeUTC: string;
+  EndTimeUTC: string;
+}
+
+export interface RiotEsportsLiveEventTimesResponse {
+  Matches: RiotEsportsLiveWindow[] | null;
+  Tournaments: RiotEsportsLiveWindow[] | null;
 }
 
 export interface RiotFavoriteItem {
