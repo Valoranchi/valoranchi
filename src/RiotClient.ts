@@ -3,6 +3,7 @@ import { MemoryCatalogueCache, ValorantApi } from "./catalogue/ValorantApi.js";
 import { AccountService } from "./client/AccountService.js";
 import type {
   AccountApi,
+  EsportsApi,
   LocalRawApi,
   MatchesApi,
   OfficialApi,
@@ -12,6 +13,7 @@ import type {
   StoreApi,
 } from "./client/api.js";
 import { createPlayer, type ClientContext } from "./client/ClientContext.js";
+import { EsportsService } from "./client/EsportsService.js";
 import { EventsService } from "./client/EventsService.js";
 import type { LoadoutChange, LoadoutGunChange } from "./client/LoadoutValidator.js";
 import { MatchService } from "./client/MatchService.js";
@@ -124,6 +126,7 @@ export class RiotClient {
   readonly matches: MatchesApi;
   readonly party: PartyApi;
   readonly official: OfficialApi;
+  readonly esports: EsportsApi;
   readonly watch: WatchApi;
   readonly local: LocalRawApi;
   readonly riot: RiotRawApi;
@@ -170,6 +173,7 @@ export class RiotClient {
     this.matches = new MatchService(context);
     this.party = new PartyService(context);
     this.official = new OfficialService(context);
+    this.esports = new EsportsService(context);
     this.local = new LocalRawService(this.sessions);
     this.riot = new RiotRawService(this.sessions, gateway);
     this.eventsService = new EventsService(context);

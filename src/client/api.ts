@@ -12,6 +12,11 @@ import type {
   CustomGameConfigs,
   CustomGameSettings,
   DailyCheckpoints,
+  EsportsLive,
+  EsportsMatch,
+  EsportsOverview,
+  EsportsPlayer,
+  EsportsStage,
   Favourite,
   Friend,
   FriendRequest,
@@ -310,3 +315,14 @@ export interface OfficialApi {
   ): Promise<PerformanceSummary>;
   profile(riotId: string, options?: { count?: number }): Promise<OfficialProfile>;
 }
+
+export interface EsportsApi {
+  overview(options?: EsportsOptions): Promise<EsportsOverview>;
+  upcoming(options?: EsportsOptions): Promise<EsportsMatch[]>;
+  live(options?: EsportsOptions): Promise<EsportsLive>;
+  matches(matchIds: string[], options?: { locale?: string }): Promise<EsportsMatch[]>;
+  stages(stageIds: string[], options?: { locale?: string }): Promise<EsportsStage[]>;
+  roster(teamId: string, options?: { locale?: string }): Promise<EsportsPlayer[]>;
+}
+
+export type EsportsOptions = { locale?: string; leagueIds?: string[] };
