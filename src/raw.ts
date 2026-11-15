@@ -110,6 +110,8 @@ export {
   type RiotRoundResultSlice,
 } from "./collection/MatchStats.js";
 export { matchMvps, playerPerformance } from "./collection/Performance.js";
+export { calculateRankAverages, rankFit, type TierResolver } from "./collection/RankFit.js";
+export { immortalCutoffs } from "./collection/LeaderboardBuilder.js";
 export { RateLimiter, type RateLimiterOptions } from "./official/RateLimiter.js";
 export { OfficialApi, type OfficialApiOptions } from "./official/OfficialApi.js";
 export {
@@ -135,6 +137,7 @@ export type {
   PerformanceGrade,
   PerformanceTrend,
   PlayerPerformance,
+  RankCutoff,
   Store,
   StoreItem,
   ValorantPresence,

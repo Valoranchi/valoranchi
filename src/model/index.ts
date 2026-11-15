@@ -405,6 +405,8 @@ export type RankFit = {
   sample: number;
 };
 
+export type RankCutoff = { tier: number; rr: number };
+
 export type Mmr = {
   current: Rank | null;
   fit: RankFit;

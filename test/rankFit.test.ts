@@ -3,6 +3,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { Catalogue } from "../src/catalogue/Catalogue.js";
 import type { ValorantApiCatalogueData } from "../src/catalogue/types.js";
+import { immortalCutoffs } from "../src/collection/LeaderboardBuilder.js";
 import { rankFit } from "../src/collection/RankFit.js";
 import { RankResolver } from "../src/collection/RankResolver.js";
 import type { RiotCompetitiveUpdate } from "../src/riot/types.js";
@@ -65,5 +66,47 @@ describe("rankFit", () => {
 
   it("stays silent for unranked accounts", () => {
     expect(rankFit(resolver.fromTier(0), updates([20, 20, 20]), resolver).verdict).toBeNull();
+  });
+
+  it("takes any tier resolver, not only the catalogue's", () => {
+    const named = {
+      fromTier: (tier: number) => ({
+        tier,
+        name: `T${tier}`,
+        division: null,
+        icon: null,
+        rating: null,
+      }),
+    };
+
+    expect(rankFit(current, updates([26, 28, 30]), named).expected).toEqual({
+      tier: 24,
+      name: "T24",
+      division: null,
+      icon: null,
+      rating: null,
+    });
+  });
+});
+
+describe("immortalCutoffs", () => {
+  const board = {
+    tierDetails: {
+      "24": { rankedRatingThreshold: 0 },
+      "25": { rankedRatingThreshold: 90 },
+      "26": { rankedRatingThreshold: 150 },
+      "27": { rankedRatingThreshold: 200 },
+    },
+    Players: [{ leaderboardRank: 500, rankedRating: 229 }],
+  };
+
+  it("reads the region's lines, and prices Radiant at passing the 500th", () => {
+    expect(immortalCutoffs(board)).toEqual([
+      { tier: 25, rr: 90 },
+      { tier: 26, rr: 150 },
+      { tier: 27, rr: 230 },
+    ]);
+    expect(immortalCutoffs({ ...board, Players: [] })?.[2]?.rr).toBe(200);
+    expect(immortalCutoffs({})).toBeNull();
   });
 });

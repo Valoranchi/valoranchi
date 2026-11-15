@@ -171,6 +171,7 @@ export type {
   RadianiteOffer,
   Rank,
   RankChange,
+  RankCutoff,
   RatingTrend,
   PerformanceSummary,
   PlayerAssessment,

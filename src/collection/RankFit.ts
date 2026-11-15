@@ -1,6 +1,9 @@
 import type { Rank, RankFit } from "../model/index.js";
 import type { RiotCompetitiveUpdate } from "../riot/types.js";
-import type { RankResolver } from "./RankResolver.js";
+
+export interface TierResolver {
+  fromTier(tier: number): Rank;
+}
 
 const MIN_WINS = 3;
 const TIERS_PER_RANK = 3;
@@ -51,7 +54,7 @@ export function calculateRankAverages(updates: RiotCompetitiveUpdate[]): {
 export function rankFit(
   current: Rank | null,
   updates: RiotCompetitiveUpdate[],
-  resolver: RankResolver,
+  resolver: TierResolver,
 ): RankFit {
   const { averageGain, averageLoss, gains } = calculateRankAverages(updates);
   const empty = { averageGain, averageLoss, sample: gains.length };
