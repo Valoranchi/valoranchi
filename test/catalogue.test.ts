@@ -187,6 +187,29 @@ describe("Catalogue", () => {
 });
 
 describe("ValorantApi", () => {
+  const serveCatalogue = async (url: string) => {
+    if (url.includes("weapons")) return { status: 200, data: sampleData.weapons };
+    if (url.includes("playerCards")) return { status: 200, data: sampleData.playerCards };
+    if (url.includes("playerTitles")) return { status: 200, data: sampleData.playerTitles };
+    if (url.includes("sprays")) return { status: 200, data: sampleData.sprays };
+    if (url.includes("buddies")) return { status: 200, data: sampleData.buddies };
+    if (url.includes("agents")) return { status: 200, data: sampleData.agents };
+    if (url.includes("contentTiers")) return { status: 200, data: sampleData.contentTiers };
+    if (url.includes("currencies")) return { status: 200, data: sampleData.currencies };
+    if (url.includes("bundles")) return { status: 200, data: sampleData.bundles };
+    if (url.includes("maps")) return { status: 200, data: sampleData.maps };
+    if (url.includes("competitivetiers"))
+      return { status: 200, data: [{ uuid: "set-1", tiers: sampleData.tiers }] };
+    if (url.includes("seasons")) return { status: 200, data: sampleData.seasons };
+    if (url.includes("levelborders"))
+      return { status: 200, data: [{ uuid: "border-1", startingLevel: 1 }] };
+    if (url.includes("contracts")) return { status: 200, data: sampleData.contracts ?? [] };
+    if (url.includes("missions")) return { status: 200, data: sampleData.missions ?? [] };
+    if (url.includes("flex")) return { status: 200, data: [] };
+    if (url.includes("themes")) return { status: 200, data: [] };
+    throw new Error(`Unexpected url: ${url}`);
+  };
+
   it("fetches client version and caches it", async () => {
     const mockGet = vi.fn().mockResolvedValue({
       status: 200,
@@ -205,26 +228,7 @@ describe("ValorantApi", () => {
   });
 
   it("fetches catalogue endpoints and caches per language", async () => {
-    const mockGet = vi.fn().mockImplementation(async (url: string) => {
-      if (url.includes("weapons")) return { status: 200, data: sampleData.weapons };
-      if (url.includes("playerCards")) return { status: 200, data: sampleData.playerCards };
-      if (url.includes("playerTitles")) return { status: 200, data: sampleData.playerTitles };
-      if (url.includes("sprays")) return { status: 200, data: sampleData.sprays };
-      if (url.includes("buddies")) return { status: 200, data: sampleData.buddies };
-      if (url.includes("agents")) return { status: 200, data: sampleData.agents };
-      if (url.includes("contentTiers")) return { status: 200, data: sampleData.contentTiers };
-      if (url.includes("currencies")) return { status: 200, data: sampleData.currencies };
-      if (url.includes("bundles")) return { status: 200, data: sampleData.bundles };
-      if (url.includes("maps")) return { status: 200, data: sampleData.maps };
-      if (url.includes("competitivetiers"))
-        return { status: 200, data: [{ uuid: "set-1", tiers: sampleData.tiers }] };
-      if (url.includes("seasons")) return { status: 200, data: sampleData.seasons };
-      if (url.includes("levelborders"))
-        return { status: 200, data: [{ uuid: "border-1", startingLevel: 1 }] };
-      if (url.includes("contracts")) return { status: 200, data: sampleData.contracts ?? [] };
-      if (url.includes("missions")) return { status: 200, data: sampleData.missions ?? [] };
-      throw new Error(`Unexpected url: ${url}`);
-    });
+    const mockGet = vi.fn().mockImplementation(serveCatalogue);
 
     const fakeGateway = { get: mockGet } as unknown as HttpGateway;
     const cache = new MemoryCatalogueCache();
@@ -239,7 +243,28 @@ describe("ValorantApi", () => {
     expect(cat1.getTierByNumber(3)?.tierName).toBe("Iron 3");
     expect(cat1.getContract("contract-jett-1")?.displayName).toBe("Jett Gear");
     expect(cat1.getMission("mission-weekly-1")?.title).toBe("Play 10 games");
+    expect(cat1.data.weapons).toBe(sampleData.weapons);
     expect(cat2).toBe(cat1);
-    expect(mockGet).toHaveBeenCalledTimes(15);
+    expect(mockGet).toHaveBeenCalledTimes(17);
+  });
+
+  it("refreshCatalogue fetches again past the memory cache and replaces it", async () => {
+    const mockGet = vi.fn().mockImplementation(async (url: string) => {
+      if (url.endsWith("/version")) return { status: 200, data: { riotClientVersion: "v1" } };
+      return serveCatalogue(url);
+    });
+    const api = new ValorantApi(
+      { get: mockGet } as unknown as HttpGateway,
+      new MemoryCatalogueCache(),
+    );
+
+    const first = await api.getCatalogue("en-US");
+    const refreshed = await api.refreshCatalogue("en-US");
+
+    expect(mockGet).toHaveBeenCalledTimes(35);
+    expect(refreshed).not.toBe(first);
+    expect(await api.getCatalogue("en-US")).toBe(refreshed);
+    expect(await api.getClientVersion()).toBe("v1");
+    expect(mockGet).toHaveBeenCalledTimes(35);
   });
 });

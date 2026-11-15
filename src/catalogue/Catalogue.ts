@@ -22,6 +22,7 @@ import type {
 } from "./types.js";
 
 export class Catalogue {
+  readonly data: ValorantApiCatalogueData;
   readonly weapons: readonly ValorantApiWeapon[];
   readonly tiers: readonly ValorantApiTier[];
   readonly seasons: readonly ValorantApiSeason[];
@@ -59,6 +60,7 @@ export class Catalogue {
   private readonly missionsByUuid = new Map<string, ValorantApiMission>();
 
   constructor(data: ValorantApiCatalogueData) {
+    this.data = data;
     this.weapons = data.weapons;
     this.tiers = data.tiers ?? [];
     this.seasons = data.seasons ?? [];

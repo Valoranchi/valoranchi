@@ -9,6 +9,7 @@ import type {
   ValorantApiContentTier,
   ValorantApiContract,
   ValorantApiCurrency,
+  ValorantApiFlex,
   ValorantApiLevelBorder,
   ValorantApiMap,
   ValorantApiMission,
@@ -16,6 +17,7 @@ import type {
   ValorantApiPlayerTitle,
   ValorantApiSeason,
   ValorantApiSpray,
+  ValorantApiTheme,
   ValorantApiTier,
   ValorantApiWeapon,
 } from "./types.js";
@@ -78,17 +80,7 @@ export class ValorantApi {
   }
 
   async getClientVersion(): Promise<string> {
-    const cached = this.cache.getVersion();
-    if (cached) {
-      return cached;
-    }
-
-    const response = await this.gateway.get<ApiResponse<VersionData>>(
-      "https://valorant-api.com/v1/version",
-    );
-    const version = response.data.riotClientVersion;
-    this.cache.setVersion(version);
-    return version;
+    return this.cache.getVersion() || this.fetchClientVersion();
   }
 
   async getCatalogue(language = "en-US"): Promise<Catalogue> {
@@ -100,6 +92,27 @@ export class ValorantApi {
     const catalogue = new Catalogue(await this.loadCatalogueData(language));
     this.cache.setCatalogue(language, catalogue);
     return catalogue;
+  }
+
+  // Past the memory cache and the store: for a consumer that knows the catalogue is out of date.
+  async refreshCatalogue(language = "en-US"): Promise<Catalogue> {
+    const [data, version] = await Promise.all([
+      this.fetchCatalogueData(language),
+      this.fetchClientVersion(),
+    ]);
+    this.store?.write(language, { version, data });
+    const catalogue = new Catalogue(data);
+    this.cache.setCatalogue(language, catalogue);
+    return catalogue;
+  }
+
+  private async fetchClientVersion(): Promise<string> {
+    const response = await this.gateway.get<ApiResponse<VersionData>>(
+      "https://valorant-api.com/v1/version",
+    );
+    const version = response.data.riotClientVersion;
+    this.cache.setVersion(version);
+    return version;
   }
 
   private async loadCatalogueData(language: string): Promise<ValorantApiCatalogueData> {
@@ -115,7 +128,9 @@ export class ValorantApi {
       Array.isArray(stored.data?.tiers) &&
       Array.isArray(stored.data?.seasons) &&
       Array.isArray(stored.data?.contracts) &&
-      Array.isArray(stored.data?.missions)
+      Array.isArray(stored.data?.missions) &&
+      Array.isArray(stored.data?.flex) &&
+      Array.isArray(stored.data?.themes)
     ) {
       return stored.data;
     }
@@ -135,7 +150,10 @@ export class ValorantApi {
   private async fetchBaseCatalogue(
     language: string,
   ): Promise<
-    Omit<ValorantApiCatalogueData, "tiers" | "seasons" | "levelBorders" | "contracts" | "missions">
+    Omit<
+      ValorantApiCatalogueData,
+      "tiers" | "seasons" | "levelBorders" | "contracts" | "missions" | "flex" | "themes"
+    >
   > {
     const [
       weaponsRes,
@@ -177,15 +195,21 @@ export class ValorantApi {
   private async fetchExtraCatalogue(
     language: string,
   ): Promise<
-    Pick<ValorantApiCatalogueData, "tiers" | "seasons" | "levelBorders" | "contracts" | "missions">
+    Pick<
+      ValorantApiCatalogueData,
+      "tiers" | "seasons" | "levelBorders" | "contracts" | "missions" | "flex" | "themes"
+    >
   > {
-    const [compTiersRes, seasonsRes, bordersRes, contractsRes, missionsRes] = await Promise.all([
-      this.fetchEndpoint<ValorantApiTierGroup[]>("competitivetiers", language),
-      this.fetchEndpoint<ValorantApiSeason[]>("seasons", language),
-      this.fetchEndpoint<ValorantApiLevelBorder[]>("levelborders", language),
-      this.fetchEndpoint<ValorantApiContract[]>("contracts", language),
-      this.fetchEndpoint<ValorantApiMission[]>("missions", language),
-    ]);
+    const [compTiersRes, seasonsRes, bordersRes, contractsRes, missionsRes, flexRes, themesRes] =
+      await Promise.all([
+        this.fetchEndpoint<ValorantApiTierGroup[]>("competitivetiers", language),
+        this.fetchEndpoint<ValorantApiSeason[]>("seasons", language),
+        this.fetchEndpoint<ValorantApiLevelBorder[]>("levelborders", language),
+        this.fetchEndpoint<ValorantApiContract[]>("contracts", language),
+        this.fetchEndpoint<ValorantApiMission[]>("missions", language),
+        this.fetchEndpoint<ValorantApiFlex[]>("flex", language),
+        this.fetchEndpoint<ValorantApiTheme[]>("themes", language),
+      ]);
     const tierGroups = compTiersRes.data ?? [];
     const lastGroup = tierGroups[tierGroups.length - 1];
     return {
@@ -194,6 +218,8 @@ export class ValorantApi {
       levelBorders: bordersRes.data,
       contracts: contractsRes.data,
       missions: missionsRes.data,
+      flex: flexRes.data,
+      themes: themesRes.data,
     };
   }
 

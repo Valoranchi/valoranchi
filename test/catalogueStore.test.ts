@@ -64,7 +64,7 @@ describe("FileCatalogueStore", () => {
       store,
     );
     await stale.getCatalogue("en-US");
-    expect(newer).toHaveBeenCalledTimes(16);
+    expect(newer).toHaveBeenCalledTimes(18);
     expect(store.read("en-US")?.version).toBe("release-10.01-1");
   });
 
@@ -85,7 +85,7 @@ describe("FileCatalogueStore", () => {
     const catalogue = await api.getCatalogue("en-US");
 
     expect(catalogue.getBundle("bundle-1")?.displayName).toBe("Prime Bundle");
-    expect(gateway).toHaveBeenCalledTimes(16);
+    expect(gateway).toHaveBeenCalledTimes(18);
     expect(store.read("en-US")?.data.bundles).toBeDefined();
   });
 
@@ -106,7 +106,7 @@ describe("FileCatalogueStore", () => {
     const catalogue = await api.getCatalogue("en-US");
 
     expect(catalogue.getMapByPath("/Game/Maps/Ascent/Ascent")?.displayName).toBe("Ascent");
-    expect(gateway).toHaveBeenCalledTimes(16);
+    expect(gateway).toHaveBeenCalledTimes(18);
     expect(store.read("en-US")?.data.maps).toBeDefined();
   });
 
@@ -127,7 +127,7 @@ describe("FileCatalogueStore", () => {
     const catalogue = await api.getCatalogue("en-US");
 
     expect(catalogue.getTierByNumber(3)?.tierName).toBe("Iron 3");
-    expect(gateway).toHaveBeenCalledTimes(16);
+    expect(gateway).toHaveBeenCalledTimes(18);
     expect(store.read("en-US")?.data.tiers).toBeDefined();
   });
 
@@ -148,7 +148,7 @@ describe("FileCatalogueStore", () => {
     const catalogue = await api.getCatalogue("en-US");
 
     expect(catalogue.getSeason("season-act-1")?.displayName).toBe("ACT 1");
-    expect(gateway).toHaveBeenCalledTimes(16);
+    expect(gateway).toHaveBeenCalledTimes(18);
     expect(store.read("en-US")?.data.seasons).toBeDefined();
   });
 
@@ -169,7 +169,7 @@ describe("FileCatalogueStore", () => {
     const catalogue = await api.getCatalogue("en-US");
 
     expect(catalogue.getContract("contract-jett-1")?.displayName).toBe("Jett Gear");
-    expect(gateway).toHaveBeenCalledTimes(16);
+    expect(gateway).toHaveBeenCalledTimes(18);
     expect(store.read("en-US")?.data.contracts).toBeDefined();
   });
 
@@ -190,7 +190,46 @@ describe("FileCatalogueStore", () => {
     const catalogue = await api.getCatalogue("en-US");
 
     expect(catalogue.getMission("mission-weekly-1")?.title).toBe("Play 10 games");
-    expect(gateway).toHaveBeenCalledTimes(16);
+    expect(gateway).toHaveBeenCalledTimes(18);
     expect(store.read("en-US")?.data.missions).toBeDefined();
+  });
+
+  it("treats a stored catalogue without flex or themes as a cache miss", async () => {
+    const store = new FileCatalogueStore(dir);
+    const { flex: _, themes: __, ...dataWithoutFlex } = sampleData;
+    store.write("en-US", {
+      version: "release-10.00-1",
+      data: dataWithoutFlex as unknown as ValorantApiCatalogueData,
+    });
+
+    const gateway = gatewayServing();
+    const api = new ValorantApi(
+      { get: gateway } as unknown as HttpGateway,
+      new MemoryCatalogueCache(),
+      store,
+    );
+    await api.getCatalogue("en-US");
+
+    expect(gateway).toHaveBeenCalledTimes(18);
+    expect(store.read("en-US")?.data.flex).toBeDefined();
+  });
+
+  it("refreshCatalogue rewrites the store with the version it fetched", async () => {
+    const store = new FileCatalogueStore(dir);
+    store.write("en-US", { version: "release-10.00-1", data: sampleData });
+
+    const gateway = gatewayServing({ status: 200, data: { riotClientVersion: "release-10.02-1" } });
+    const api = new ValorantApi(
+      { get: gateway } as unknown as HttpGateway,
+      new MemoryCatalogueCache(),
+      store,
+    );
+    await api.refreshCatalogue("en-US");
+
+    expect(gateway).toHaveBeenCalledTimes(18);
+    expect(store.read("en-US")?.version).toBe("release-10.02-1");
+
+    await api.getCatalogue("en-US");
+    expect(gateway).toHaveBeenCalledTimes(18);
   });
 });

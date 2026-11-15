@@ -97,12 +97,35 @@ export interface ValorantApiBundle {
   verticalPromoImage: string | null;
 }
 
+export interface ValorantApiMapCallout {
+  regionName: string;
+  superRegionName: string;
+  location: { x: number; y: number };
+}
+
 export interface ValorantApiMap {
   uuid: string;
   displayName: string;
   mapUrl: string;
   displayIcon: string | null;
   listViewIcon: string | null;
+  splash?: string | null;
+  xMultiplier?: number | null;
+  yMultiplier?: number | null;
+  xScalarToAdd?: number | null;
+  yScalarToAdd?: number | null;
+  callouts?: ValorantApiMapCallout[] | null;
+}
+
+export interface ValorantApiFlex {
+  uuid: string;
+  displayName: string;
+  displayIcon: string | null;
+}
+
+export interface ValorantApiTheme {
+  uuid: string;
+  displayName: string;
 }
 
 export interface ValorantApiTier {
@@ -193,4 +216,6 @@ export interface ValorantApiCatalogueData {
   levelBorders?: ValorantApiLevelBorder[];
   contracts?: ValorantApiContract[];
   missions?: ValorantApiMission[];
+  flex?: ValorantApiFlex[];
+  themes?: ValorantApiTheme[];
 }
