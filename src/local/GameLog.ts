@@ -9,7 +9,8 @@ export function defaultLogPath(): string | null {
 }
 
 // The loading screen runs from `Broadcasting state changed to TransitionToInGame` to the next
-// state change, normally InGame. The log grows past 15 MB while playing, so it is followed, never read whole.
+// state change, normally InGame. The log grows past 15 MB while playing, so it is followed,
+// never read whole.
 const STATE_CHANGE = /Broadcasting state changed to (\w+)/;
 const LOADING_STATE = "TransitionToInGame";
 
@@ -20,7 +21,8 @@ export type GameFlow = {
 
 export const NO_GAME_FLOW: GameFlow = { loading: false, partial: "" };
 
-// Only complete lines count: a cut at `...changed to TransitionTo` would end the loading screen early.
+// Only complete lines count: a cut at `...changed to TransitionTo` would end the loading screen
+// early.
 export function advanceGameFlow(flow: GameFlow, text: string): GameFlow {
   const lines = (flow.partial + text).split("\n");
   const partial = lines.pop() ?? "";
@@ -146,7 +148,8 @@ export function parseRoundStarts(log: string, from: number, to: number): number[
     const buy = Math.round(at - seconds * 1000);
     const last = rounds[rounds.length - 1];
     if (seconds >= BARRIERS_SECONDS.min && seconds <= BARRIERS_SECONDS.max) {
-      // A buy line written 6 s late once split one round into two, cutting every round before it a round late.
+      // A buy line written 6 s late once split one round into two, cutting every round before it
+      // a round late.
       if (last && at > last.buy && at - last.buy <= seconds * 1000 + LATE_MS) last.barriers = at;
       else rounds.push({ buy, barriers: at });
     } else if (!last || Math.abs(buy - last.buy) > 5_000) {

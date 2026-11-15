@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 
-// Unreal writes FullscreenMode=0 for exclusive fullscreen, 1 for windowed fullscreen, 2 for a window.
+// Unreal writes FullscreenMode=0 for exclusive fullscreen, 1 for windowed fullscreen,
+// 2 for a window.
 export const EXCLUSIVE_FULLSCREEN = 0;
 
 export function parseFullscreenMode(ini: string): number | null {
