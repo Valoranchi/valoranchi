@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-11-15
+
 ### Added
 
 - The raw layer reads the game's files: `defaultLogPath`, `GameFlowWatcher` and `advanceGameFlow` (whether the game is on the loading screen that follows agent select, followed off `ShooterGame.log` without reading it whole), `parseRoundStarts` (when each round's barriers dropped, on this machine's clock), `isExclusiveFullscreen`, `readGameUserSettings` and `parseFullscreenMode` (the display mode from the account's `GameUserSettings.ini`), and `readLockfile`, `parseLockfile` and `defaultLockfilePath`.
