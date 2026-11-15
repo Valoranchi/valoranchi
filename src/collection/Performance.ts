@@ -48,14 +48,14 @@ const puuidOrNull = (value: unknown): string | null =>
 
 export function matchMvps(
   details:
-    | { matchMvp?: string | null; teams?: { mvp?: string | null }[] | null }
+    | { matchMvp?: string | null; teams?: ({ mvp?: string | null } | null)[] | null }
     | null
     | undefined,
 ): { mvp: string | null; teamMvps: string[] } {
   return {
     mvp: puuidOrNull(details?.matchMvp),
     teamMvps: (details?.teams ?? [])
-      .map((team) => puuidOrNull(team.mvp))
+      .map((team) => puuidOrNull(team?.mvp))
       .filter((puuid): puuid is string => puuid !== null),
   };
 }
