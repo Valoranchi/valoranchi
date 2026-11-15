@@ -112,6 +112,18 @@ export {
 export { matchMvps, playerPerformance } from "./collection/Performance.js";
 export { calculateRankAverages, rankFit, type TierResolver } from "./collection/RankFit.js";
 export { immortalCutoffs } from "./collection/LeaderboardBuilder.js";
+export {
+  ACTIVE_CROSSHAIR,
+  applyCrosshairProfileToSettings,
+  deduplicateProfileName,
+  parseSettingsProfileData,
+  readCrosshairProfilesFromSettings,
+  renameCrosshairProfileInSettings,
+  SAVED_CROSSHAIRS,
+  type CrosshairProfileRaw,
+  type ReadCrosshairsResult,
+  type SettingsProfileData,
+} from "./collection/CrosshairProfiles.js";
 export { RateLimiter, type RateLimiterOptions } from "./official/RateLimiter.js";
 export { OfficialApi, type OfficialApiOptions } from "./official/OfficialApi.js";
 export {
