@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { parseLockfile } from "../src/local/Lockfile.js";
 import { RiotClientLocalApi, type LocalApiFetchFn } from "../src/local/RiotClientLocalApi.js";
-import { parseRegionFromLog, resolveRegion, shardOf } from "../src/local/RegionResolver.js";
+import {
+  gamePodRegion,
+  parseRegionFromLog,
+  resolveRegion,
+  shardOf,
+} from "../src/local/RegionResolver.js";
 import {
   RegionUnknownError,
   RiotApiError,
@@ -481,5 +486,18 @@ describe("RiotClientLocalApi", () => {
 
     expect(res).toEqual({ updated: true });
     expect(capturedHeaders.Authorization).toBe("Basic custom-auth");
+  });
+});
+
+describe("gamePodRegion", () => {
+  it("reads the region out of a game pod id", () => {
+    expect(gamePodRegion("aresriot.aws-scl1-prod.latam-gp-santiago-1")).toBe("latam");
+    expect(gamePodRegion("aresriot.aws-sae1-prod.br-gp-saopaulo-1")).toBe("br");
+    expect(gamePodRegion("aresriot.aws-scl1-prod.XX-gp-mars-1")).toBe("xx");
+  });
+
+  it("is null when the id has no region", () => {
+    expect(gamePodRegion("nothing-useful")).toBeNull();
+    expect(gamePodRegion(undefined)).toBeNull();
   });
 });

@@ -19,6 +19,7 @@ export {
   type PreferenceSource,
 } from "./local/PlayerPreferencesApi.js";
 export { PreferenceCodec, type PreferenceBlob } from "./riot/PreferenceCodec.js";
+export { uuidOrNull } from "./riot/Uuid.js";
 export {
   RiotSocket,
   parseFrame,
@@ -60,6 +61,7 @@ export {
   parseFullscreenMode,
   readGameUserSettings,
 } from "./local/GameUserSettings.js";
+export { gamePodRegion } from "./local/RegionResolver.js";
 
 export {
   LoadoutValidator,

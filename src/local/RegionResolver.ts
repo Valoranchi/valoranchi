@@ -13,6 +13,13 @@ export function shardOf(region: string): string {
   return REGION_SHARD_OVERRIDES[normalized] ?? normalized;
 }
 
+// The region in a game pod id such as `aresriot.aws-scl1-prod.latam-gp-santiago-1`.
+export function gamePodRegion(podId: unknown): string | null {
+  if (typeof podId !== "string") return null;
+  const region = /\.([a-z]+)-gp-/i.exec(podId)?.[1];
+  return region ? region.toLowerCase() : null;
+}
+
 export function defaultLogReader(): string | null {
   const logPath = defaultLogPath();
   if (!logPath) {
