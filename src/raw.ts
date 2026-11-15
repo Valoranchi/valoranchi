@@ -88,6 +88,28 @@ export {
   type RiotLoadoutGunPut,
   type RiotLoadoutPutBody,
 } from "./collection/LoadoutWriter.js";
+export {
+  attackingTeam,
+  computeMatchStats,
+  getKillTime,
+  getRoundKills,
+  isRemake,
+  teamWon,
+  type ComputedAbilityCasts,
+  type ComputedClutches,
+  type ComputedMatchStats,
+  type ComputedMultiKills,
+  type ComputedPlayerStats,
+  type ComputedRoundStats,
+  type RiotDamageSlice,
+  type RiotEconomySlice,
+  type RiotKillSlice,
+  type RiotMatchDetailsSlice,
+  type RiotPlayerSlice,
+  type RiotRoundPlayerStatsSlice,
+  type RiotRoundResultSlice,
+} from "./collection/MatchStats.js";
+export { matchMvps, playerPerformance } from "./collection/Performance.js";
 export { RateLimiter, type RateLimiterOptions } from "./official/RateLimiter.js";
 export { OfficialApi, type OfficialApiOptions } from "./official/OfficialApi.js";
 export {
@@ -110,6 +132,9 @@ export type {
   Friend,
   FriendRequest,
   OwnedItems,
+  PerformanceGrade,
+  PerformanceTrend,
+  PlayerPerformance,
   Store,
   StoreItem,
   ValorantPresence,

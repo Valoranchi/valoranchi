@@ -1,22 +1,14 @@
 import type { Catalogue } from "../catalogue/Catalogue.js";
-import type {
-  Match,
-  MatchPlayer,
-  MatchRound,
-  MatchSummary,
-  PerformanceGrade,
-  PerformanceTrend,
-  PlayerPerformance,
-} from "../model/index.js";
+import type { Match, MatchPlayer, MatchRound, MatchSummary } from "../model/index.js";
 import type {
   RiotDamage,
   RiotMatchDetailsResponse,
   RiotMatchPlayer,
   RiotMatchTeam,
-  RiotPlayerScores,
   RiotRoundPlayerStats,
   RiotRoundResult,
 } from "../riot/types.js";
+import { playerPerformance } from "./Performance.js";
 import {
   RankResolver,
   resolveAgent,
@@ -25,24 +17,6 @@ import {
   resolveSeasonName,
   resolveTitle,
 } from "./RankResolver.js";
-
-const PERFORMANCE_TRENDS: readonly PerformanceTrend[] = [
-  "double_up",
-  "up",
-  "neutral",
-  "down",
-  "double_down",
-];
-
-const PERFORMANCE_GRADES: readonly PerformanceGrade[] = ["pass", "merit", "distinction"];
-
-function toTrend(value: string | undefined): PerformanceTrend {
-  return PERFORMANCE_TRENDS.find((trend) => trend === value) ?? "neutral";
-}
-
-function toGrade(value: string | undefined): PerformanceGrade {
-  return PERFORMANCE_GRADES.find((grade) => grade === value) ?? "pass";
-}
 
 export class MatchBuilder {
   private readonly details: RiotMatchDetailsResponse;
@@ -124,34 +98,7 @@ export class MatchBuilder {
       card: resolveCard(this.catalogue, player.playerCard),
       title: resolveTitle(this.catalogue, player.playerTitle),
       stats: this.computePlayerStats(player, roundResults),
-      performance: this.buildPerformance(player.scores),
-    };
-  }
-
-  private buildPerformance(scores: RiotPlayerScores | null | undefined): PlayerPerformance | null {
-    if (scores?.TempValueF === undefined) return null;
-    const ratings = scores.TempValueL;
-    const combat = ratings?.TempValueP;
-    const support = ratings?.TempValueQ;
-    return {
-      score: Math.round(scores.TempValueF),
-      combat: Math.round(scores.TempValueG ?? 0),
-      support: Math.round(scores.TempValueH ?? 0),
-      grade: toGrade(ratings?.TempValueO),
-      combatTrend: toTrend(ratings?.TempValueM),
-      supportTrend: toTrend(ratings?.TempValueN),
-      combatBreakdown: {
-        damage: toTrend(combat?.damage),
-        killImpact: toTrend(combat?.killImpact),
-        deathImpact: toTrend(combat?.deathImpact),
-        trades: toTrend(combat?.trades),
-      },
-      supportBreakdown: {
-        assists: toTrend(support?.assists),
-        plants: toTrend(support?.plants),
-        defuses: toTrend(support?.defuses),
-        utilityUsage: toTrend(support?.utilityUsage),
-      },
+      performance: playerPerformance(player.scores),
     };
   }
 
