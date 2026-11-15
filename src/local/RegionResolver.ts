@@ -1,6 +1,6 @@
 import fs from "node:fs";
-import path from "node:path";
 import { RegionUnknownError } from "../errors.js";
+import { defaultLogPath } from "./GameLog.js";
 import type { RiotClientLocalApi } from "./RiotClientLocalApi.js";
 
 const REGION_SHARD_OVERRIDES: Record<string, string> = {
@@ -14,11 +14,10 @@ export function shardOf(region: string): string {
 }
 
 export function defaultLogReader(): string | null {
-  const localAppData = process.env.LOCALAPPDATA;
-  if (!localAppData) {
+  const logPath = defaultLogPath();
+  if (!logPath) {
     return null;
   }
-  const logPath = path.join(localAppData, "VALORANT", "Saved", "Logs", "ShooterGame.log");
   try {
     if (!fs.existsSync(logPath)) {
       return null;

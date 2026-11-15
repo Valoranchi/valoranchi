@@ -40,6 +40,26 @@ export {
 } from "./catalogue/CatalogueStore.js";
 export { FileResponseCache, defaultResponseCacheDir } from "./riot/ResponseCache.js";
 export { decodeValorantPresence } from "./local/Presence.js";
+export {
+  defaultLockfilePath,
+  parseLockfile,
+  readLockfile,
+  type LockfileData,
+} from "./local/Lockfile.js";
+export {
+  advanceGameFlow,
+  defaultLogPath,
+  GameFlowWatcher,
+  NO_GAME_FLOW,
+  parseRoundStarts,
+  type GameFlow,
+} from "./local/GameLog.js";
+export {
+  EXCLUSIVE_FULLSCREEN,
+  isExclusiveFullscreen,
+  parseFullscreenMode,
+  readGameUserSettings,
+} from "./local/GameUserSettings.js";
 
 export {
   LoadoutValidator,
