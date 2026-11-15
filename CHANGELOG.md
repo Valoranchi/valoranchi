@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- The raw layer reads the game's files: `defaultLogPath`, `GameFlowWatcher` and `advanceGameFlow` (whether the game is on the loading screen that follows agent select, followed off `ShooterGame.log` without reading it whole), `parseRoundStarts` (when each round's barriers dropped, on this machine's clock), `isExclusiveFullscreen`, `readGameUserSettings` and `parseFullscreenMode` (the display mode from the account's `GameUserSettings.ini`), and `readLockfile`, `parseLockfile` and `defaultLockfilePath`.
+- Match statistics over a raw `match-details`: `computeMatchStats` gives every player's ACS, K/D, +/-, ADR, damage delta, headshot rate, KAST, first kills and deaths, flawless rounds, multikills, clutches, plants, defuses, ability casts and average loadout, plus the round strip; `teamWon`, `isRemake`, `attackingTeam`, `getRoundKills` and `getKillTime` beside it. `playerPerformance` and `matchMvps` read the performance score and the MVPs, which `MatchBuilder` now builds through them.
+- `rankFit` and `calculateRankAverages` in the raw layer; `rankFit` takes any `TierResolver` (an object with `fromTier(tier)`), `RankResolver` included. `immortalCutoffs` and the `RankCutoff` type: what Immortal 2, Immortal 3 and Radiant take in a region, from its leaderboard read at rank 500.
+- Crosshair profiles over the `Ares.PlayerSettings` blob: `readCrosshairProfilesFromSettings`, `applyCrosshairProfileToSettings`, `renameCrosshairProfileInSettings`, `parseSettingsProfileData`, `deduplicateProfileName`, and the `SAVED_CROSSHAIRS` and `ACTIVE_CROSSHAIR` setting keys.
+- The catalogue fetches `flex` and `themes`, maps carry `splash`, the minimap multipliers and `callouts`, `Catalogue.data` exposes the lists as valorant-api serves them, and `ValorantApi.refreshCatalogue(language)` downloads again past the memory cache and the store. A stored catalogue without `flex` or `themes` is fetched again once.
+- `uuidOrNull` (Riot's all-zero uuid is none) and `gamePodRegion` (the region in a game pod id).
+
 ## [0.15.0] - 2026-11-10
 
 ### Added
