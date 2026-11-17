@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - `matchMvps` skips a null entry in `teams` instead of throwing.
+- The region falls back to the newest `ShooterGame-backup-*.log` files when the current game log has none, as happens after the game is launched and closed before it reaches the servers; until now the session could not be built at all until the game was opened again.
 
 ## [0.16.0] - 2026-11-15
 

@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import path from "node:path";
 import { RegionUnknownError } from "../errors.js";
 import { defaultLogPath } from "./GameLog.js";
 import type { RiotClientLocalApi } from "./RiotClientLocalApi.js";
@@ -20,19 +21,46 @@ export function gamePodRegion(podId: unknown): string | null {
   return region ? region.toLowerCase() : null;
 }
 
+const LOG_BACKUP = /^ShooterGame-backup-.+\.log$/;
+const LOG_BACKUPS_READ = 3;
+
+function readLog(file: string): string | null {
+  try {
+    return fs.readFileSync(file, "utf-8");
+  } catch {
+    return null;
+  }
+}
+
+function newestBackups(dir: string): string[] {
+  try {
+    return fs
+      .readdirSync(dir)
+      .filter((name) => LOG_BACKUP.test(name))
+      .sort()
+      .reverse()
+      .slice(0, LOG_BACKUPS_READ)
+      .map((name) => path.join(dir, name));
+  } catch {
+    return [];
+  }
+}
+
+// The game rewrites its log on every launch, so one closed before reaching the servers leaves a
+// log with no region; its timestamped backups, named to sort by date, still hold the last one.
 export function defaultLogReader(): string | null {
   const logPath = defaultLogPath();
   if (!logPath) {
     return null;
   }
-  try {
-    if (!fs.existsSync(logPath)) {
-      return null;
-    }
-    return fs.readFileSync(logPath, "utf-8");
-  } catch {
-    return null;
+  let first: string | null = null;
+  for (const file of [logPath, ...newestBackups(path.dirname(logPath))]) {
+    const text = readLog(file);
+    if (text === null) continue;
+    if (parseRegionFromLog(text)) return text;
+    first ??= text;
   }
+  return first;
 }
 
 export function parseRegionFromLog(text: string): { region: string; shard: string } | null {

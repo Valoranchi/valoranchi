@@ -1,7 +1,11 @@
-import { describe, expect, it } from "vitest";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { afterEach, describe, expect, it } from "vitest";
 import { parseLockfile } from "../src/local/Lockfile.js";
 import { RiotClientLocalApi, type LocalApiFetchFn } from "../src/local/RiotClientLocalApi.js";
 import {
+  defaultLogReader,
   gamePodRegion,
   parseRegionFromLog,
   resolveRegion,
@@ -74,6 +78,37 @@ describe("RegionResolver", () => {
     const logText = "https://glz-ap-1.ap.a.pvp.net";
     const result = await resolveRegion(fakeApi, () => logText);
     expect(result).toEqual({ region: "ap", shard: "ap" });
+  });
+
+  describe("defaultLogReader", () => {
+    const appData = process.env.LOCALAPPDATA;
+    afterEach(() => {
+      process.env.LOCALAPPDATA = appData;
+    });
+
+    const logsIn = (files: Record<string, string>) => {
+      const root = fs.mkdtempSync(path.join(os.tmpdir(), "region-"));
+      const dir = path.join(root, "VALORANT", "Saved", "Logs");
+      fs.mkdirSync(dir, { recursive: true });
+      for (const [name, text] of Object.entries(files)) fs.writeFileSync(path.join(dir, name), text);
+      process.env.LOCALAPPDATA = root;
+    };
+
+    it("reads the region from the newest backup when the current log has none", () => {
+      logsIn({
+        "ShooterGame.log": "launched and closed",
+        "ShooterGame-backup-2026.11.16-22.02.12.log": "https://glz-eu-1.eu.a.pvp.net",
+        "ShooterGame-backup-2026.11.17-06.23.20.log": "https://glz-latam-1.na.a.pvp.net",
+      });
+      expect(parseRegionFromLog(defaultLogReader() ?? "")).toEqual({ region: "latam", shard: "na" });
+    });
+
+    it("prefers the current log and falls back to it when no log has a region", () => {
+      logsIn({ "ShooterGame.log": "https://glz-ap-1.ap.a.pvp.net" });
+      expect(parseRegionFromLog(defaultLogReader() ?? "")).toEqual({ region: "ap", shard: "ap" });
+      logsIn({ "ShooterGame.log": "nothing yet" });
+      expect(defaultLogReader()).toBe("nothing yet");
+    });
   });
 
   it("throws RegionUnknownError when both sources fail", async () => {
