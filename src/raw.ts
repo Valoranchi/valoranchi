@@ -112,6 +112,22 @@ export {
   type RiotRoundResultSlice,
 } from "./collection/MatchStats.js";
 export { matchMvps, playerPerformance } from "./collection/Performance.js";
+export {
+  matchRating,
+  percentileOf,
+  playerRating,
+  quantiles,
+  RATING_STATS,
+  RATING_WEIGHTS,
+  ratingGrade,
+  scoreboardPlaces,
+  type PlayerRating,
+  type PlayerRatingStats,
+  type Quantiles,
+  type RatingBenchmarks,
+  type RatingGrade,
+  type RatingStat,
+} from "./collection/Rating.js";
 export { calculateRankAverages, rankFit, type TierResolver } from "./collection/RankFit.js";
 export { immortalCutoffs } from "./collection/LeaderboardBuilder.js";
 export {
