@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Rating helpers in the raw layer: `quantiles` (the 21 cuts p0 to p100 of a list), `percentileOf` (the share of players below a value, inverted for `place`), `ratingGrade` (D, C, B, A, S at 200, 400, 700 and 900), `playerRating` (a 0 to 1000 score from the weighted percentiles of win rate, K/D, ACS, ADR, KAST and scoreboard place, renormalised over the stats present), `matchRating` (the performance score doubled, capped at 1000) and `scoreboardPlaces` (each player's place by performance, or by combat score when someone lacks it).
+- `computeMatchStats` gives every player's `weapons` (rounds with each weapon, the kills made with it and the rounds won) and every round's `resultCode`, Riot's `roundResultCode`. `RiotRoundResult` types `roundResultCode` and `RiotRoundPlayerStats` types `economy`.
+
 ## [0.16.1] - 2026-11-17
 
 ### Fixed

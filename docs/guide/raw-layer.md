@@ -15,7 +15,7 @@ Applications maintaining their own domain models or custom architectures can con
 - **Validation**: Individual validators (`LoadoutValidator`, `PartyValidator`, `StoreValidator`, `MatchValidator`).
 - **Catalogue & Caching**: `ValorantApi`, `MemoryCatalogueCache`, `FileCatalogueStore`, and `FileResponseCache`. `ValorantApi.refreshCatalogue` downloads the catalogue again past the caches.
 - **Game files**: `defaultLogPath`, `GameFlowWatcher`, `parseRoundStarts`, `isExclusiveFullscreen` and `readLockfile` read what the game writes to disk.
-- **Match statistics**: `computeMatchStats`, `teamWon`, `isRemake`, `attackingTeam`, `playerPerformance`, `matchMvps`, `rankFit` and `immortalCutoffs` work over Riot's own payloads.
+- **Match statistics**: `computeMatchStats`, `teamWon`, `isRemake`, `attackingTeam`, `playerPerformance`, `matchMvps`, `rankFit` and `immortalCutoffs` work over Riot's own payloads, and `playerRating`, `matchRating`, `scoreboardPlaces`, `quantiles` and `percentileOf` rate a player against the cuts of others.
 - **Crosshairs**: `readCrosshairProfilesFromSettings`, `applyCrosshairProfileToSettings` and `renameCrosshairProfileInSettings` edit the profiles inside the preferences blob.
 
 ## Stability Note
