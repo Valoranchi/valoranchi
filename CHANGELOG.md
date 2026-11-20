@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.17.0] - 2026-11-20
+
 ### Added
 
 - Rating helpers in the raw layer: `quantiles` (the 21 cuts p0 to p100 of a list), `percentileOf` (the share of players below a value, inverted for `place`), `ratingGrade` (D, C, B, A, S at 200, 400, 700 and 900), `playerRating` (a 0 to 1000 score from the weighted percentiles of win rate, K/D, ACS, ADR, KAST and scoreboard place, renormalised over the stats present), `matchRating` (the performance score doubled, capped at 1000) and `scoreboardPlaces` (each player's place by performance, or by combat score when someone lacks it).
