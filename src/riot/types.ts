@@ -355,16 +355,26 @@ export interface RiotDamage {
   headshots: number;
 }
 
+export interface RiotRoundEconomy {
+  loadoutValue: number;
+  weapon: string;
+  armor: string;
+  remaining: number;
+  spent: number;
+}
+
 export interface RiotRoundPlayerStats {
   subject: string;
   kills?: RiotKill[];
   damage?: RiotDamage[];
   score?: number;
+  economy?: RiotRoundEconomy | null;
 }
 
 export interface RiotRoundResult {
   roundNum: number;
   roundResult: string;
+  roundResultCode?: string;
   roundCeremony?: string | null;
   winningTeam: string;
   bombPlanter?: string | null;

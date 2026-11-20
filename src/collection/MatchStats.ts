@@ -23,6 +23,7 @@ export type RiotKillSlice = {
   victim: string;
   assistants?: string[] | null;
   round?: number;
+  finishingDamage?: { damageType?: string | null; damageItem?: string | null } | null;
 };
 
 export type RiotDamageSlice = {
@@ -35,6 +36,7 @@ export type RiotDamageSlice = {
 
 export type RiotEconomySlice = {
   loadoutValue?: number;
+  weapon?: string | null;
 };
 
 export type RiotRoundPlayerStatsSlice = {
@@ -48,6 +50,7 @@ export type RiotRoundPlayerStatsSlice = {
 export type RiotRoundResultSlice = {
   roundNum: number;
   roundResult?: string | null;
+  roundResultCode?: string | null;
   roundCeremony?: string | null;
   winningTeam?: string | null;
   bombPlanter?: string | null;
@@ -80,6 +83,13 @@ export type ComputedAbilityCasts = {
   x: number;
 };
 
+export type ComputedWeaponStats = {
+  weaponId: string;
+  rounds: number;
+  kills: number;
+  roundsWon: number;
+};
+
 export type ComputedPlayerStats = {
   puuid: string;
   acs: number;
@@ -98,12 +108,14 @@ export type ComputedPlayerStats = {
   defuses: number;
   abilityCasts: ComputedAbilityCasts;
   avgLoadout: number | null;
+  weapons: ComputedWeaponStats[];
 };
 
 export type ComputedRoundStats = {
   n: number;
   winningTeam: string | null;
   result: string | null;
+  resultCode: string | null;
   ceremony: string | null;
 };
 
@@ -210,6 +222,32 @@ function computeAvgLoadout(roundResults: RiotRoundResultSlice[], puuid: string):
     }
   }
   return vals.length > 0 ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : null;
+}
+
+function computePlayerWeapons(
+  roundResults: RiotRoundResultSlice[],
+  topLevelKills: RiotKillSlice[] | null | undefined,
+  puuid: string,
+  teamId: string | null | undefined,
+): ComputedWeaponStats[] {
+  const weapons = new Map<string, ComputedWeaponStats>();
+  for (const r of roundResults) {
+    const weaponId = (r.playerStats ?? [])
+      .find((s) => s.subject === puuid)
+      ?.economy?.weapon?.toLowerCase();
+    if (!weaponId) continue;
+    const entry = weapons.get(weaponId) ?? { weaponId, rounds: 0, kills: 0, roundsWon: 0 };
+    entry.rounds++;
+    entry.kills += getRoundKills(r, topLevelKills).filter(
+      (k) =>
+        k.killer === puuid &&
+        k.finishingDamage?.damageType === "Weapon" &&
+        k.finishingDamage.damageItem?.toLowerCase() === weaponId,
+    ).length;
+    if (teamId && r.winningTeam === teamId) entry.roundsWon++;
+    weapons.set(weaponId, entry);
+  }
+  return [...weapons.values()].sort((a, b) => b.rounds - a.rounds);
 }
 
 function computePlayerDamageStats(
@@ -419,6 +457,7 @@ export function computeMatchStats(details: RiotMatchDetailsSlice): ComputedMatch
         x: casts.ultimateCasts ?? 0,
       },
       avgLoadout: roundCount > 0 ? computeAvgLoadout(roundResults, puuid) : null,
+      weapons: computePlayerWeapons(roundResults, details.kills, puuid, p.teamId),
     });
   }
 
@@ -426,6 +465,7 @@ export function computeMatchStats(details: RiotMatchDetailsSlice): ComputedMatch
     n: (typeof r.roundNum === "number" ? r.roundNum : i) + 1,
     winningTeam: r.winningTeam ?? null,
     result: r.roundResult ?? null,
+    resultCode: r.roundResultCode ?? null,
     ceremony: r.roundCeremony ?? null,
   }));
 

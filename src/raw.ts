@@ -103,6 +103,7 @@ export {
   type ComputedMultiKills,
   type ComputedPlayerStats,
   type ComputedRoundStats,
+  type ComputedWeaponStats,
   type RiotDamageSlice,
   type RiotEconomySlice,
   type RiotKillSlice,

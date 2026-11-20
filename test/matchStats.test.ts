@@ -18,6 +18,13 @@ const fixture = (
   ) as { raw: RiotMatchDetailsSlice }
 ).raw;
 
+const performanceFixture = JSON.parse(
+  fs.readFileSync(
+    path.join(import.meta.dirname, "fixtures", "matchDetailsPerformance.json"),
+    "utf-8",
+  ),
+) as RiotMatchDetailsSlice;
+
 describe("teamWon", () => {
   const teams = (blue: boolean, red: boolean) => [
     { teamId: "Blue", won: blue },
@@ -407,6 +414,105 @@ describe("computeMatchStats", () => {
     const res = computeMatchStats(payload);
     expect(res.players.get("s")?.damageDelta).toBeNull();
     expect(res.players.get("s")?.flawlessRounds).toBe(0);
+    expect(res.players.get("s")?.weapons).toEqual([]);
+  });
+
+  it("counts each weapon's rounds, kills and won rounds over a real match", () => {
+    const stats = computeMatchStats(performanceFixture);
+
+    expect(stats.players.get("00000000-0000-4000-8000-000000000008")?.weapons).toEqual([
+      { weaponId: "9c82e19d-4575-0200-1a81-3eacf00cf872", rounds: 8, kills: 5, roundsWon: 3 },
+      { weaponId: "29a0cfab-485b-f5d5-779a-b59f85e204a8", rounds: 5, kills: 0, roundsWon: 0 },
+      { weaponId: "8db0a1bf-4a50-832a-4566-faaaa6d250ca", rounds: 1, kills: 0, roundsWon: 1 },
+      { weaponId: "1baa85b4-4c70-1284-64bb-6481dfc3bb4e", rounds: 1, kills: 0, roundsWon: 0 },
+      { weaponId: "4ade7faa-4cf1-8376-95ef-39884480959b", rounds: 1, kills: 1, roundsWon: 0 },
+      { weaponId: "e336c6b8-418d-9340-d77f-7a9e4cfe0702", rounds: 1, kills: 0, roundsWon: 1 },
+      { weaponId: "ee8e8d15-496b-07ac-e5f6-8fae5d4c7b1a", rounds: 1, kills: 2, roundsWon: 0 },
+    ]);
+  });
+
+  it("keeps Riot's round result code beside the result text", () => {
+    const rounds = computeMatchStats(performanceFixture).rounds;
+
+    expect(rounds.filter((r) => r.resultCode === "Defuse").map((r) => r.n)).toEqual([4, 9, 12, 17]);
+    const others = rounds.filter((r) => r.resultCode !== "Defuse");
+    expect(others).toHaveLength(14);
+    expect(others.every((r) => r.resultCode === "Elimination")).toBe(true);
+    expect(rounds[0].result).toBe("Eliminated");
+  });
+
+  it("counts a weapon only with weapon kills of that weapon, case-insensitively", () => {
+    const payload: RiotMatchDetailsSlice = {
+      players: [
+        { subject: "s", teamId: "Blue" },
+        { subject: "e", teamId: "Red" },
+      ],
+      roundResults: [
+        {
+          roundNum: 0,
+          winningTeam: "Blue",
+          roundResultCode: "Elimination",
+          playerStats: [
+            {
+              subject: "s",
+              economy: { weapon: "AAA" },
+              kills: [
+                {
+                  killer: "s",
+                  victim: "e",
+                  roundTime: 1000,
+                  finishingDamage: { damageType: "Weapon", damageItem: "aaa" },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          roundNum: 1,
+          winningTeam: "Red",
+          roundResultCode: "",
+          playerStats: [
+            {
+              subject: "s",
+              economy: { weapon: "aaa" },
+              kills: [
+                {
+                  killer: "s",
+                  victim: "e",
+                  roundTime: 1000,
+                  finishingDamage: { damageType: "Ability", damageItem: "GrenadeAbility" },
+                },
+                {
+                  killer: "s",
+                  victim: "e",
+                  roundTime: 2000,
+                  finishingDamage: { damageType: "Weapon", damageItem: "BBB" },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          roundNum: 2,
+          winningTeam: "Blue",
+          playerStats: [{ subject: "s", economy: { weapon: "BBB" } }],
+        },
+        {
+          roundNum: 3,
+          winningTeam: "Blue",
+          playerStats: [{ subject: "s", economy: { weapon: "" } }],
+        },
+        { roundNum: 4, winningTeam: "Blue", playerStats: [] },
+      ],
+    };
+
+    const res = computeMatchStats(payload);
+    expect(res.players.get("s")?.weapons).toEqual([
+      { weaponId: "aaa", rounds: 2, kills: 1, roundsWon: 1 },
+      { weaponId: "bbb", rounds: 1, kills: 0, roundsWon: 1 },
+    ]);
+    expect(res.players.get("e")?.weapons).toEqual([]);
+    expect(res.rounds.map((r) => r.resultCode)).toEqual(["Elimination", "", null, null, null]);
   });
 });
 

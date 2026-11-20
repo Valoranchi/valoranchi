@@ -79,6 +79,7 @@ import {
 } from "../src/raw.js";
 import type {
   ComputedMatchStats,
+  ComputedWeaponStats,
   CrosshairProfileRaw,
   GameFlow,
   LockfileData,
@@ -191,6 +192,7 @@ import type {
   RiotQueueConfigItem,
   RiotQueueConfigsResponse,
   RiotQueueSkills,
+  RiotRoundEconomy,
   RiotRoundPlayerStats,
   RiotRoundResult,
   RiotSeasonalInfo,
@@ -426,6 +428,7 @@ describe("raw entry point", () => {
         RiotFinishingDamage,
         RiotKill,
         RiotDamage,
+        RiotRoundEconomy,
         RiotRoundPlayerStats,
         RiotRoundResult,
         RiotMatchDetailsResponse,
@@ -472,6 +475,7 @@ describe("raw entry point", () => {
         GameFlow,
         RiotMatchDetailsSlice,
         ComputedMatchStats,
+        ComputedWeaponStats,
         TierResolver,
         RankCutoff,
         PlayerPerformance,
